@@ -599,6 +599,22 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
 .tc2.soonc .hd em, .tc2.soonc .hd b { color: var(--muted); }
 @media (max-width: 959px) { .tcg { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 599px) { .quad2, .tcg { grid-template-columns: minmax(0, 1fr); } .tsq { grid-template-columns: repeat(3, minmax(0, 1fr)); } .sq { font-size: .74rem; } .endcard .big { font-size: 2.6rem; } .endcard .chip { font-size: 1rem; } .coach.mapc img { width: 56px; height: 56px; } }
+/* Accounts (v0.2, 30 Oct 2026): login tabs, fields, tick box, Configuración */
+.ltabs { display: flex; gap: 6px; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 4px; align-self: flex-start; }
+.ltab { min-height: 48px; padding: 0 22px; border-radius: 999px; border: 0; background: transparent; font-weight: 700; color: var(--muted); }
+.ltab[aria-selected="true"] { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+.flabel { font-weight: 700; margin-bottom: -6px; }
+.field { width: 100%; min-height: 56px; border: 2px solid var(--line); border-radius: 14px; padding: 0 16px; background: var(--paper); font-size: 1.15rem; }
+.field:focus { border-color: var(--mat); outline: none; }
+.check { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; min-height: 56px; padding: 12px 14px; border: 2px solid var(--line); border-radius: 14px; background: var(--paper); cursor: pointer; line-height: 1.35; }
+.check input { width: 26px; height: 26px; margin: 0; accent-color: var(--mat); }
+.config { gap: 22px; }
+.config .csec { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; border-top: 1px solid var(--line); padding-top: 18px; }
+.config .csec h2 { font-size: 1.1rem; }
+.config .csec .btn svg { width: 22px; height: 22px; }
+.config .email { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
+.okmsg { color: var(--ok); font-weight: 700; }
+@media (max-width: 599px) { .ltabs { align-self: stretch; } .ltab { flex: 1; padding: 0 10px; } .config .csec { align-items: stretch; } }
 .homelinks { justify-content: space-between; } .btn.opinion { text-decoration: none; color: var(--ink); } .btn.opinion .ic { --s: 22px; color: var(--muted); }
 @media (max-width: 599px) { .homelinks { flex-direction: column; align-items: stretch; } .homelinks .btn-link { align-self: flex-start; } }
 </style>
@@ -619,6 +635,8 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
   <main id="app" lang="es"><p class="sub" id="loading">Cargando preguntas…</p></main>
 </div>
 
+<!-- Supabase client (accounts, v0.2). Pinned version; if it cannot load, login shows the connection message. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
 <script>
 (() => {
   /* ---------- data ---------- */
@@ -654,7 +672,8 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
   const app = document.getElementById('app');
   const top = document.getElementById('top');
 
-  let state = { view: 'login', user: null, materia: null, prueba: null };
+  // user = the nickname shown on screen; uid and email come from the account (v0.2)
+  let state = { view: 'login', user: null, uid: null, email: null, materia: null, prueba: null, loginTab: 'entrar' };
 
   /* ---------- helpers ---------- */
   const t = (key, vars = {}) => { vars = { grado: CFG ? CFG.grado : '', ...vars };
@@ -670,14 +689,54 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
   const subtemaName = (mid, sid) => { for (const x of materia(mid).temas) for (const s of x.subtemas) if (s.id === sid) return s.name; return sid; };
   const temaNum = tid => parseInt(tid.slice(1), 10);
 
-  /* ---------- storage: this device only (v0.1) ---------- */
-  const KEY_USERS = 'aprueba.v01.usuarios';
-  const keyData = u => 'aprueba.v01.datos.' + u.toLowerCase();
+  /* ---------- storage on this device ----------
+     Progress is still kept on the device until results are saved online (v0.2 step 4),
+     now per account (account id) instead of per typed username. */
+  const keyData = uid => 'aprueba.v02.datos.' + uid;
   const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
   const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable: keep going */ } };
   let memoryData = {};
-  const userData = () => memoryData[state.user.toLowerCase()] || (memoryData[state.user.toLowerCase()] = load(keyData(state.user), { pruebas: [] }));
-  const saveUserData = () => save(keyData(state.user), userData());
+  const userData = () => memoryData[state.uid] || (memoryData[state.uid] = load(keyData(state.uid), { pruebas: [] }));
+  const saveUserData = () => save(keyData(state.uid), userData());
+
+  /* ---------- accounts (v0.2, decided 30 Oct 2026) ----------
+     Email and password with Supabase. The parent signs up (required tick box, stored as adult_confirmed);
+     no email confirmation during the test. The nickname is chosen after the first login:
+     unique ignoring capitals and accents, 2 to 20 characters (checked again by the database). */
+  const SUPABASE_URL = 'https://ctvaqvzvhxpyjwtpuycn.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_qa_L6c8kfiYHiht7E7tT9Q_i3MFqALs';   // publishable key: the access rules protect the data
+  const MIN_PASS = 6;                                                     // Supabase's default minimum password length
+  let sb = null;
+  const client = () => sb || (window.supabase && window.supabase.createClient ? (sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)) : null);
+  const noNet = () => { const e = new Error('offline'); e.offline = true; return e; };
+  const isOffline = e => !e || e.offline || e.name === 'AuthRetryableFetchError' || e.status === 0 || /fetch|network|load failed/i.test(e.message || '');
+  async function loadProfile(user) {
+    const c = client(); if (!c) throw noNet();
+    const { data, error } = await c.from('students').select('nickname').eq('id', user.id).maybeSingle();
+    if (error) throw error;
+    Object.assign(state, { uid: user.id, email: user.email, user: (data && data.nickname) || null });
+  }
+  async function enterAs(user) {   // after login, sign-up or a session saved on this device
+    await loadProfile(user);
+    memoryData = {};
+    go(state.user ? 'home' : 'apodo');
+  }
+  // Returns null when saved, or the text key of the message to show
+  async function saveNickname(name) {
+    name = name.trim();
+    if ([...name].length < 2 || [...name].length > 20) return 'textos.apodoAyuda';
+    try {
+      const c = client(); if (!c) return 'textos.errorConexion';
+      const { error } = await c.from('students').update({ nickname: name }).eq('id', state.uid).select('nickname').single();
+      if (error) return error.code === '23505' ? 'textos.apodoOcupado' : 'textos.errorConexion';
+      state.user = name; return null;
+    } catch (e) { return 'textos.errorConexion'; }
+  }
+  async function signOut() {
+    try { const c = client(); if (c) await c.auth.signOut(); } catch (e) { /* signed out on this device anyway */ }
+    memoryData = {};
+    go('login', { user: null, uid: null, email: null, prueba: null, loginTab: 'entrar' });
+  }
 
   /* ---------- draw a prueba (TST-01 to TST-05) ---------- */
   function pool(tipo, mid, tid) {
@@ -830,35 +889,122 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
   const backBtn = (id, key) => `<button class="btn btn-ghost back" id="${id}"><span class="ar" aria-hidden="true">‹</span>${esc(t(key))}</button>`;
   const bigCoach = (mood, text, name) => `<div class="pcoach"><p class="bubble">${esc(text)}</p><img src="img/profe-ariel-${mood}.svg" alt="${esc(t('textos.profe.nombre'))}">${name ? `<span class="name" aria-hidden="true">${esc(t('textos.profe.nombre'))}</span>` : ''}</div>`;
 
+  // Login (v0.2): two tabs. «Crear cuenta» is addressed to the parent and has a required tick box.
+  const field = (id, key, type, auto) => `<label class="flabel" for="${id}">${esc(t(key))}</label><input class="field" id="${id}" type="${type}" autocomplete="${auto}" autocapitalize="none" spellcheck="false">`;
   function viewLogin() {
-    const users = load(KEY_USERS, []);
+    const crear = state.loginTab === 'crear';
     app.innerHTML = `
       <section class="screen loginwrap">
         <div class="sidegrid" style="grid-template-columns:260px minmax(0,1fr)">
           ${bigCoach('neutral', t('textos.profe.login'), true)}
           <div class="pcard">
             ${logo()}
-            <h1>${esc(t('textos.loginTitulo'))}</h1>
+            <div class="ltabs" role="tablist">
+              <button class="ltab" role="tab" id="tab-entrar" aria-selected="${!crear}">${esc(t('textos.tabEntrar'))}</button>
+              <button class="ltab" role="tab" id="tab-crear" aria-selected="${crear}">${esc(t('textos.tabCrear'))}</button>
+            </div>
+            <h1>${esc(t(crear ? 'textos.crearTitulo' : 'textos.loginTitulo'))}</h1>
+            ${crear ? `<p class="note">${esc(t('textos.crearNota'))}</p>` : ''}
             <form id="f" class="stack" novalidate>
-              <label for="u"><b>${esc(t('textos.loginEtiqueta'))}</b></label>
-              <input id="u" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="24" placeholder="${esc(t('textos.loginPlaceholder'))}" style="width:100%;min-height:56px;border:2px solid var(--line);border-radius:14px;padding:0 16px;background:var(--paper);font-size:1.15rem">
-              <p class="error" id="err"></p>
-              <div><button class="btn btn-main" type="submit">${esc(t('textos.loginBoton'))}</button></div>
+              ${field('email', 'textos.correo', 'email', 'email')}
+              ${field('pass', 'textos.contrasena', 'password', crear ? 'new-password' : 'current-password')}
+              ${crear ? `<label class="check"><input type="checkbox" id="adulto"><span>${esc(t('textos.crearAdulto'))}</span></label>` : ''}
+              <p class="error" id="err" role="alert"></p>
+              <div><button class="btn btn-main" type="submit" id="go">${esc(t(crear ? 'textos.crearBoton' : 'textos.entrarBoton'))}</button></div>
             </form>
-            ${users.length ? `<div class="stack"><span class="note">${esc(t('textos.usuariosRecientes'))}</span><div class="chips">${users.map(u => `<button class="chip-user" data-u="${esc(u)}">${esc(u)}</button>`).join('')}</div></div>` : ''}
-            <p class="note">${esc(t('textos.loginNota'))}</p>
+            ${crear ? '' : `<p class="note">${esc(t('textos.olvideContrasena'))}</p>`}
           </div>
         </div>
       </section>`;
-    const enter = name => {
-      name = name.trim();
-      if (!name) { document.getElementById('err').textContent = t('textos.loginError'); return; }
-      const list = load(KEY_USERS, []).filter(u => u.toLowerCase() !== name.toLowerCase());
-      list.unshift(name); save(KEY_USERS, list.slice(0, 6));
-      go('home', { user: name });
-    };
-    document.getElementById('f').addEventListener('submit', e => { e.preventDefault(); enter(document.getElementById('u').value); });
-    app.querySelectorAll('[data-u]').forEach(b => b.addEventListener('click', () => enter(b.dataset.u)));
+    const $ = id => document.getElementById(id);
+    $('tab-entrar').onclick = () => go('login', { loginTab: 'entrar' });
+    $('tab-crear').onclick = () => go('login', { loginTab: 'crear' });
+    const fail = key => { $('err').textContent = t(key, { n: MIN_PASS }); $('go').disabled = false; };
+    $('f').addEventListener('submit', async e => {
+      e.preventDefault();
+      const email = $('email').value.trim(), pass = $('pass').value;
+      if (!email) { $('email').focus(); return; }
+      if (!pass) { $('pass').focus(); return; }
+      if (crear && pass.length < MIN_PASS) return fail('textos.errorContrasenaCorta');
+      if (crear && !$('adulto').checked) return fail('textos.errorAdulto');
+      $('err').textContent = ''; $('go').disabled = true;
+      try {
+        const c = client(); if (!c) throw noNet();
+        const { data, error } = crear
+          ? await c.auth.signUp({ email, password: pass, options: { data: { adult_confirmed: true } } })
+          : await c.auth.signInWithPassword({ email, password: pass });
+        if (error) {
+          if (isOffline(error)) return fail('textos.errorConexion');
+          if (error.code === 'user_already_exists' || /already/i.test(error.message || '')) return fail('textos.errorExiste');
+          if (error.code === 'weak_password' || /at least|password should/i.test(error.message || '')) return fail('textos.errorContrasenaCorta');
+          return fail('textos.errorDatos');
+        }
+        if (!data || !data.user || !data.session) return fail('textos.errorDatos');
+        await enterAs(data.user);
+      } catch (err) { fail('textos.errorConexion'); }
+    });
+  }
+
+  // Nickname after the first login (v0.2). Addressed to the child.
+  function viewApodo() {
+    app.innerHTML = `
+      <section class="screen loginwrap">
+        <div class="sidegrid" style="grid-template-columns:260px minmax(0,1fr)">
+          ${bigCoach('neutral', t('textos.profe.apodo'))}
+          <div class="pcard">
+            ${logo()}
+            <form id="f" class="stack" novalidate>
+              <label class="flabel" for="nick">${esc(t('textos.apodoEtiqueta'))}</label>
+              <input class="field" id="nick" maxlength="20" autocomplete="nickname" spellcheck="false">
+              <p class="note" id="help">${esc(t('textos.apodoAyuda'))}</p>
+              <p class="error" id="err" role="alert"></p>
+              <div><button class="btn btn-main" type="submit" id="go">${esc(t('textos.apodoBoton'))}</button></div>
+            </form>
+          </div>
+        </div>
+      </section>`;
+    const $ = id => document.getElementById(id);
+    $('f').addEventListener('submit', async e => {
+      e.preventDefault(); $('go').disabled = true; $('err').textContent = '';
+      const key = await saveNickname($('nick').value);
+      if (key) { $('err').textContent = t(key); $('go').disabled = false; return; }
+      go('home');
+    });
+  }
+
+  // Configuración (v0.2): nickname, sound, account email and Cerrar sesión
+  function viewConfig() {
+    const on = soundOn();
+    app.innerHTML = `
+      <section class="screen narrow">
+        <div class="navrow">${backBtn('back', 'textos.volver')}</div>
+        <h1>${esc(t('textos.configuracion'))}</h1>
+        <div class="pcard config">
+          <form id="f" class="stack" novalidate>
+            <label class="flabel" for="nick">${esc(t('textos.apodoEtiqueta'))}</label>
+            <input class="field" id="nick" maxlength="20" autocomplete="nickname" spellcheck="false" value="${esc(state.user)}">
+            <p class="note">${esc(t('textos.apodoAyuda'))}</p>
+            <p class="error" id="err" role="alert"></p>
+            <div class="row"><button class="btn btn-main" type="submit" id="go">${esc(t('textos.guardar'))}</button><span class="okmsg" id="ok" role="status"></span></div>
+          </form>
+          <div class="csec"><h2>${esc(t('textos.sonido'))}</h2>
+            <button class="btn btn-ghost" id="sndbtn" aria-pressed="${on}">${soundIcon(on)}${esc(t(on ? 'textos.sonidoSilenciar' : 'textos.sonidoActivar'))}</button></div>
+          <div class="csec"><h2>${esc(t('textos.cuenta'))}</h2>
+            <p class="email">${esc(state.email)}</p>
+            <button class="btn btn-ghost" id="salir">${esc(t('textos.cerrarSesion'))}</button></div>
+        </div>
+      </section>`;
+    const $ = id => document.getElementById(id);
+    $('back').onclick = () => go('home');
+    $('sndbtn').onclick = () => { toggleSound(); viewConfig(); };
+    $('salir').onclick = signOut;
+    $('f').addEventListener('submit', async e => {
+      e.preventDefault(); $('go').disabled = true; $('err').textContent = ''; $('ok').textContent = '';
+      const key = await saveNickname($('nick').value);
+      $('go').disabled = false;
+      if (key) { $('err').textContent = t(key); return; }
+      renderTop(); $('ok').textContent = t('textos.guardado');
+    });
   }
 
   function viewHome() {
@@ -873,12 +1019,12 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
         </div>
         <div class="pcoach"><p class="bubble">${esc(t('textos.profe.inicio'))}</p><img src="img/profe-ariel-neutral.svg" alt="${esc(t('textos.profe.nombre'))}"></div>
         </div>
-        <div class="row homelinks">${CFG.enlaceOpinion ? `<a class="btn btn-ghost opinion" href="${esc(CFG.enlaceOpinion)}" target="_blank" rel="noopener">${micon('LEN')}${esc(t('textos.opinion'))}</a>` : ''}<button class="btn-link" id="logout">${esc(t('textos.cambiarUsuario'))}</button></div>
+        <div class="row homelinks">${CFG.enlaceOpinion ? `<a class="btn btn-ghost opinion" href="${esc(CFG.enlaceOpinion)}" target="_blank" rel="noopener">${micon('LEN')}${esc(t('textos.opinion'))}</a>` : ''}<button class="btn-link" id="config">${esc(t('textos.configuracion'))}</button></div>
       </section>`;
     document.getElementById('c-grado').onclick = () => go('intro', { pick: { tipo: 'grado' } });
     app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => go('materia', { materia: b.dataset.m }));
     document.getElementById('c-progreso').onclick = () => go('progreso');
-    document.getElementById('logout').onclick = () => go('login', { user: null });
+    document.getElementById('config').onclick = () => go('config');
   }
 
   // Tema slots 1..temasPorMateria: the included Temas are active, the others show as "Tema N" (not active yet)
@@ -991,7 +1137,7 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
     const respuestas = P.items.map(x => { const q = Q(x.id); return { id: x.id, correcta: x.chosen === q.correct, elegida: q.options[x.chosen], ms: x.ms }; });
     const correctas = respuestas.filter(r => r.correcta).length;
     const record = {
-      usuario: state.user, tipo: P.tipo, materia: P.mid || null, tema: P.tid || null,
+      usuario: state.user, cuenta: state.uid, tipo: P.tipo, materia: P.mid || null, tema: P.tid || null,
       inicio: P.inicio, fin: new Date().toISOString(), duracionSeg: Math.round((Date.now() - P.t0) / 1000),
       correctas, puntos: pts(correctas, respuestas.length), respuestas
     };
@@ -1099,9 +1245,10 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
     document.getElementById('back').onclick = () => go('home');
   }
 
-  const VIEWS = { login: viewLogin, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, progreso: viewProgreso };
+  const VIEWS = { login: viewLogin, apodo: viewApodo, config: viewConfig, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, progreso: viewProgreso };
   function render() {
-    if (!state.user && state.view !== 'login') state.view = 'login';
+    if (!state.uid) state.view = 'login';                                  // not signed in
+    else if (!state.user && state.view !== 'login') state.view = 'apodo';  // signed in, no nickname yet
     if (!VIEWS[state.view]) state.view = 'home';
     // Materia screen and questions take the Materia colour (tinted page)
     // (30 Oct 2026) also the Prueba intro and the end of a Prueba on one Materia or one Tema
@@ -1152,12 +1299,15 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
       document.getElementById('loading').textContent = 'No se pudieron cargar las preguntas. Revisa tu conexión y vuelve a abrir la página.';
       return;
     }
-    if (saved && saved.view) state = saved;
+    // A session saved on this device goes straight in (login is remembered)
+    try {
+      const c = client();
+      const { data } = c ? await c.auth.getSession() : { data: null };
+      if (data && data.session && data.session.user) { await enterAs(data.session.user); return; }
+    } catch (e) { /* no connection or no saved session: show the login */ }
     render();
-    initRemote();
   }
-  window.claude?.hot?.snapshot?.(() => state);
-  window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+  start();
 })();
 </script>
 </body>
