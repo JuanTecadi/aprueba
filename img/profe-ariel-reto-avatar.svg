@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Profe Ariel">
+<!-- aPrueba mascot: Profe Ariel. Mood: Reto (challenge). Approved 28 October 2026 (option E version 2). 200 x 200 viewBox. -->
+<defs><clipPath id="c"><circle cx="100" cy="100" r="100"/></clipPath></defs>
+<g clip-path="url(#c)"><rect width="200" height="200" fill="#FFF6DA"/><path d="M84 138 L84 168 Q100 176 116 168 L116 138 Z" fill="#D4BC94" stroke="#16213A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M24 208 Q28 170 76 162 L124 162 Q172 170 176 208 Z" fill="#3B3F4A" stroke="#16213A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="78" y="154" width="44" height="16" rx="8" fill="#3B3F4A" stroke="#16213A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M86 158 L86 166 M94 158 L94 166 M102 158 L102 166 M110 158 L110 166" stroke="#565B68" stroke-width="2"/>
+  <path d="M80 163 Q100 197 120 163" fill="none" stroke="#FFC93C" stroke-width="3.5"/>
+  <rect x="90" y="177" width="22" height="11" rx="5" fill="#FFC93C" stroke="#16213A" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="105" cy="182.5" r="2.2" fill="#16213A"/><path d="M84 56 C80 38 70 28 56 24" fill="none" stroke="#16213A" stroke-width="15" stroke-linecap="round"/><path d="M84 56 C80 38 70 28 56 24" fill="none" stroke="#BC946A" stroke-width="7" stroke-linecap="round"/><ellipse cx="46" cy="100" rx="24" ry="10" transform="rotate(-10 46 100)" fill="#EEDDBE" stroke="#16213A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+     <ellipse cx="44" cy="101" rx="14" ry="4.5" transform="rotate(-10 44 101)" fill="#E6B6A0"/><g transform="matrix(-1 0 0 1 200 0)"><path d="M84 56 C80 38 70 28 56 24" fill="none" stroke="#16213A" stroke-width="15" stroke-linecap="round"/><path d="M84 56 C80 38 70 28 56 24" fill="none" stroke="#BC946A" stroke-width="7" stroke-linecap="round"/><ellipse cx="46" cy="100" rx="24" ry="10" transform="rotate(-10 46 100)" fill="#EEDDBE" stroke="#16213A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+     <ellipse cx="44" cy="101" rx="14" ry="4.5" transform="rotate(-10 44 101)" fill="#E6B6A0"/></g><ellipse cx="100" cy="100" rx="46" ry="50" fill="#EEDDBE"/>
+    <ellipse cx="100" cy="128" rx="30" ry="21" fill="#FAF3E6"/>
+    <ellipse cx="100" cy="100" rx="46" ry="50" fill="none" stroke="#16213A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M74 60 Q86 42 112 46 Q124 48 128 58 Q112 52 100 58 Q88 64 74 60Z" fill="#F1EEE8" stroke="#16213A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M92 118 Q100 112 108 118 Q104 124 100 124 Q96 124 92 118Z" fill="#6E4426"/>
+    <circle cx="80" cy="96" r="9.5" fill="#fff"/>
+    <circle cx="81" cy="98" r="4.8" fill="#16213A"/>
+    <path d="M68 95 L92 98 L92 82 L68 82 Z" fill="#EEDDBE"/>
+    <circle cx="80" cy="96" r="9.5" fill="none" stroke="#16213A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M70.5 95 L89.5 98" stroke="#16213A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="120" cy="96" r="9.5" fill="#fff"/>
+    <circle cx="121" cy="98" r="4.8" fill="#16213A"/>
+    <path d="M108 96 L132 92 L132 82 L108 82 Z" fill="#EEDDBE"/>
+    <circle cx="120" cy="96" r="9.5" fill="none" stroke="#16213A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M110.5 96 L129.5 92" stroke="#16213A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><rect x="65" y="78" width="30" height="10" rx="5" fill="#F1EEE8" stroke="#16213A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="rotate(18 80 83)"/><rect x="105" y="73" width="30" height="10" rx="5" fill="#F1EEE8" stroke="#16213A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="rotate(-6 120 78)"/><g transform="translate(100 58) scale(0.72) translate(-100 -95)"><rect x="62" y="84" width="34" height="22" rx="10" fill="#16213A"/><rect x="104" y="84" width="34" height="22" rx="10" fill="#16213A"/>
+    <path d="M94 92 Q100 88 106 92" stroke="#16213A" stroke-width="5" fill="none"/>
+    <path d="M69 92 L78 87 M111 92 L120 87" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/></g><path d="M88 141 L104 140 Q110 139 113 135" fill="none" stroke="#16213A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/></g>
+</svg>

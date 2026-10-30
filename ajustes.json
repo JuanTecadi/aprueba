@@ -1,0 +1,43 @@
+{
+  "preguntasPorPrueba": 10,
+  "puntosPorCorrecta": 10,
+  "puntosPorIncorrecta": 0,
+  "mensajeAltoDesde": 0.8,
+  "mensajeMedioDesde": 0.5,
+  "mascotaFelizDesde": 0.9,
+  "sonidoInicial": "activado",
+  "volumenSonido": 0.4,
+  "respuestaQueCuenta": "mejor",
+  "temasIncluidos": [
+    "T01",
+    "T02",
+    "T03",
+    "T04",
+    "T05"
+  ],
+  "temasPorMateria": 12,
+  "grado": "5to",
+  "enlaceOpinion": "https://docs.google.com/forms/d/e/1FAIpQLScpZcqUPk7Q1vfJWXuvwii5pjD6iXg_TIpUK_zy-gcLn4PtdQ/viewform",
+  "niveles": [
+    {
+      "desde": 0.0,
+      "color": "#E3F4E8"
+    },
+    {
+      "desde": 0.2,
+      "color": "#B9E4C6"
+    },
+    {
+      "desde": 0.4,
+      "color": "#7FCC98"
+    },
+    {
+      "desde": 0.6,
+      "color": "#3FAE66"
+    },
+    {
+      "desde": 0.8,
+      "color": "#1B8A45"
+    }
+  ]
+}
