@@ -90,23 +90,26 @@ create table if not exists public.ratings (
 );
 
 -- ---------- Saving a Prueba: the Prueba and its answers in one step (all or nothing) ----------
--- p = {tipo, materia, tema, started_at, finished_at, duracion_seg, n_preguntas, n_correctas, puntos,
+-- p = {id, tipo, materia, tema, started_at, finished_at, duracion_seg, n_preguntas, n_correctas, puntos,
 --      answers: [{question_id, posicion, opcion, correcta, tiempo_ms, answered_at}, ...]}
+-- The app gives each Prueba its id, so a retry after a dropped connection is ignored (no duplicates).
 create or replace function public.save_prueba(p jsonb) returns uuid
 language plpgsql security invoker set search_path = '' as $$
-declare pid uuid;
+declare pid uuid; wanted uuid := coalesce((p ->> 'id')::uuid, gen_random_uuid());
 begin
   if auth.uid() is null then raise exception 'not signed in'; end if;
   if jsonb_array_length(p -> 'answers') <> (p ->> 'n_preguntas')::int then
     raise exception 'answers do not match n_preguntas';
   end if;
-  insert into public.pruebas (student_id, tipo, materia, tema, started_at, finished_at,
+  insert into public.pruebas (id, student_id, tipo, materia, tema, started_at, finished_at,
                               duracion_seg, n_preguntas, n_correctas, puntos)
-  values (auth.uid(), p ->> 'tipo', p ->> 'materia', p ->> 'tema',
+  values (wanted, auth.uid(), p ->> 'tipo', p ->> 'materia', p ->> 'tema',
           (p ->> 'started_at')::timestamptz, (p ->> 'finished_at')::timestamptz,
           (p ->> 'duracion_seg')::int, (p ->> 'n_preguntas')::int,
           (p ->> 'n_correctas')::int, (p ->> 'puntos')::int)
+  on conflict (id) do nothing
   returning id into pid;
+  if pid is null then return wanted; end if;   -- already saved
   insert into public.answers (prueba_id, student_id, question_id, posicion, opcion, correcta, tiempo_ms, answered_at)
   select pid, auth.uid(), a ->> 'question_id', (a ->> 'posicion')::int, a ->> 'opcion',
          (a ->> 'correcta')::boolean, (a ->> 'tiempo_ms')::int, (a ->> 'answered_at')::timestamptz

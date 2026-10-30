@@ -13,19 +13,21 @@ Tablet-first practice game for 5to grado students in Venezuela. This repository 
 | `img/` | Logo and Profe Ariel (version 1) | Project folders `claude/images/logo/v1/` and `claude/images/mascot/v1/` |
 | `supabase/schema.sql` | Database: tables, access rules, save function, backstage views | This repository (matches the live Supabase database) |
 | `tools/build_textos.py` | *Aprueba – Textos* → `textos.json`, with checks | This repository |
+| `tools/export_questions.py` | Master workbook → `questions.json`, with option codes K, D1, D2, D3 | This repository |
 | `tests/` | Local browser tests (Playwright) with a stand-in for Supabase | This repository |
 
 The JSON files are generated from the project documents; do not edit them by hand.
 
 ## Data
 
-No student data is stored in this repository. Accounts (email and password, nickname) are in Supabase since v0.2 step 3. Until step 4, progress, sound and reviewer ratings are still saved only in the browser of each device, per account.
+No student data is stored in this repository. Accounts are in Supabase since v0.2 step 3; Pruebas, answers (with the option code K, D1, D2 or D3) and thumbs since step 4. Only the sound on/off choice, and a Prueba that could not be sent yet, stay on the device.
 
 ## Tests
 
-From the repository folder: `python3 -m http.server 8765 &` then `node tests/test-accounts.js`.
+From the repository folder: `python3 -m http.server 8765 &` then `node tests/test-accounts.js` and `node tests/test-save.js`.
 
 ## History
 
 - v0.1 (October 2026): built and published on claude.ai, published version 23. Moved here unchanged on 30 October 2026.
 - v0.2 step 3 (30 October 2026): accounts: sign-up by the parent, login, nickname at the first login, Configuración.
+- v0.2 step 4 (30 October 2026): Pruebas, answers and thumbs saved in Supabase; option codes in questions.json.

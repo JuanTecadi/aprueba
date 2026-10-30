@@ -689,15 +689,15 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
   const subtemaName = (mid, sid) => { for (const x of materia(mid).temas) for (const s of x.subtemas) if (s.id === sid) return s.name; return sid; };
   const temaNum = tid => parseInt(tid.slice(1), 10);
 
-  /* ---------- storage on this device ----------
-     Progress is still kept on the device until results are saved online (v0.2 step 4),
-     now per account (account id) instead of per typed username. */
-  const keyData = uid => 'aprueba.v02.datos.' + uid;
+  /* ---------- storage ----------
+     Since v0.2 step 4 the student's Pruebas, answers and thumbs are saved in Supabase and loaded after login,
+     so the map and the points follow the student to any device. A Prueba that could not be sent waits on
+     this device (per account) and is sent again on the next Prueba or the next login. */
+  const keyPend = uid => 'aprueba.v02.pendientes.' + uid;
   const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
   const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable: keep going */ } };
   let memoryData = {};
-  const userData = () => memoryData[state.uid] || (memoryData[state.uid] = load(keyData(state.uid), { pruebas: [] }));
-  const saveUserData = () => save(keyData(state.uid), userData());
+  const userData = () => memoryData[state.uid] || (memoryData[state.uid] = { pruebas: [] });
 
   /* ---------- accounts (v0.2, decided 30 Oct 2026) ----------
      Email and password with Supabase. The parent signs up (required tick box, stored as adult_confirmed);
@@ -719,8 +719,47 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
   async function enterAs(user) {   // after login, sign-up or a session saved on this device
     await loadProfile(user);
     memoryData = {};
+    await loadHistory();
     go(state.user ? 'home' : 'apodo');
+    sendPending();
   }
+  // The student's own Pruebas (with their answers) and thumbs; the access rules return only this account's rows
+  async function loadHistory() {
+    const c = client();
+    const { data, error } = await c.from('pruebas')
+      .select('id,tipo,materia,tema,started_at,finished_at,duracion_seg,n_correctas,puntos,answers(question_id,posicion,opcion,correcta,tiempo_ms)')
+      .order('finished_at', { ascending: true });
+    if (error) throw error;
+    const saved = (data || []).map(x => ({
+      id: x.id, tipo: x.tipo, materia: x.materia, tema: x.tema, inicio: x.started_at, fin: x.finished_at,
+      duracionSeg: x.duracion_seg, correctas: x.n_correctas, puntos: x.puntos,
+      respuestas: (x.answers || []).slice().sort((a, b) => a.posicion - b.posicion)
+        .map(a => ({ id: a.question_id, correcta: a.correcta, opcion: a.opcion, ms: a.tiempo_ms }))
+    }));
+    const ids = new Set(saved.map(x => x.id));
+    const waiting = load(keyPend(state.uid), []).filter(w => !ids.has(w.record.id));
+    save(keyPend(state.uid), waiting);
+    memoryData[state.uid] = { pruebas: saved.concat(waiting.map(w => w.record)) };
+    const r = await c.from('ratings').select('question_id,valor');
+    votes = {}; for (const v of (r.data || [])) votes[v.question_id] = v.valor;
+  }
+  // Send the Pruebas waiting on this device, oldest first; a retry of the same Prueba is ignored by the database
+  let sending = false;
+  async function sendPending() {
+    if (sending || !state.uid) return;
+    const uid = state.uid, c = client(); if (!c) return;
+    sending = true;
+    try {
+      for (const w of load(keyPend(uid), [])) {
+        const { error } = await c.rpc('save_prueba', { p: w.payload });
+        if (error) break;
+        save(keyPend(uid), load(keyPend(uid), []).filter(x => x.record.id !== w.record.id));
+      }
+    } catch (e) { /* no connection: try again later */ }
+    finally { sending = false; }
+  }
+  const newId = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+    : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, ch => { const r = Math.random() * 16 | 0; return (ch === 'x' ? r : (r & 3 | 8)).toString(16); });
   // Returns null when saved, or the text key of the message to show
   async function saveNickname(name) {
     name = name.trim();
@@ -785,38 +824,17 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
   const levelColor = n => CFG.niveles[n - 1].color;
   const levelInk = n => n >= 4 ? '#ffffff' : '#10301c';   // readable text on light and dark greens
   /* ---------- reviewer ratings (thumbs up / down per question) ----------
-     Kept on this device and, when the viewer is signed in to claude.ai with
-     edit access, in the page's shared store (one document per reviewer). */
-  const KEY_VOTES = 'aprueba.v01.valoraciones';
-  let votes = load(KEY_VOTES, {});            // { questionId: 1 | -1 | 0 }
-  const remote = { db: null, uid: null, writing: false, dirty: false };
-  async function pushVotes() {
-    if (!remote.db) return;
-    if (remote.writing) { remote.dirty = true; return; }
-    remote.writing = true;
+     Since v0.2 step 4: one row per account and question in Supabase (table ratings); tapping again removes it. */
+  let votes = {};                              // { questionId: 1 | -1 } for this account, loaded after login
+  async function vote(qid, v) {
+    const now = votes[qid] === v ? 0 : v;      // tap again to remove the rating
+    if (now) votes[qid] = now; else delete votes[qid];
+    render();
     try {
-      do { remote.dirty = false; await remote.db.doc('valoraciones/' + remote.uid).set({ votos: { ...votes }, actualizado: new Date().toISOString() }); }
-      while (remote.dirty);
-    } catch (e) { if (!e || e.code !== 'unavailable') remote.db = null; }
-    finally { remote.writing = false; }
-  }
-  async function initRemote() {
-    try {
-      if (!window.claude || !window.claude.use) return;
-      const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
-      if (!db || !user) return;
-      const uid = await user.id(); if (!uid) return;
-      const snap = await db.doc('valoraciones/' + uid).get();
-      const server = snap.exists ? (snap.data().votos || {}) : {};
-      const merged = { ...server, ...votes };
-      votes = merged; save(KEY_VOTES, votes);
-      remote.db = db; remote.uid = uid;
-      if (JSON.stringify(merged) !== JSON.stringify(server)) pushVotes();
-    } catch (e) { /* no shared store in this view: ratings stay on this device */ }
-  }
-  function vote(qid, v) {
-    votes[qid] = votes[qid] === v ? 0 : v;    // tap again to remove the rating
-    save(KEY_VOTES, votes); pushVotes(); render();
+      const c = client(); if (!c || !state.uid) return;
+      if (now) await c.from('ratings').upsert({ student_id: state.uid, question_id: qid, valor: now, updated_at: new Date().toISOString() }, { onConflict: 'student_id,question_id' });
+      else await c.from('ratings').delete().eq('student_id', state.uid).eq('question_id', qid);
+    } catch (e) { /* no connection: the thumb shows on screen but is not saved */ }
   }
   const totalPoints = () => userData().pruebas.reduce((a, p) => a + p.puntos, 0);
 
@@ -1124,7 +1142,7 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
       </section>`;
     // Feedback appears as soon as an answer is chosen
     app.querySelectorAll('[data-v]').forEach(b => b.onclick = () => vote(q.id, +b.dataset.v));
-    app.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { if (it.checked) return; it.chosen = +b.dataset.o; it.checked = true; it.checkedAt = Date.now(); it.ms = Date.now() - P.qStart; it.line = say(it.chosen === q.correct ? 'textos.profe.pregunta.correcta' : 'textos.profe.pregunta.incorrecta'); sfx(it.chosen === q.correct ? 'correcta' : 'incorrecta'); render(); });
+    app.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { if (it.checked) return; it.chosen = +b.dataset.o; it.checked = true; it.checkedAt = Date.now(); it.answeredAt = new Date().toISOString(); it.ms = Date.now() - P.qStart; it.line = say(it.chosen === q.correct ? 'textos.profe.pregunta.correcta' : 'textos.profe.pregunta.incorrecta'); sfx(it.chosen === q.correct ? 'correcta' : 'incorrecta'); render(); });
     const $ = id => document.getElementById(id);
     if ($('next')) $('next').onclick = advance;
     if ($('quit')) $('quit').onclick = () => { P.quit = true; render(); };
@@ -1134,16 +1152,23 @@ body.tinted .pcard, body.tinted .area2, body.tinted .tc2 { box-shadow: 0 1px 0 r
 
   function finish() {
     const P = state.prueba;
-    const respuestas = P.items.map(x => { const q = Q(x.id); return { id: x.id, correcta: x.chosen === q.correct, elegida: q.options[x.chosen], ms: x.ms }; });
+    // The option chosen is saved as its code from the master workbook (K = correct, D1-D3), not its position or text
+    const respuestas = P.items.map(x => { const q = Q(x.id); return { id: x.id, correcta: x.chosen === q.correct, opcion: q.codes[x.chosen], ms: x.ms, at: x.answeredAt }; });
     const correctas = respuestas.filter(r => r.correcta).length;
     const record = {
-      usuario: state.user, cuenta: state.uid, tipo: P.tipo, materia: P.mid || null, tema: P.tid || null,
+      id: newId(), tipo: P.tipo, materia: P.mid || null, tema: P.tid || null,
       inicio: P.inicio, fin: new Date().toISOString(), duracionSeg: Math.round((Date.now() - P.t0) / 1000),
       correctas, puntos: pts(correctas, respuestas.length), respuestas
     };
     // Temas that reach the top level for the first time with this Prueba (with "Mejor", a level never goes down)
     const top5 = CFG.niveles.length, before = perf();
-    userData().pruebas.push(record); saveUserData();
+    userData().pruebas.push(record);
+    const payload = { id: record.id, tipo: record.tipo, materia: record.materia, tema: record.tema,
+      started_at: record.inicio, finished_at: record.fin, duracion_seg: record.duracionSeg,
+      n_preguntas: respuestas.length, n_correctas: correctas, puntos: record.puntos,
+      answers: respuestas.map((r, k) => ({ question_id: r.id, posicion: k + 1, opcion: r.opcion, correcta: r.correcta, tiempo_ms: r.ms, answered_at: r.at })) };
+    save(keyPend(state.uid), load(keyPend(state.uid), []).concat([{ record, payload }]));
+    sendPending();
     const after = perf(), nuevoNivel5 = [];
     for (const m of BANK.materias) for (const x of m.temas) {
       const k = m.id + '|' + x.id;
