@@ -39,6 +39,9 @@ begin
   on conflict (id) do nothing;
   return new;
 end $$;
+-- Trigger functions run on their own; nobody needs to call them through the API.
+revoke execute on function public.on_new_user() from public, anon, authenticated;
+revoke execute on function public.set_nickname_key() from public, anon, authenticated;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users
   for each row execute function public.on_new_user();
@@ -75,6 +78,7 @@ create table if not exists public.answers (
 );
 create index if not exists answers_student on public.answers (student_id);
 create index if not exists answers_question on public.answers (question_id);
+create index if not exists answers_prueba on public.answers (prueba_id);
 
 -- ---------- ratings: one thumb per student and question; removing a rating deletes the row ----------
 create table if not exists public.ratings (
