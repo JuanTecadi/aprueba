@@ -1,6 +1,7 @@
 """Export approved questions from the master workbook to questions.json for the aPrueba prototype.
 
 Usage: python3 export_questions.py <master.xlsx> [output.json]
+Exports questions with Status approved or reviewed. A Materia lists only the Temas it has questions for.
 For Option order = Fixed, options are stored already sorted by value (TST-03, MET-08).
 Each option carries its code from the master workbook (v0.2, 30 Oct 2026): K = Correct answer,
 D1, D2, D3 = Distractor 1, 2, 3. The app saves the code of the option chosen, so the record does not
@@ -42,7 +43,8 @@ def clean(v):
 def main(src, out='questions.json'):
     q = pd.read_excel(src, 'Questions')
     t = pd.read_excel(src, 'Taxonomy')
-    q = q[q['Status'] == 'approved']
+    # approved, and reviewed (Accuracy check = Verify): the author chose on 2 Nov 2026 to include the Verify questions and let reviewers catch problems
+    q = q[q['Status'].isin(['approved', 'reviewed'])]
     questions = []
     for _, r in q.iterrows():
         qid = r['ID']
@@ -57,7 +59,9 @@ def main(src, out='questions.json'):
             id=qid, materia=CODES[r['Materia']], tema=tema, subtema=f'{tema}-{sub}',
             stem=clean(r['Stem']), options=options, codes=codes, correct=codes.index('K'),
             feedback=clean(r['Feedback']), cluster=clean(r['Cluster ID']), order=order))
-    tx = t[t['Tema ID'].isin(sorted(q['ID'].str.split('-').str[1].unique()))]
+    # Temas per Materia: only the Temas that Materia has questions for (a Tema ID such as T06 exists in every Materia's map)
+    have = set(zip(q['Materia'], q['ID'].str.split('-').str[1]))
+    tx = t[[(m, tid) in have for m, tid in zip(t['Materia'], t['Tema ID'])]]
     materias = []
     for name, code in CODES.items():
         temas = []
