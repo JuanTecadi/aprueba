@@ -173,12 +173,20 @@ select s.nickname,
        round(avg(a.correcta::int) filter (where a.question_id like 'CIE%') * 100) as pct_ciencias,
        round(avg(a.correcta::int) filter (where a.question_id like 'LEN%') * 100) as pct_lengua,
        round(avg(a.correcta::int) filter (where a.question_id like 'MAT%') * 100) as pct_matematicas,
-       round(avg(a.correcta::int) filter (where a.question_id like 'SOC%') * 100) as pct_sociales
+       round(avg(a.correcta::int) filter (where a.question_id like 'SOC%') * 100) as pct_sociales,
+       -- added 3 November 2026 (at the end, so the view can be replaced in place)
+       (u.last_sign_in_at at time zone 'America/Caracas')::timestamp(0) as ultimo_login,
+       (max(p.finished_at) at time zone 'America/Caracas')::timestamp(0) as ultima_prueba,
+       (now() at time zone 'America/Caracas')::date
+         - max((p.finished_at at time zone 'America/Caracas')::date)   as dias_sin_jugar,
+       count(distinct p.id) filter (where p.finished_at > now() - interval '7 days') as pruebas_7_dias,
+       round(avg(a.correcta::int) * 100)                               as pct_total,
+       (select count(*) from public.ratings r where r.student_id = s.id) as pulgares_dados
 from public.students s
 join auth.users u on u.id = s.id
 left join public.pruebas p on p.student_id = s.id
 left join public.answers a on a.prueba_id = p.id
-group by s.id, u.email;
+group by s.id, u.email, u.last_sign_in_at;
 
 create or replace view backstage.por_pregunta as
 with r as (
@@ -211,3 +219,17 @@ select count(*)                                   as testers,
        round(avg(pruebas) filter (where pruebas > 0), 1)      as pruebas_por_tester,
        round(avg(dias_jugados) filter (where pruebas > 0), 1) as dias_por_tester
 from backstage.por_tester;
+
+-- One row per question with at least one thumb, thumbs down first (added 3 November 2026).
+-- Stems are not in the database; look them up in the master workbook by question_id.
+create or replace view backstage.votos as
+select question_id,
+       left(question_id, 3)                     as materia,
+       split_part(question_id, '-', 2)          as tema,
+       split_part(question_id, '-', 3)          as subtema,
+       count(*) filter (where valor = 1)        as votos_arriba,
+       count(*) filter (where valor = -1)       as votos_abajo,
+       (max(updated_at) at time zone 'America/Caracas')::date as ultimo_voto
+from public.ratings
+group by question_id
+order by votos_abajo desc, votos_arriba desc, question_id;
