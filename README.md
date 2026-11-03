@@ -9,7 +9,7 @@ Tablet-first practice game for 5to grado students in Venezuela. This repository 
 | `index.html` | Layout, styles and logic. No student text in the code. | This repository |
 | `textos.json` | Every text the student reads (Spanish, Venezuelan usage) | Project document *Aprueba – Textos* |
 | `ajustes.json` | Settings | Project document *Aprueba – Ajustes* |
-| `questions.json` | Approved questions, Temas and Subtemas | Master workbook `Aprueba_5to_Phase1_T01-T05_plus_CIE_LEN_T06-T12.xlsx` |
+| `questions.json` | Approved questions, Temas and Subtemas | Master workbook `Aprueba_5to_Phase1_T01-T12.xlsx` |
 | `img/` | Logo and Profe Ariel (version 1) | Project folders `claude/images/logo/v1/` and `claude/images/mascot/v1/` |
 | `supabase/schema.sql` | Database: tables, access rules, save function, backstage views | This repository (matches the live Supabase database) |
 | `tools/build_textos.py` | *Aprueba – Textos* → `textos.json`, with checks | This repository |
@@ -34,3 +34,4 @@ From the repository folder: `python3 -m http.server 8765 &` then `node tests/tes
 - Content export (2 November 2026): Ciencias Temas 1 to 12 (722 questions).
 - Content export (2 November 2026): Lengua Temas 6 to 12 added; 928 questions (Ciencias 328, Lengua 326, Matemáticas 159, Sociales 115).
 - Content export (3 November 2026): Sociales Temas 6 to 11 added (all 11 Sociales Temas); 1.095 questions (Ciencias 328, Lengua 326, Matemáticas 159, Sociales 282). Source: Aprueba_5to_Phase1_T01-T05_plus_CIE_LEN_SOC_T06-T12.xlsx.
+- Content export (3 November 2026): Matemáticas Temas 6 to 12 added (all four materias complete); 1.343 questions (Ciencias 328, Lengua 326, Matemáticas 407, Sociales 282). Source: Aprueba_5to_Phase1_T01-T12.xlsx. `tests/test-temas12.js`: 45 checks, including a Prueba in every new Matemáticas Tema and Todo Matemáticas.
