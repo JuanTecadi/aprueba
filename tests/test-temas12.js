@@ -1,4 +1,4 @@
-// Check (2 Nov 2026): all 12 Ciencias and Lengua Temas active, Matemáticas and Sociales keep Temas 1-5; Pruebas play. Run: python3 -m http.server 8765 & node tests/test-ciencias12.js
+// Check (3 Nov 2026): all 12 Ciencias and Lengua Temas active, all 11 Sociales Temas active (its map has 11), Matemáticas keeps Temas 1-5; Pruebas play. Run: python3 -m http.server 8765 & node tests/test-temas12.js
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
 const MOCK = fs.readFileSync(path.join(__dirname, 'mock-supabase.js'), 'utf8');
@@ -18,7 +18,7 @@ async function play(p) { let n = 0; while (await p.locator('.qscreen .opt').coun
   const b = await chromium.launch();
   for (const [w, h, dark] of [[1180, 820, false], [820, 1180, false], [390, 844, true]]) {
     const p = await page(b, w, h, dark); const tag = `${w}x${h}${dark ? ' dark' : ''}`;
-    for (const [m, act] of [['CIE', 12], ['LEN', 12], ['MAT', 5], ['SOC', 5]]) {
+    for (const [m, act] of [['CIE', 12], ['LEN', 12], ['MAT', 5], ['SOC', 11]]) {
       await p.click(`[data-m="${m}"]`); await p.waitForTimeout(80);
       ok(`${tag} ${m}: ${act} active, ${12 - act} grey`, (await p.locator('.mt.tema').count()) === act && (await p.locator('.mt.inact').count()) === 12 - act);
       await p.click('#back'); await p.waitForTimeout(60);
@@ -39,6 +39,14 @@ async function play(p) { let n = 0; while (await p.locator('.qscreen .opt').coun
       }
       await p.click('[data-m="LEN"]'); await p.click('#all'); await p.locator('.btn-main').first().click();
       ok('Todo Lengua Prueba has 10 questions', (await play(p)) === 10);
+      await p.goto(URL, { waitUntil: 'networkidle' });
+      for (const t of ['T06', 'T07', 'T08', 'T09', 'T10', 'T11']) {
+        await p.click('[data-m="SOC"]'); await p.click(`[data-t="${t}"]`); await p.locator('.btn-main').first().click();
+        const n = await play(p); ok(`SOC ${t} Prueba has 10 questions`, n === 10); await p.waitForTimeout(150);
+        await p.goto(URL, { waitUntil: 'networkidle' });
+      }
+      await p.click('[data-m="SOC"]'); await p.click('#all'); await p.locator('.btn-main').first().click();
+      ok('Todo Sociales Prueba has 10 questions', (await play(p)) === 10);
     }
     await p.click('#c-progreso').catch(async () => { await p.goto(URL); });
     const over = await p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
