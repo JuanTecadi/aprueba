@@ -25,12 +25,13 @@
       const d = db(), uid = me();
       if (table === 'students') {
         const u = d.users.find(x => x.id === (q.filters.find(f => f[0] === 'id') || [])[1]);
-        if (q.op === 'update') {
+        if (q.op === 'update' && 'nickname' in q.val) {
           const k = norm(q.val.nickname.trim());
           if (d.users.some(x => x.id !== u.id && x.nickname && norm(x.nickname) === k)) return { data: null, error: { code: '23505', message: 'duplicate key' } };
           u.nickname = q.val.nickname.trim(); put(d);
         }
-        return { data: u ? [{ nickname: u.nickname }] : [], error: null };
+        if (q.op === 'update' && 'leaderboard' in q.val) { u.leaderboard = !!q.val.leaderboard; put(d); }   // 4 Nov 2026
+        return { data: u ? [{ nickname: u.nickname, leaderboard: !!u.leaderboard }] : [], error: null };
       }
       if (table === 'pruebas') {
         let rows = d.pruebas.filter(p => p.student_id === uid);
@@ -50,6 +51,28 @@
     return chain;
   }
 
+  // Leaderboard (4 Nov 2026), same rules as public.tabla_posiciones: opted-in students only; whole grade = saved
+  // points of each Prueba, one Materia = correct answers of that Materia x points; 'siempre' ignores dates (the
+  // stand-in does not work out weeks); top_n rows, ties share a rank, plus the caller's own row when further down.
+  // Extra students for the board can be put in mock.db as users with fixed 'puntos' ({ ALL, CIE, ... }).
+  function tabla({ p_periodo, p_materia, p_top_n }) {
+    const d = db(), uid = me();
+    const pts = d.users.filter(u => u.leaderboard && u.nickname).map(u => {
+      let total;
+      if (u.puntos) total = u.puntos[p_materia || 'ALL'] || 0;
+      else if (!p_materia) total = d.pruebas.filter(p => p.student_id === u.id).reduce((a, p) => a + p.puntos, 0);
+      else total = d.answers.filter(a => a.correcta && a.question_id.startsWith(p_materia) && d.pruebas.some(p => p.id === a.prueba_id && p.student_id === u.id)).length * 10;
+      return { id: u.id, apodo: u.nickname, puntos: total };
+    });
+    const ranked = pts.filter(x => x.puntos > 0).sort((a, b) => b.puntos - a.puntos || a.apodo.localeCompare(b.apodo));
+    ranked.forEach((x, i) => { x.rango = i && ranked[i - 1].puntos === x.puntos ? ranked[i - 1].rango : i + 1; x.rn = i + 1; });
+    const out = ranked.filter(x => x.rn <= p_top_n).map(x => ({ rango: x.rango, apodo: x.apodo, puntos: x.puntos, soy_yo: x.id === uid }));
+    const mine = ranked.find(x => x.id === uid && x.rn > p_top_n) || (pts.find(x => x.id === uid && x.puntos === 0) && { rango: null, ...pts.find(x => x.id === uid) });
+    if (mine) out.push({ rango: mine.rango, apodo: mine.apodo, puntos: mine.puntos, soy_yo: true });
+    d.tablaCalls = (d.tablaCalls || 0) + 1; put(d);
+    return out;
+  }
+
   window.supabase = { createClient: () => ({
     auth: {
       async getSession() { const id = me(); const u = id && db().users.find(x => x.id === id); return { data: { session: u ? sess(u) : null }, error: null }; },
@@ -67,8 +90,10 @@
       async signOut() { localStorage.removeItem('mock.session'); return { error: null }; }
     },
     from: query,
-    async rpc(name, { p }) {
+    async rpc(name, args) {
       if (offline()) return { data: null, error: NET };
+      if (name === 'tabla_posiciones') return { data: tabla(args), error: null };
+      const { p } = args;
       const d = db(); d.rpcCalls++;
       if (!d.pruebas.some(x => x.id === p.id)) {
         if (p.answers.length !== p.n_preguntas) return { data: null, error: { message: 'answers do not match n_preguntas' } };

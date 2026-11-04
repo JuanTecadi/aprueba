@@ -233,3 +233,66 @@ select question_id,
 from public.ratings
 group by question_id
 order by votos_abajo desc, votos_arriba desc, question_id;
+-- ---------- Tabla de posiciones (leaderboard, v0.2 step 5, defined 4 November 2026) ----------
+-- Score = points: every correct answer, repeats included. Only students who opted in appear.
+-- Returns ONLY rank, nickname, points and whether the row is the caller's; never the email or anything else,
+-- and nothing about students who did not opt in.
+--   periodo: 'semana' (this week), 'mes' (this month) or 'siempre' (all time)
+--   materia: null for the whole grade, or 'CIE', 'LEN', 'MAT', 'SOC'. Per-Materia points are counted from the
+--            answers (correct answers of that Materia × points per correct answer), because a whole-grade
+--            Prueba mixes Materias; whole-grade points use the points saved on each Prueba.
+--   top_n, inicio_semana, zona, pts_correcta: from the app's settings (tablaTop, inicioSemana, zonaHoraria,
+--            puntosPorCorrecta). Weeks and months are worked out in that time zone.
+-- Rows: the top_n students with points in the period (ties share a rank: 1, 1, 3), plus the caller's own row
+-- if the caller opted in and is not among them (rank null when the caller has no points in the period).
+create or replace function public.tabla_posiciones(
+  p_periodo text, p_materia text default null, p_top_n int default 8,
+  p_inicio_semana text default 'lunes', p_zona text default 'America/Caracas', p_pts_correcta int default 10)
+returns table (rango int, apodo text, puntos int, soy_yo boolean)
+language plpgsql stable security definer set search_path = '' as $$
+declare
+  me uuid := auth.uid();
+  loc timestamp;
+  desde timestamptz;
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if p_periodo not in ('semana', 'mes', 'siempre') then raise exception 'periodo must be semana, mes or siempre'; end if;
+  if p_materia is not null and p_materia not in ('CIE', 'LEN', 'MAT', 'SOC') then raise exception 'unknown materia'; end if;
+  if p_inicio_semana not in ('lunes', 'domingo') then raise exception 'inicio_semana must be lunes or domingo'; end if;
+  p_top_n := least(greatest(coalesce(p_top_n, 8), 1), 50);
+  p_pts_correcta := least(greatest(coalesce(p_pts_correcta, 10), 0), 100);
+  loc := now() at time zone p_zona;                       -- fails on an unknown time zone
+  desde := case p_periodo
+    when 'semana' then (case p_inicio_semana
+                          when 'lunes' then date_trunc('week', loc)
+                          else date_trunc('week', loc + interval '1 day') - interval '1 day' end) at time zone p_zona
+    when 'mes' then date_trunc('month', loc) at time zone p_zona
+    else '-infinity'::timestamptz end;
+  return query
+  with pts as (
+    select s.id, s.nickname,
+           coalesce(case when p_materia is null
+             then (select sum(p.puntos) from public.pruebas p
+                   where p.student_id = s.id and p.finished_at >= desde)
+             else (select count(*) * p_pts_correcta from public.answers a
+                   join public.pruebas p on p.id = a.prueba_id
+                   where a.student_id = s.id and a.correcta and p.finished_at >= desde
+                     and left(a.question_id, 3) = p_materia) end, 0)::int as total
+    from public.students s
+    where s.leaderboard and s.nickname is not null),
+  ranked as (
+    select (rank() over (order by total desc))::int as r,
+           row_number() over (order by total desc, lower(nickname)) as rn,
+           nickname, total, id
+    from pts where total > 0)
+  select x.r, x.nickname, x.total, x.id = me from ranked x where x.rn <= p_top_n
+  union all
+  select y.r, y.nickname, y.total, true from (
+    select k.r, k.nickname, k.total, k.rn from ranked k where k.id = me
+    union all
+    select null, p.nickname, 0, null from pts p where p.id = me and p.total = 0) y
+  where y.rn is null or y.rn > p_top_n
+  order by 1 nulls last, 2;
+end $$;
+revoke all on function public.tabla_posiciones(text, text, int, text, text, int) from public, anon;
+grant execute on function public.tabla_posiciones(text, text, int, text, text, int) to authenticated;

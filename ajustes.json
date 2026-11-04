@@ -8,6 +8,10 @@
   "sonidoInicial": "activado",
   "volumenSonido": 0.4,
   "respuestaQueCuenta": "mejor",
+  "tablaTop": 8,
+  "progresoSemanas": 8,
+  "inicioSemana": "lunes",
+  "zonaHoraria": "America/Caracas",
   "temasIncluidos": [
     "T01",
     "T02",

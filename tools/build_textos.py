@@ -14,6 +14,8 @@ import sys
 FIXED = {
     "marca": [], "cargando": [], "errorCarga": [], "errorConexion": [],
     "puntosTotales": ["n"], "sonidoActivar": [], "sonidoSilenciar": [],
+    # Top bar (4 Nov 2026): name and gear open Configuración; the points chip opens the Tabla de posiciones
+    "abrirConfiguracion": [], "verTabla": ["p"],
     "volver": [], "inicio": [],
     # Login and sign-up (v0.2, 30 Oct 2026)
     "loginTitulo": [], "tabEntrar": [], "tabCrear": [], "correo": [], "contrasena": [],
@@ -24,7 +26,7 @@ FIXED = {
     "apodoEtiqueta": [], "apodoAyuda": [], "apodoBoton": [], "apodoOcupado": [],
     "configuracion": [], "guardar": [], "guardado": [], "sonido": [], "cuenta": [], "cerrarSesion": [],
     "hola": ["nombre"], "tipoGrado": ["grado"],
-    "miProgreso": [], "opinion": [],
+    "miProgreso": [], "tablaTitulo": [], "opinion": [], "tablaConfig": [],
     "materiaSub": [], "todosLosTemas": ["materia"],
     "temaN": ["n"], "proximamente": [],
     "introGrado": ["grado"], "introGradoSub": [], "introMateria": ["materia"],
@@ -37,8 +39,14 @@ FIXED = {
     "resultadoTitulo": [], "resultadoCorrectas": ["c", "n"], "resultadoCorrectasSub": [],
     "resultadoPuntos": ["p"], "resumenTitulo": [],
     "otraPrueba": [], "verRespuestas": [], "ocultarRespuestas": [], "tusRespuestas": [],
+    "tuRespuesta": [], "respuestaCorrecta": [],
     "mapaTodoTab": ["grado"], "mapaTodoTitulo": ["grado"], "mapaTitulo": ["materia"],
-    "progresoPuntos": ["n"], "mapaInactivos": [],
+    "mapaInactivos": [],
+    # Tabla de posiciones and «Tu progreso» (4 Nov 2026)
+    "tablaSemana": [], "tablaMes": [], "tablaSiempre": [], "tablaDentro": [], "tablaDentroNota": [],
+    "tablaFuera": [], "tablaFueraNota": [], "tablaTu": ["apodo"], "tablaReinicio": [], "tablaVacia": [],
+    "progresoTitulo": [], "progresoEstaSemana": [], "progresoSemanaPasada": [], "progresoSemanaActual": [],
+    "progresoNota": [],
     "profe.nombre": [], "profe.login": [], "profe.inicio": [], "profe.apodo": [], "profe.nivel5": ["tema"],
     "profe.mapa": [], "profe.mapaVacio": [],
 }

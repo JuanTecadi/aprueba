@@ -46,7 +46,7 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     await p.fill('#nick', 'sofia'); await p.click('#go'); await p.waitForTimeout(100);
     ok(`${tag} taken nickname refused (Sofía = sofia)`, (await p.locator('#err').innerText()).includes('ya lo tiene otra persona'));
     await p.fill('#nick', `Luis${w}`); await p.click('#go'); await p.waitForTimeout(200);
-    ok(`${tag} home after nickname`, (await text(p)).includes(`¡Hola, Luis${w}!`) && (await p.locator('#top').innerText()).includes(`Luis${w}`));
+    ok(`${tag} home after nickname`, (await text(p)).includes(`¡Hola, Luis${w}!`) && (await p.locator('#top .me .nm').textContent()) === `Luis${w}`);
     ok(`${tag} Configuración link on home, no Cambiar de usuario`, (await p.locator('#config').count()) === 1 && !(await text(p)).includes('Cambiar de usuario'));
     await shot(p, `home-${w}`);
     // Session remembered
@@ -60,7 +60,7 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     await p.fill('#nick', 'Sofia '); await p.click('#go'); await p.waitForTimeout(100);
     ok(`${tag} Configuración refuses taken nickname`, (await p.locator('#err').innerText()).includes('ya lo tiene otra persona'));
     await p.fill('#nick', `Lucho${w}`); await p.click('#go'); await p.waitForTimeout(100);
-    ok(`${tag} Configuración saves nickname and updates top bar`, (await p.locator('#ok').innerText()) === 'Listo, guardado.' && (await p.locator('#top').innerText()).includes(`Lucho${w}`));
+    ok(`${tag} Configuración saves nickname and updates top bar`, (await p.locator('#ok').innerText()) === 'Listo, guardado.' && (await p.locator('#top .me .nm').textContent()) === `Lucho${w}`);
     const s1 = await p.getAttribute('#sndbtn', 'aria-pressed'); await p.click('#sndbtn');
     const s2 = await p.getAttribute('#sndbtn', 'aria-pressed');
     ok(`${tag} sound toggles in Configuración and top bar`, s1 !== s2 && (await p.getAttribute('#snd', 'aria-pressed')) === s2);

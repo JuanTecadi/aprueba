@@ -11,8 +11,9 @@ Tablet-first practice game for 5to grado students in Venezuela. This repository 
 | `ajustes.json` | Settings | Project document *Aprueba – Ajustes* |
 | `questions.json` | Approved questions, Temas and Subtemas | Master workbook `Aprueba_5to_Phase1_T01-T12.xlsx` |
 | `img/` | Logo and Profe Ariel (version 1) | Project folders `claude/images/logo/v1/` and `claude/images/mascot/v1/` |
-| `supabase/schema.sql` | Database: tables, access rules, save function, backstage views | This repository (matches the live Supabase database) |
+| `supabase/schema.sql` | Database: tables, access rules, save function, leaderboard function `tabla_posiciones`, backstage views | This repository (matches the live Supabase database) |
 | `tools/build_textos.py` | *Aprueba – Textos* → `textos.json`, with checks | This repository |
+| `tools/build_ajustes.py` | *Aprueba – Ajustes* → `ajustes.json`, with checks (moved here 4 November 2026) | This repository |
 | `tools/export_questions.py` | Master workbook → `questions.json`, with option codes K, D1, D2, D3 | This repository |
 | `tests/` | Local browser tests (Playwright) with a stand-in for Supabase | This repository |
 
@@ -24,7 +25,7 @@ No student data is stored in this repository. Accounts are in Supabase since v0.
 
 ## Tests
 
-From the repository folder: `python3 -m http.server 8765 &` then `node tests/test-accounts.js`, `node tests/test-save.js` and `node tests/test-temas12.js`.
+From the repository folder: `python3 -m http.server 8765 &` then `node tests/test-accounts.js`, `node tests/test-save.js`, `node tests/test-temas12.js` and `node tests/test-step5.js` (optionally with a folder for screenshots).
 
 ## History
 
@@ -35,3 +36,4 @@ From the repository folder: `python3 -m http.server 8765 &` then `node tests/tes
 - Content export (2 November 2026): Lengua Temas 6 to 12 added; 928 questions (Ciencias 328, Lengua 326, Matemáticas 159, Sociales 115).
 - Content export (3 November 2026): Sociales Temas 6 to 11 added (all 11 Sociales Temas); 1.095 questions (Ciencias 328, Lengua 326, Matemáticas 159, Sociales 282). Source: Aprueba_5to_Phase1_T01-T05_plus_CIE_LEN_SOC_T06-T12.xlsx.
 - Content export (3 November 2026): Matemáticas Temas 6 to 12 added (all four materias complete); 1.343 questions (Ciencias 328, Lengua 326, Matemáticas 407, Sociales 282). Source: Aprueba_5to_Phase1_T01-T12.xlsx. `tests/test-temas12.js`: 45 checks, including a Prueba in every new Matemáticas Tema and Todo Matemáticas.
+- v0.2 step 5 (4 November 2026): result page with the launch tile and collapsible answer rows; points in the top bar grow as soon as an answer is correct (an abandoned Prueba returns to the saved total); the map shows no points; *Tabla de posiciones* (opt-in, points, this week / this month / always, whole grade or one Materia, top 8 plus own row) and «Tu progreso»; main page with seven tiles (*Todo 5to* double width); *Configuración* opens from the name and gear in the top bar and holds the leaderboard switch. `tests/test-step5.js`: 65 checks.

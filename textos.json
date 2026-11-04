@@ -228,7 +228,7 @@
     "votoArriba": "Me gusta esta pregunta",
     "votoAbajo": "No me gusta esta pregunta",
     "salir": "Salir",
-    "salirPregunta": "¿Quieres salir de esta prueba? Las respuestas de esta prueba no se guardarán.",
+    "salirPregunta": "¿Quieres salir de esta prueba? Tus respuestas y tus puntos de esta prueba no se guardarán.",
     "salirSi": "Sí, salir",
     "salirNo": "Seguir con la prueba",
     "resultadoTitulo": "¡Terminaste la prueba!",
@@ -243,7 +243,6 @@
     "mapaTodoTab": "Todo {grado}",
     "mapaTodoTitulo": "Mapa de conocimientos · {grado} grado",
     "mapaTitulo": "Mapa de conocimientos · {materia}",
-    "progresoPuntos": "{n} puntos",
     "mapaInactivos": "Temas en gris: próximamente",
     "resumen": {
       "feliz": [
@@ -314,6 +313,27 @@
           "texto": "Hoy costó, y es normal. Lee con calma las explicaciones en la próxima prueba y verás cómo mejoras."
         }
       ]
-    }
+    },
+    "abrirConfiguracion": "Abrir configuración",
+    "verTabla": "{p} puntos. Ver la tabla de posiciones",
+    "tablaTitulo": "Tabla de posiciones",
+    "tablaConfig": "Aparecer en la tabla de posiciones",
+    "tuRespuesta": "Tu respuesta",
+    "respuestaCorrecta": "Respuesta correcta",
+    "tablaSemana": "Esta semana",
+    "tablaMes": "Este mes",
+    "tablaSiempre": "Siempre",
+    "tablaDentro": "Apareces en la tabla",
+    "tablaDentroNota": "Los demás ven tu apodo y tus puntos. Puedes salir cuando quieras.",
+    "tablaFuera": "No apareces en la tabla",
+    "tablaFueraNota": "Nadie ve tus puntos. Actívalo si quieres aparecer con tu apodo.",
+    "tablaTu": "{apodo} (tú)",
+    "tablaReinicio": "La tabla empieza de cero cada lunes.",
+    "tablaVacia": "Todavía nadie aparece aquí. ¡Puedes ser la primera persona!",
+    "progresoTitulo": "Tu progreso",
+    "progresoEstaSemana": "puntos esta semana",
+    "progresoSemanaPasada": "la semana pasada",
+    "progresoSemanaActual": "Esta",
+    "progresoNota": "Puntos por semana. Debajo, las pruebas que hiciste. Solo tú ves esto."
   }
 }
