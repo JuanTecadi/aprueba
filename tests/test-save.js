@@ -19,12 +19,12 @@ async function newPage(b, opts = {}) {
 const mockdb = p => p.evaluate(() => JSON.parse(localStorage.getItem('mock.db')));
 const pending = p => p.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('aprueba.v02.pendientes.')).reduce((n, k) => n + JSON.parse(localStorage.getItem(k)).length, 0));
 async function playPrueba(p, opts = {}) {
-  await p.click('#c-grado'); await p.locator('.btn-main').first().click();
+  await p.click('#c-grado'); await p.click('#start');
   let n = 0;
-  while (await p.locator('.qscreen .opt').count() && n < 15) {
+  while (await p.locator('.qo').count() && n < 15) {
     if (n === 0 && opts.thumbs) await opts.thumbs();
-    await p.locator('.qscreen .opt').nth(n % 4).click(); await p.waitForTimeout(60);
-    await p.locator('.side .btn-main').click(); await p.waitForTimeout(60); n++;
+    await p.locator('.qo').nth(n % 4).click(); await p.waitForTimeout(60);
+    await p.click('#next'); await p.waitForTimeout(60); n++;
   }
   await p.waitForTimeout(200);
   return n;
@@ -38,10 +38,10 @@ async function playPrueba(p, opts = {}) {
   await p.waitForTimeout(150); await p.fill('#nick', 'Ana'); await p.click('#go'); await p.waitForTimeout(150);
   let firstQ;
   const n1 = await playPrueba(p, { thumbs: async () => {
-    firstQ = await p.evaluate(() => document.querySelector('.qcard') && document.querySelector('.qcard').innerText);
-    await p.click('.vote.up'); await p.waitForTimeout(80);
-    const a = (await mockdb(p)).ratings; await p.click('.vote.up'); await p.waitForTimeout(80);
-    const b2 = (await mockdb(p)).ratings; await p.click('.vote.down'); await p.waitForTimeout(80);
+    firstQ = await p.evaluate(() => document.querySelector('.qcard3') && document.querySelector('.qcard3').innerText);
+    await p.click('.vote3[data-v="1"]'); await p.waitForTimeout(80);
+    const a = (await mockdb(p)).ratings; await p.click('.vote3[data-v="1"]'); await p.waitForTimeout(80);
+    const b2 = (await mockdb(p)).ratings; await p.click('.vote3[data-v="-1"]'); await p.waitForTimeout(80);
     const c = (await mockdb(p)).ratings;
     ok('thumb up saved as a row (valor 1)', a.length === 1 && a[0].valor === 1);
     ok('tapping again removes the row', b2.length === 0);
@@ -70,14 +70,14 @@ async function playPrueba(p, opts = {}) {
   await p2.context().close();
 
   // Offline at the end of a Prueba: result still shows, the Prueba waits on the device, then is sent
-  await p.click('#home');
+  await p.click('[data-rail="home"]');
   await p.evaluate(() => localStorage.setItem('mock.offline', 'true'));
   await playPrueba(p);
   ok('offline: result screen still shows', (await p.locator('#app').innerText()).includes('¡Terminaste la prueba!'));
   ok('offline: the Prueba waits on the device', (await pending(p)) === 1 && (await mockdb(p)).pruebas.length === 1);
   const ptsOff = await p.locator('.pts').innerText();
   await p.evaluate(() => localStorage.setItem('mock.offline', 'false'));
-  await p.click('#home'); await playPrueba(p);
+  await p.click('[data-rail="home"]'); await playPrueba(p);
   d = await mockdb(p);
   ok('back online: the waiting Prueba and the new one are saved', d.pruebas.length === 3 && d.answers.length === 30 && (await pending(p)) === 0);
   // Reload: history comes from the server, no duplicates

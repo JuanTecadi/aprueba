@@ -946,6 +946,173 @@ body.s-login .stage { padding: 0; max-width: none; margin: 0; }
   .cfgcard .frow, .crow:last-child { flex-wrap: wrap; }
   .cfgcard .frow .b-sec, .crow:last-child .b-sec { width: 100%; }
 }
+
+/* ===================== v0.3 step 3 (8 Nov 2026): Materia, Prueba intro, question, result card, «Mis respuestas» ===================== */
+/* Information area: extra pieces (question dots and the Prueba-type chip) */
+.info .tt { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.info .tt > .tic2 { display: flex; color: inherit; }
+/* Phones: with a back link, the icon and title take their own line under it (step 3) */
+@media (max-width: 599px) { .info { flex-wrap: wrap; row-gap: 6px; } .info .ttl { display: contents; } .info .tt { flex: 1 1 0; } .info .tools { order: 2; } .info .b-back + .tt, .info .qmeta3 { order: 3; flex-basis: 100%; } }
+body.s-read .info .snd, body.s-read .info .pts { background: #fff; }
+body.s-read .rail { background: color-mix(in srgb, var(--sft, #F3F5F9) 92%, #16213A); }
+body.s-read .rail .ri { color: #47506A; } body.s-read .rail .ri.on { color: var(--ink); }
+
+/* Materia screen: the line and the yellow «Todo [Materia]» tile, then 12 white Tema tiles (4 × 3) */
+.mpage .mhead3 { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 12px 0; }
+.mpage .mhead3 p { margin: 0; font-size: 18px; color: rgba(255,255,255,.88); }
+.mtodo { height: 64px; padding: 0 26px; border: 0; border-radius: 18px; background: var(--sun); color: var(--ink); display: flex; align-items: center; gap: 12px; flex: none;
+  font-family: var(--display); font-weight: 800; font-size: 20px; }
+.mtodo .ic { width: 30px; height: 30px; stroke-width: 2; }
+.ttiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.ttile { height: 182px; border: 0; border-radius: 18px; background: #fff; color: var(--ink); padding: 18px 20px; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: left; }
+.ttile .tslot { height: 58px; display: flex; align-items: center; color: var(--mt); }
+.ttile .tslot .ic { width: 58px; height: 58px; stroke-width: 1.7; }
+.ttile .tslot .tnum { font-family: var(--display); font-weight: 800; font-size: 48px; line-height: 1; }
+.ttile .tn { flex: 1; font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; hyphens: auto; }
+.ttile .tno { font-size: 14px; font-weight: 700; color: var(--muted2); }
+.ttile.off { background: rgba(255,255,255,.1); justify-content: flex-end; }
+.ttile.off .tno { color: rgba(255,255,255,.6); }
+button.ttile:active, .mtodo:active { transform: translateY(1px); }
+@media (min-width: 600px) and (max-width: 959px) { .ttiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ttile { height: 176px; padding: 16px; } .ttile .tn { font-size: 20px; } }
+@media (max-width: 599px) {
+  .mpage .mhead3 { flex-direction: column; align-items: stretch; margin-top: 4px; }
+  .mpage .mhead3 p { font-size: 17px; }
+  .mtodo { justify-content: center; }
+  .ttiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .ttile { height: 150px; padding: 14px; }
+  .ttile .tslot { height: 44px; } .ttile .tslot .ic { width: 44px; height: 44px; } .ttile .tslot .tnum { font-size: 38px; }
+  .ttile .tn { font-size: 17px; }
+  .ttile .tno { font-size: 13px; }
+}
+
+/* The game card (intro, and its back: the result). --bc = band colour, --bi = band ink, --lc = label colour */
+.gcard { width: 440px; max-width: 100%; min-height: 560px; background: #fff; color: var(--ink); border-radius: 26px; overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; flex: none; }
+.gband { height: 150px; flex: none; background: var(--bc); color: var(--bi, #fff); display: flex; align-items: center; justify-content: center; }
+.gband .ic { width: 72px; height: 72px; stroke-width: 1.6; }
+.gband .tnum { font-family: var(--display); font-weight: 800; font-size: 64px; line-height: 1; }
+.gband.sm { height: 110px; } .gband.sm .ic { width: 56px; height: 56px; } .gband.sm .tnum { font-size: 52px; }
+.gbody { flex: 1; padding: 26px 30px 30px; display: flex; flex-direction: column; gap: 12px; }
+.glbl { margin: 0; font-size: 14px; font-weight: 700; color: var(--lc); letter-spacing: .5px; text-transform: uppercase; }
+.gbody h2 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1.05; }
+.gchips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.gchip { border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: 14px; background: var(--cs); color: var(--lc); }
+.gchip.y { background: #FFF3CC; color: #6B4E00; }
+.ginst { margin: 6px 0 0; font-size: 18px; line-height: 1.5; color: #39425A; }
+.gbody .grow { flex: 1; }
+.cpage { display: flex; justify-content: center; margin-top: 18px; }
+.gcard.deal { animation: deal .26s ease-out both; }
+@keyframes deal { from { transform: translateY(28px) rotate(-2deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.gcard.flip { animation: flip .28s ease-out both; }
+@keyframes flip { from { transform: perspective(900px) rotateY(-90deg); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gcard.deal, .gcard.flip { animation: none; } }
+
+/* Result: the back of the card, the chivo beside it */
+.rpage .rwrap { display: flex; justify-content: center; align-items: flex-end; gap: 24px; margin-top: 18px; padding-left: 160px; }
+.rpage .gbody { gap: 8px; padding-top: 24px; }
+.rpage .gbody h2 { font-size: 28px; }
+.score3 { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+.score3 .sbig { font-family: var(--display); font-weight: 800; font-size: 64px; line-height: 1; font-variant-numeric: tabular-nums; }
+.score3 .gchip { background: var(--sun); color: var(--ink); font-size: 17px; }
+.ssub { margin: 0; font-size: 16px; color: var(--muted2); }
+.smsg { margin: 12px 0 0; font-size: 18px; line-height: 1.5; color: #39425A; }
+.gacts { display: flex; gap: 10px; }
+.gacts .b { flex: 1; min-width: 0; padding: 0 12px; }
+.rpage .rchivo { height: 300px; flex: none; }
+@media (min-width: 600px) and (max-width: 959px) { .rpage .rwrap { padding-left: 0; } .rpage .rchivo { height: 220px; } }
+@media (max-width: 599px) {
+  .cpage, .rpage .rwrap { margin-top: 8px; padding-left: 0; }
+  .gcard { width: 100%; min-height: 0; }
+  .gband { height: 120px; } .gband .ic { width: 60px; height: 60px; } .gband.sm { height: 96px; }
+  .gbody { padding: 22px 20px 22px; }
+  .gbody h2 { font-size: 30px; }
+  .gbody .grow { flex: none; height: 12px; }
+  .score3 .sbig { font-size: 54px; }
+  .gacts { flex-direction: column-reverse; }
+  .gacts .b { flex: none; width: 100%; }
+  .rpage .rchivo { display: none; }
+}
+
+/* Question: one centred card on the soft Materia tint; feedback grows below the options */
+.qmeta3 { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.dots3 { display: flex; gap: 6px; align-items: center; flex: none; }
+.dots3 .dt { width: 12px; height: 12px; border-radius: 50%; box-sizing: border-box; background: #fff; border: 1.5px solid color-mix(in srgb, var(--mt, #5B6478) 30%, #fff); }
+.dots3 .dt.cur { border: 3px solid var(--mt); }
+.dots3 .dt.ok { background: #1F9D55; border-color: #1F9D55; }
+.dots3 .dt.no { background: #D23F3F; border-color: #D23F3F; }
+.pchip { display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: 14px; color: var(--mt); white-space: nowrap; flex: none; }
+.info .pchip .ic { width: 18px; height: 18px; stroke-width: 2; }
+.info .pchip .ic.todo { stroke: none; }
+.qpage { margin-top: 14px; }
+.qcard3 { width: 780px; max-width: 100%; margin: 0 auto; background: #fff; border-radius: 22px; overflow: hidden; color: var(--ink); }
+.qband { background: var(--bc); color: #fff; min-height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 12px 0 20px; font-weight: 700; font-size: 15px; }
+.qband > .ic { width: 20px; height: 20px; stroke-width: 2; flex: none; }
+.qband .qloc { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qband .rate3 { display: flex; gap: 8px; }
+.qband .vote3 { position: relative; width: 44px; height: 40px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,.5); background: transparent; color: #fff; display: flex; align-items: center; justify-content: center; padding: 0; }
+.qband .vote3::before { content: ""; position: absolute; inset: -8px -4px; }
+.qband .vote3 svg { width: 18px; height: 18px; }
+.qband .vote3[aria-pressed="true"] { background: #fff; color: var(--bc); border-color: #fff; }
+.qbody3 { padding: 22px 26px 24px; }
+.qstem { margin: 0 0 18px; font-size: 22px; font-weight: 700; line-height: 1.4; }
+.qopts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.qo { min-height: 64px; border-radius: 14px; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 18px; line-height: 1.35; text-align: left;
+  border: 1.5px solid color-mix(in srgb, var(--mt) 22%, #fff); background: color-mix(in srgb, var(--sft) 45%, #fff); color: var(--ink); }
+.qo .mk { font-size: 22px; font-weight: 700; flex: none; }
+.qo.right { border-color: #1F9D55; box-shadow: inset 0 0 0 1px #1F9D55; background: #E5F5EC; }   /* same border width: the options never move */
+.qo.right .mk { color: #17783F; }
+.qo.wrong { border-color: #D23F3F; box-shadow: inset 0 0 0 1px #D23F3F; background: #FDECEC; }
+.qo.wrong .mk { color: #A32D2D; }
+.qo.dim { border-color: #E3E8EF; background: #fff; color: #6B7488; }
+.qo:disabled { cursor: default; }
+.qfb { margin-top: 18px; border-top: 1px solid #E3E8EF; padding-top: 16px; }
+.qverd { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-weight: 700; font-size: 18px; }
+.qverd.ok { color: #17783F; } .qverd.no { color: #A32D2D; }
+.qverd .plus3 { background: var(--sun); color: var(--ink); border-radius: 999px; padding: 4px 12px; font-size: 15px; }
+.qlbl { margin: 0; font-size: 13px; font-weight: 700; color: var(--mt); letter-spacing: .5px; text-transform: uppercase; }
+.qexp { margin: 4px 0 14px; font-size: 18px; line-height: 1.5; }
+/* «Salir» confirmation */
+.qconfirm { position: fixed; inset: 0; z-index: 20; background: rgba(22,33,58,.45); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.qconfirm .box { width: 460px; max-width: 100%; background: #fff; border-radius: 22px; padding: 26px; box-sizing: border-box; color: var(--ink); }
+.qconfirm p { margin: 0 0 18px; font-size: 18px; line-height: 1.5; font-weight: 700; }
+.qconfirm .actions .b { min-width: 0; }
+@media (min-width: 600px) and (max-width: 959px) { .qstem { font-size: 21px; } }
+@media (max-width: 599px) {
+  .info .qmeta3 { gap: 10px; }
+  .info .dots3 { gap: 5px; }
+  .pchip { padding: 5px 10px; }
+  .qpage { margin-top: 8px; }
+  .qband { padding-left: 14px; }
+  .qbody3 { padding: 18px 16px 20px; }
+  .qstem { font-size: 19px; }
+  .qopts { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .qo { min-height: 56px; font-size: 17px; }
+  .qexp { font-size: 17px; }
+}
+
+/* «Mis respuestas»: one white card of rows on the calm tint; one row open at a time */
+.apage .rlist { width: 860px; max-width: 100%; margin: 18px auto 0; background: #fff; border-radius: 22px; overflow: hidden; list-style: none; padding: 0; color: var(--ink); }
+.rlist li + li { border-top: 1px solid #E3E8EF; }
+.rrow { width: 100%; min-height: 56px; display: grid; grid-template-columns: 22px 20px minmax(0, 1fr) 20px; column-gap: 14px; align-items: center; padding: 10px 18px; border: 0; background: #fff; text-align: left; color: var(--ink); }
+.rrow .no { font-weight: 700; color: var(--muted2); font-size: 16px; }
+.rrow .mk { font-size: 20px; font-weight: 700; }
+.mk.ok { color: #17783F; } .mk.no2 { color: #A32D2D; }
+.rrow .rst { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rrow .chev { display: inline-block; font-size: 20px; color: #9AA3B5; transition: transform .15s; }
+.rrow[aria-expanded="true"] { align-items: start; }
+.rrow[aria-expanded="true"] .rst { white-space: normal; font-size: 18px; font-weight: 700; line-height: 1.4; }
+.rrow[aria-expanded="true"] .chev { transform: rotate(90deg); }
+.rrow .rloc { grid-column: 3; display: flex; align-items: center; gap: 6px; margin-top: 2px; font-size: 13px; font-weight: 700; color: var(--mt); }
+.rrow .rloc .ic { width: 16px; height: 16px; stroke-width: 2; }
+.ropen { padding: 0 18px 18px 88px; display: flex; flex-direction: column; gap: 8px; }
+.ropen .qlbl { margin-top: 6px; }
+.ropen .rans { border: 2px solid #1F9D55; background: #E5F5EC; border-radius: 12px; padding: 10px 14px; font-size: 18px; }
+.ropen .qexp { margin: 0; }
+@media (prefers-reduced-motion: reduce) { .rrow .chev { transition: none; } }
+@media (max-width: 599px) {
+  .apage .rlist { margin-top: 8px; }
+  .rrow { grid-template-columns: 20px 18px minmax(0, 1fr) 16px; column-gap: 10px; padding: 10px 14px; }
+  .ropen { padding: 0 14px 16px 14px; }
+}
 </style>
 </head>
 <body>
@@ -1280,7 +1447,7 @@ body.s-login .stage { padding: 0; max-width: none; margin: 0; }
     rail.querySelectorAll('[data-rail]').forEach(b => b.onclick = () => leaveTo(b.dataset.rail));
     rail.hidden = false;
   }
-  // Each view describes its information area: { back: [id, textKey], icon: html, title: text, pill: true }
+  // Each view describes its information area: { back: [id, textKey, action], icon: html, title: text, pill: true, extra: html }
   let HEAD = null;
   const head = h => { HEAD = h; };
   function renderTop() {
@@ -1290,12 +1457,13 @@ body.s-login .stage { padding: 0; max-width: none; margin: 0; }
     const shown = anim ? anim.from : total, h = HEAD || {};
     top.innerHTML = `<div class="ttl">`
       + (h.back ? `<button class="b-back" id="${h.back[0]}"><span class="ar" aria-hidden="true">‹</span>${esc(t(h.back[1]))}</button>` : '')
-      + (h.icon || '') + (h.title ? `<h1>${esc(h.title)}</h1>` : '') + (h.pill ? `<span class="gpill">${esc(CFG.grado)}</span>` : '')
+      + (h.icon || h.title ? `<span class="tt">${h.icon || ''}${h.title ? `<h1>${esc(h.title)}</h1>` : ''}</span>` : '') + (h.pill ? `<span class="gpill">${esc(CFG.grado)}</span>` : '') + (h.extra || '')
       + `</div><div class="tools">`
       + `<button class="snd ${on ? '' : 'off'}" id="snd" aria-pressed="${on}" aria-label="${lbl}" title="${lbl}">${soundIcon(on)}</button>`
       + `<button class="pts" id="ptsbtn" aria-label="${esc(t('textos.verTabla', { p: total }))}">${micon('TAB')}<span class="n">${esc(t('textos.puntosTotales', { n: shown }))}</span></button></div>`;
     document.getElementById('snd').onclick = toggleSound;
     document.getElementById('ptsbtn').onclick = () => leaveTo('tabla');
+    if (h.back && h.back[2]) document.getElementById(h.back[0]).onclick = h.back[2];   // step 3: the view gives the back action
     top.hidden = false;
     if (anim) countUp(anim.from, anim.to);
   }
@@ -1521,115 +1689,135 @@ body.s-login .stage { padding: 0; max-width: none; margin: 0; }
   // Tema slots 1..temasPorMateria: the included Temas are active, the others show as "Tema N" (not active yet)
   const temaSlots = m => Array.from({ length: Math.max(CFG.temasPorMateria, m.temas.length) }, (_, i) => ({ n: i + 1, tema: m.temas.find(x => temaNum(x.id) === i + 1) || null }));
 
-  // Materia screen (30 Oct 2026): back at the top; Tema tiles with a large number and the name; coming Temas half height
+  // Materia screen (v0.3, 8 Nov 2026): deep Materia background; information area with «‹ Volver», the Materia icon and
+  // name and the grade pill. The line and the yellow «Todo [Materia]» tile, then 12 white Tema tiles (4 × 3):
+  // the Tema icon (or the number in the icon slot until that Materia's icons are drawn), the name, «Tema N».
+  // Temas not active yet: a translucent tile with «Tema N» only, not tappable.
   function viewMateria() {
     const m = materia(state.materia);
-    const slots = temaSlots(m);
-    const tiles = slots.filter(s => s.tema).map(({ n, tema: x }) => `<button class="mt tema" data-t="${x.id}"><span class="bignum">${n}</span><b>${esc(x.name)}</b></button>`).join('');
-    const soon = slots.filter(s => !s.tema).map(({ n }) => `<div class="mt inact" aria-disabled="true"><span class="bignum">${n}</span><b>${esc(t('textos.temaN', { n }))}</b></div>`).join('');
+    head({ back: ['back', 'textos.volver', () => go('home')], icon: `<span class="tic2">${micon(m.id)}</span>`, title: m.name, pill: true });
+    const tiles = temaSlots(m).map(({ n, tema: x }) => x
+      ? `<button class="ttile" data-t="${x.id}"><span class="tslot">${temaIcon(m.id, x.id) || `<span class="tnum" aria-hidden="true">${n}</span>`}</span><b class="tn">${esc(x.name)}</b><span class="tno">${esc(t('textos.temaN', { n }))}</span></button>`
+      : `<div class="ttile off" aria-disabled="true"><span class="tno">${esc(t('textos.temaN', { n }))}</span></div>`).join('');
     app.innerHTML = `
-      <section class="screen" style="--mc:${MCOLOR[m.id]}">
-        <div class="navrow">${backBtn('back', 'textos.volver')}</div>
-        <div class="menu m4">
-          <div class="mhead mhead2">${micon(m.id)}<div><h1>${esc(m.name)}</h1><p class="sub">${esc(t('textos.materiaSub'))}</p></div></div>
-          <button class="mt all" id="all">${micon('ALL')}<b>${esc(t('textos.todosLosTemas', { materia: m.name }))}</b></button>
-          ${tiles}${soon}
-        </div>
+      <section class="page mpage" style="--mt:var(--${m.id.toLowerCase()}-t)">
+        <div class="mhead3"><p>${esc(t('textos.materiaSub'))}</p>
+          <button class="mtodo" id="all">${micon(m.id)}<span>${esc(t('textos.todosLosTemas', { materia: m.name }))}</span></button></div>
+        <div class="ttiles">${tiles}</div>
       </section>`;
     document.getElementById('all').onclick = () => go('intro', { pick: { tipo: 'materia', mid: m.id } });
     app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => go('intro', { pick: { tipo: 'tema', mid: m.id, tid: b.dataset.t } }));
-    document.getElementById('back').onclick = () => go('home');
   }
 
   function pickLabels(pick) {
-    if (pick.tipo === 'grado') return { title: t('textos.introGrado'), sub: t('textos.introGradoSub'), color: null };
+    if (pick.tipo === 'grado') return { title: t('textos.introGrado'), sub: t('textos.introGradoSub') };
     const m = materia(pick.mid);
-    if (pick.tipo === 'materia') return { title: t('textos.introMateria', { materia: m.name }), sub: t('textos.introMateriaSub', { materia: m.name }), color: MCOLOR[m.id], mid: m.id };
-    return { title: t('textos.introTema', { tema: tema(pick.mid, pick.tid).name }), sub: t('textos.introTemaSub', { materia: m.name, n: temaNum(pick.tid) }), color: MCOLOR[m.id], mid: m.id };
+    if (pick.tipo === 'materia') return { title: t('textos.introMateria', { materia: m.name }), sub: t('textos.introMateriaSub', { materia: m.name }) };
+    return { title: t('textos.introTema', { tema: tema(pick.mid, pick.tid).name }), sub: t('textos.introTemaSub', { materia: m.name, n: temaNum(pick.tid) }) };
   }
+  // The icon of the tile that launched the Prueba travels with it (8 Nov 2026): intro band, question chip, result band.
+  // Todo 5to: the four-colour “+”; Todo [Materia]: the Materia icon; one Tema: its icon (or its number until drawn).
+  const launchIcon = pick => pick.tipo === 'grado' ? micon('ALL') : pick.tipo === 'materia' ? micon(pick.mid)
+    : temaIcon(pick.mid, pick.tid) || `<span class="tnum" aria-hidden="true">${temaNum(pick.tid)}</span>`;
+  // Card colours: band (--bc, --bi), label and chip (--lc, --cs). Whole grade: yellow band, grade-pill blue label.
+  const cardStyle = pick => {
+    if (pick.tipo === 'grado') return '--bc:var(--sun);--bi:var(--ink);--lc:var(--g-pill);--cs:#E9EEF8';
+    const k = pick.mid.toLowerCase(); return `--bc:var(--${k}-t);--lc:var(--${k}-t);--cs:var(--${k}-s)`;
+  };
+  // Animations only when the card arrives (not on a re-render or on the way back from «Mis respuestas»)
+  let prevView = null;
 
-  // Prueba intro (30 Oct 2026): title outside the card, one line of facts, one button, Profe Ariel large beside the card
+  // Prueba intro: a game card (8 Nov 2026). Band with the launching icon; label, title, two chips, the instruction,
+  // «¡Empezar!» across the card. «‹ Volver» in the information area. No mascot, no visible timer.
   function viewIntro() {
-    const L = pickLabels(state.pick);
-    const l = state.introLine || (state.introLine = say('textos.profe.intro'));
+    const p = state.pick, L = pickLabels(p);
+    head({ back: ['back', 'textos.volver', () => p.tipo === 'grado' ? go('home') : go('materia', { materia: p.mid })], pill: true });
     app.innerHTML = `
-      <section class="screen" ${L.color ? `style="--mc:${L.color}"` : ''}>
-        <div class="navrow">${backBtn('back', 'textos.volver')}</div>
-        <div class="vcenter"><div class="ptitle"><span class="lbl">${L.mid ? micon(L.mid) : ''}${esc(L.sub)}</span><h1>${esc(L.title)}</h1></div>
-        <div class="sidegrid">
-          <div class="pcard introcard">
-            <p class="datos">${esc(t('textos.introDatos', { n: CFG.preguntasPorPrueba, p: CFG.puntosPorCorrecta }))}</p>
-            <button class="btn btn-main" id="start">${esc(t('textos.empezar'))}</button>
+      <section class="page cpage">
+        <div class="gcard${prevView !== 'intro' ? ' deal' : ''}" style="${cardStyle(p)}">
+          <div class="gband" aria-hidden="true">${launchIcon(p)}</div>
+          <div class="gbody">
+            <p class="glbl">${esc(L.sub)}</p>
+            <h2>${esc(L.title)}</h2>
+            <div class="gchips"><span class="gchip">${esc(t('textos.introPreguntas', { n: CFG.preguntasPorPrueba }))}</span><span class="gchip y">${esc(t('textos.introPuntos', { p: CFG.puntosPorCorrecta }))}</span></div>
+            <p class="ginst">${esc(t('textos.introInstruccion'))}</p>
+            <span class="grow"></span>
+            <button class="b b-pri wide" id="start">${esc(t('textos.empezar'))}</button>
           </div>
-          ${bigCoach(l.animo, l.texto)}
-        </div></div>
+        </div>
       </section>`;
     document.getElementById('start').onclick = () => {
-      const p = state.pick;
       go('pregunta', { prueba: { ...p, inicio: new Date().toISOString(), t0: Date.now(), qStart: Date.now(), i: 0, items: draw(p.tipo, p.mid, p.tid), quit: false } });
-    };
-    document.getElementById('back').onclick = () => {
-      const p = state.pick;
-      p.tipo === 'grado' ? go('home') : go('materia', { materia: p.mid });
     };
   }
 
+  // Question (8 Nov 2026): one centred card on the soft tint of the question's Materia. Band: Materia icon,
+  // «Materia · Tema», thumbs. Stem, 2 × 2 options (one column on phones). After the first tap the answer locks and the
+  // feedback grows below the options (the options never move): fixed verdict, «+10», «Explicación», «Continuar».
+  // Information area (rail hidden): «‹ Salir», the dots, a chip with the launching icon; sound and points on the right.
+  const THUMB = d => d > 0 ? '<path d="M7 11v9H4v-9zM7 11l4-7c1.5 0 2.5 1 2.5 2.5V10H19a2 2 0 0 1 2 2.3l-1.2 6A2 2 0 0 1 17.8 20H7"/>'
+    : '<path d="M17 13V4h3v9zM17 13l-4 7c-1.5 0-2.5-1-2.5-2.5V14H5a2 2 0 0 1-2-2.3l1.2-6A2 2 0 0 1 6.2 4H17"/>';
   function viewPregunta() {
     const P = state.prueba, it = P.items[P.i], q = Q(it.id), n = P.items.length;
-    const m = materia(q.materia);
-    const dots = P.items.map((x, k) => `<span class="dot ${k === P.i && !x.checked ? 'cur' : ''} ${x.checked ? (x.chosen === Q(x.id).correct ? 'ok' : 'no') : ''}"></span>`).join('');
+    const m = materia(q.materia), k = m.id.toLowerCase(), x = tema(q.materia, q.tema);
+    const dots = P.items.map((d, j) => `<span class="dt${j === P.i && !d.checked ? ' cur' : ''}${d.checked ? (d.chosen === Q(d.id).correct ? ' ok' : ' no') : ''}"></span>`).join('');
+    const chipTxt = P.tipo === 'grado' ? t('textos.tipoGrado') : P.tipo === 'materia' ? t('textos.todosLosTemas', { materia: materia(P.mid).name }) : t('textos.temaN', { n: temaNum(P.tid) });
+    const chipIc = P.tipo === 'tema' ? (temaIcon(P.mid, P.tid) || micon(P.mid)) : launchIcon(P);
+    const chipMt = P.tipo === 'grado' ? 'var(--ink)' : `var(--${P.mid.toLowerCase()}-t)`;
+    head({ back: ['quit', 'textos.salir', () => { P.quit = true; P.quitTo = null; render(); }],
+      extra: `<span class="qmeta3"><div class="dots3" role="img" aria-label="${esc(t('textos.preguntaDe', { i: P.i + 1, n }))}">${dots}</div><span class="pchip" style="--mt:${chipMt}">${chipIc}${esc(chipTxt)}</span></span>` });
     const right = it.checked && it.chosen === q.correct;
-    // Options (30 Oct 2026): text only, no letter keys; ✓ and ✗ stay
     const opts = it.order.map(oi => {
-      let cls = 'opt', mk = '';
+      let cls = 'qo', mk = '';
       if (it.checked) {
         if (oi === q.correct) { cls += ' right'; mk = '✓'; }
         else if (oi === it.chosen) { cls += ' wrong'; mk = '✗'; }
         else cls += ' dim';
-      } else if (oi === it.chosen) cls += ' sel';
+      }
       return `<button class="${cls}" data-o="${oi}" ${it.checked ? 'disabled' : ''} aria-pressed="${oi === it.chosen}"><span>${fmt(q.options[oi])}</span><span class="mk" aria-hidden="true">${mk}</span></button>`;
     }).join('');
-    const last = P.i === n - 1;
+    const vote3 = d => { const on = votes[q.id] === d, l = esc(t(d > 0 ? 'textos.votoArriba' : 'textos.votoAbajo'));
+      return `<button class="vote3" data-v="${d}" aria-pressed="${on}" aria-label="${l}" title="${l}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${THUMB(d)}</svg></button>`; };
+    const plus = right ? CFG.puntosPorCorrecta : it.checked ? CFG.puntosPorIncorrecta : 0;
     app.innerHTML = `
-      <div class="wmp" style="--mc:${MCOLOR[q.materia]};--pat:${pattern(q.materia)}" aria-hidden="true"></div>
-      <section class="screen qscreen" style="--mc:${MCOLOR[q.materia]}">
-        <div class="navrow">${P.quit ? '' : backBtn('quit', 'textos.salir')}<div class="dots" role="img" aria-label="${esc(t('textos.preguntaDe', { i: P.i + 1, n }))}">${dots}</div></div>
-        ${P.quit ? `
-          <div class="confirm" role="alertdialog"><p>${esc(t('textos.salirPregunta'))}</p>
-            <div class="row"><button class="btn btn-ghost" id="quit-yes">${esc(t('textos.salirSi'))}</button><button class="btn btn-main" id="quit-no">${esc(t('textos.salirNo'))}</button></div></div>` : ''}
-        <div class="qgrid">
-        <article class="qcard">
-          <div class="band"><span class="mtag">${micon(m.id)}${esc(m.name)}</span><span class="tm">· ${esc(tema(q.materia, q.tema).name)}</span>
-            <span class="rate"><button class="vote up ${votes[q.id] === 1 ? 'on' : ''}" data-v="1" aria-pressed="${votes[q.id] === 1}" aria-label="${esc(t('textos.votoArriba'))}" title="${esc(t('textos.votoArriba'))}"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 10v11H3V10h4zm2 11h8.6a2 2 0 0 0 2-1.6l1.3-7A2 2 0 0 0 19 10h-5.2l.8-3.9a1.6 1.6 0 0 0-.4-1.5L13.3 4 9 9.2V21z" fill="currentColor"/></svg></button><button class="vote down ${votes[q.id] === -1 ? 'on' : ''}" data-v="-1" aria-pressed="${votes[q.id] === -1}" aria-label="${esc(t('textos.votoAbajo'))}" title="${esc(t('textos.votoAbajo'))}"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 10v11H3V10h4zm2 11h8.6a2 2 0 0 0 2-1.6l1.3-7A2 2 0 0 0 19 10h-5.2l.8-3.9a1.6 1.6 0 0 0-.4-1.5L13.3 4 9 9.2V21z" fill="currentColor"/></svg></button></span></div>
-          <div class="qbody">
-            <p class="stem">${fmt(q.stem)}</p>
-            <div class="opts" role="group">${opts}</div>
+      <section class="qpage" style="--mt:var(--${k}-t);--sft:var(--${k}-s)">
+        <article class="qcard3" style="--bc:var(--${k}-t)">
+          <div class="qband">${micon(m.id)}<span class="qloc">${esc(m.name)} · ${esc(x ? x.name : q.tema)}</span><span class="rate3">${vote3(1)}${vote3(-1)}</span></div>
+          <div class="qbody3">
+            <p class="qstem">${fmt(q.stem)}</p>
+            <div class="qopts" role="group">${opts}</div>
+            ${it.checked ? `<div class="qfb" id="fb">
+              <div class="qverd ${right ? 'ok' : 'no'}" role="status"><span><span aria-hidden="true">${right ? '✓' : '✗'}</span> ${esc(t(right ? 'textos.correcto' : 'textos.incorrecto'))}</span>${plus ? `<span class="plus3">${esc(t('textos.masPuntos', { p: plus }))}</span>` : ''}</div>
+              <p class="qlbl">${esc(t('textos.explicacion'))}</p>
+              <p class="qexp">${fmt(q.feedback)}</p>
+              <div class="actions"><button class="b b-pri" id="next">${esc(t(P.i === n - 1 ? 'textos.verResultado' : 'textos.siguiente'))}</button></div>
+            </div>` : ''}
           </div>
         </article>
-        ${it.checked ? `<aside class="side">
-            <div class="coach q" role="status"><span class="sr">${esc(t(right ? 'textos.correcto' : 'textos.incorrecto'))}</span>${right ? `<span class="plus">${esc(t('textos.masPuntos', { p: CFG.puntosPorCorrecta }))}</span>` : CFG.puntosPorIncorrecta ? `<span class="plus">${esc(t('textos.masPuntos', { p: CFG.puntosPorIncorrecta }))}</span>` : ''}</div>
-            <div class="fb"><h3>${esc(t('textos.explicacion'))}</h3><p>${fmt(q.feedback)}</p></div>
-            ${P.quit ? '' : `<button class="btn btn-main" id="next">${esc(t(last ? 'textos.verResultado' : 'textos.siguiente'))}</button>`}
-          </aside>` : `<aside class="side wait">${micon(m.id)}<span>${esc(t('textos.esperaRespuesta'))}</span></aside>`}
-        </div>
-      </section>`;
-    // Feedback appears as soon as an answer is chosen
+      </section>
+      ${P.quit ? `<div class="qconfirm"><div class="box" role="alertdialog" aria-modal="true" aria-labelledby="qc-t"><p id="qc-t">${esc(t('textos.salirPregunta'))}</p>
+        <div class="actions"><button class="b b-sec" id="quit-yes">${esc(t('textos.salirSi'))}</button><button class="b b-pri" id="quit-no">${esc(t('textos.salirNo'))}</button></div></div></div>` : ''}`;
     app.querySelectorAll('[data-v]').forEach(b => b.onclick = () => vote(q.id, +b.dataset.v));
     app.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       if (it.checked) return;
       const before = totalPoints();
       it.chosen = +b.dataset.o; it.checked = true; it.checkedAt = Date.now(); it.answeredAt = new Date().toISOString(); it.ms = Date.now() - P.qStart;
-      it.line = say(it.chosen === q.correct ? 'textos.profe.pregunta.correcta' : 'textos.profe.pregunta.incorrecta');
       sfx(it.chosen === q.correct ? 'correcta' : 'incorrecta');
       // 4 Nov 2026: the top bar adds the points at the same moment the option turns green (no extra sound)
       const after = totalPoints(); if (after !== before) state.ptsAnim = { from: before, to: after };
       render();
+      // Phones and portrait: if the feedback ends below the screen, bring it up (on a tablet in landscape it fits)
+      const fb = document.getElementById('fb');
+      if (fb && fb.getBoundingClientRect().bottom > innerHeight) {
+        const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        fb.scrollIntoView({ block: 'end', behavior: reduce ? 'auto' : 'smooth' });
+      }
     });
     const $ = id => document.getElementById(id);
     if ($('next')) $('next').onclick = advance;
-    if ($('quit')) $('quit').onclick = () => { P.quit = true; P.quitTo = null; render(); };
     if ($('quit-no')) $('quit-no').onclick = () => { P.quit = false; P.quitTo = null; render(); };
     if ($('quit-yes')) $('quit-yes').onclick = () => go(P.quitTo || 'home', { prueba: null });
+    if ($('quit-no')) $('quit-no').focus();
   }
 
   function finish() {
@@ -1656,78 +1844,80 @@ body.s-login .stage { padding: 0; max-width: none; margin: 0; }
       const k = m.id + '|' + x.id;
       if (level(before[k]) < top5 && level(after[k]) >= top5) nuevoNivel5.push(x.name);
     }
-    // Profe Ariel's line and «Tu resumen» come from the band of the result (limits in the settings); chosen once here
+    // The message (app's voice, 8 Nov 2026): one line from the band of the result, chosen once here; a Tema reaching
+    // «Dominado» for the first time uses «nivel5» instead. The chivo: «Festejo» from mascotaFelizDesde or with nivel5.
     const share = correctas / respuestas.length;
     const band = share >= CFG.mascotaFelizDesde ? 'feliz' : share >= CFG.mensajeAltoDesde ? 'alto' : share >= CFG.mensajeMedioDesde ? 'medio' : 'bajo';
-    const linea = nuevoNivel5.length ? { animo: 'feliz', texto: t('textos.nivel5', { tema: nuevoNivel5[0] }) } : say('textos.profe.final.' + band);
-    const resumen = say('textos.resumen.' + band).texto;
-    go('resultado', { resultado: record, verRespuestas: false, nuevoNivel5, linea, resumen });
+    const mensaje = nuevoNivel5.length ? t('textos.nivel5', { tema: nuevoNivel5[0] }) : say('textos.resumen.' + band).texto;
+    const festejo = band === 'feliz' || nuevoNivel5.length > 0;
+    go('resultado', { resultado: record, nuevoNivel5, mensaje, festejo, prueba: null });
   }
 
-  // End of Prueba (30 Oct 2026; revised 4 Nov 2026): one headline, points chip, a small copy of the tile that launched
-  // the Prueba, Profe Ariel large, «Tu resumen», three same-size buttons. Time is recorded, not shown.
-  // The launch tile is a badge, not a button: flat, no press effect, tapping it does nothing.
-  function launchTile(R) {
-    if (R.tipo === 'grado') { const l = t('textos.tipoGrado'); return `<div class="ltile grade" role="img" aria-label="${esc(l)}">${micon('ALL')}<b aria-hidden="true">${esc(l)}</b></div>`; }
+  // End of Prueba (8 Nov 2026): the back of the card. Band with the launching icon; label, «¡Terminaste la prueba!»,
+  // the score, «+N puntos», the message with no label; «Mis respuestas» and «Otra prueba». The chivo beside the card.
+  // Time is recorded, not shown.
+  const pickOf = R => ({ tipo: R.tipo, mid: R.materia, tid: R.tema });
+  function resultLabel(R) {
+    if (R.tipo === 'grado') return t('textos.introGrado');
     const m = materia(R.materia);
-    if (R.tipo === 'materia') { const l = t('textos.todosLosTemas', { materia: m.name }); return `<div class="ltile all" role="img" aria-label="${esc(l)}">${micon('ALL')}<b aria-hidden="true">${esc(l)}</b></div>`; }
-    const x = tema(R.materia, R.tema), l = x ? x.name : R.tema;
-    return `<div class="ltile tema" role="img" aria-label="${esc(l)}"><span class="bignum" aria-hidden="true">${temaNum(R.tema)}</span><b aria-hidden="true">${esc(l)}</b></div>`;
-  }
-  // «Ver mis respuestas» (4 Nov 2026): one row per question, all closed at first; tapping a row opens it and closes
-  // the one open before. Location line: only the parts that change within that type of Prueba (display names, TAX-05).
-  function locLine(R, q) {
-    const sub = esc(subtemaName(q.materia, q.subtema)), x = tema(q.materia, q.tema), tn = esc(x ? x.name : q.tema);
-    if (R.tipo === 'grado') return `${micon(q.materia)}<span>${esc(materia(q.materia).name)} › ${tn} › ${sub}</span>`;
-    if (R.tipo === 'materia') return `<span>${esc(t('textos.temaN', { n: temaNum(q.tema) }))} · ${tn} › ${sub}</span>`;
-    return `<span>${sub}</span>`;
-  }
-  function answerRows(R) {
-    return R.respuestas.map((r, k) => {
-      const q = Q(r.id); if (!q) return '';
-      const chosen = q.codes ? q.codes.indexOf(r.opcion) : -1;
-      const mk = r.correcta ? '<span class="mk ok" aria-hidden="true">✓</span>' : '<span class="mk no2" aria-hidden="true">✗</span>';
-      const sr = `<span class="sr">${esc(t(r.correcta ? 'textos.correcto' : 'textos.incorrecto'))}</span>`;
-      return `<li style="--mt:var(--${q.materia.toLowerCase()}-t)">
-        <button class="arow" data-row="${k}" aria-expanded="false" aria-controls="ar-${k}"><span class="no">${k + 1}</span>${mk}<span class="st">${fmt(q.stem)}</span><span class="chev" aria-hidden="true">›</span><span class="loc">${locLine(R, q)}</span></button>
-        <div class="aopen" id="ar-${k}" hidden>${sr}
-          ${chosen >= 0 ? `<div><h4>${esc(t('textos.tuRespuesta'))}</h4><div class="ans ${r.correcta ? 'ok' : 'no2'}">${mk}<p>${fmt(q.options[chosen])}</p></div></div>` : ''}
-          ${r.correcta ? '' : `<div><h4>${esc(t('textos.respuestaCorrecta'))}</h4><div class="ans ok"><span class="mk ok" aria-hidden="true">✓</span><p>${fmt(q.options[q.correct])}</p></div></div>`}
-          <div><h4>${esc(t('textos.explicacion'))}</h4><p>${fmt(q.feedback)}</p></div>
-        </div></li>`;
-    }).join('');
+    if (R.tipo === 'materia') return t('textos.introMateria', { materia: m.name });
+    const x = tema(R.materia, R.tema);
+    return t('textos.introTemaSub', { materia: m.name, n: temaNum(R.tema) }) + (x ? ' · ' + x.name : '');
   }
   function viewResultado() {
     const R = state.resultado, n = R.respuestas.length;
-    const { animo: mood, texto: msg } = state.linea || { animo: 'neutral', texto: '' };
+    head({});
     app.innerHTML = `
-      <section class="screen" ${R.materia ? `style="--mc:${MCOLOR[R.materia]}"` : ''}>
-        <div class="ptitle"><h1>${esc(t('textos.resultadoTitulo'))}</h1></div>
-        <div class="sidegrid">
-          <div class="pcard endcard">
-            <div class="head"><div class="score1"><div class="sline"><span class="big">${esc(t('textos.resultadoCorrectas', { c: R.correctas, n }))}</span><span class="chip">${esc(t('textos.resultadoPuntos', { p: R.puntos }))}</span></div>
-              <p class="sub">${esc(t('textos.resultadoCorrectasSub'))}</p></div>${launchTile(R)}</div>
-            ${state.resumen ? `<div class="resumen"><h3>${esc(t('textos.resumenTitulo'))}</h3><p>${esc(state.resumen)}</p></div>` : ''}
-            <div class="row">
-              <button class="btn btn-main" id="again">${esc(t('textos.otraPrueba'))}</button>
-              <button class="btn btn-ghost" id="prog">${esc(t('textos.miProgreso'))}</button>
-              <button class="btn btn-ghost" id="home">${esc(t('textos.inicio'))}</button>
-            </div>
+      <section class="page rpage"><div class="rwrap">
+        <div class="gcard${prevView === 'pregunta' ? ' flip' : ''}" style="${cardStyle(pickOf(R))}">
+          <div class="gband sm" aria-hidden="true">${launchIcon(pickOf(R))}</div>
+          <div class="gbody">
+            <p class="glbl">${esc(resultLabel(R))}</p>
+            <h2>${esc(t('textos.resultadoTitulo'))}</h2>
+            <div class="score3"><span class="sbig">${esc(t('textos.resultadoCorrectas', { c: R.correctas, n }))}</span><span class="gchip">${esc(t('textos.resultadoPuntos', { p: R.puntos }))}</span></div>
+            <p class="ssub">${esc(t('textos.resultadoCorrectasSub'))}</p>
+            ${state.mensaje ? `<p class="smsg">${esc(state.mensaje)}</p>` : ''}
+            <span class="grow"></span>
+            <div class="gacts"><button class="b b-sec" id="mis">${esc(t('textos.misRespuestas'))}</button><button class="b b-pri" id="again">${esc(t('textos.otraPrueba'))}</button></div>
           </div>
-          ${bigCoach(mood, msg)}
         </div>
-        <div><button class="btn btn-ghost" id="toggle-ans" aria-expanded="${!!state.verRespuestas}">${esc(t(state.verRespuestas ? 'textos.ocultarRespuestas' : 'textos.verRespuestas'))}</button></div>
-        ${state.verRespuestas ? `<h2>${esc(t('textos.tusRespuestas'))}</h2>
-        <div class="anscard"><ol class="arows">${answerRows(R)}</ol></div>` : ''}
-      </section>`;
-    document.getElementById('again').onclick = () => go('intro', { pick: { tipo: R.tipo, mid: R.materia, tid: R.tema } });
-    document.getElementById('prog').onclick = () => go('progreso');
-    document.getElementById('home').onclick = () => go('home');
-    document.getElementById('toggle-ans').onclick = () => { state.verRespuestas = !state.verRespuestas; render(); };
-    // Only one row open at a time; no row opens by itself
-    app.querySelectorAll('.arow').forEach(b => b.onclick = () => {
+        <img class="rchivo" src="img/chivo-${state.festejo ? 'festejo' : 'saludo'}.svg" alt="" aria-hidden="true">
+      </div></section>`;
+    document.getElementById('again').onclick = () => go('intro', { pick: pickOf(R) });
+    document.getElementById('mis').onclick = () => go('respuestas');
+  }
+
+  // «Mis respuestas» (8 Nov 2026): its own screen, on the calm tint. Ten rows, all closed: number, ✓/✗, the stem on
+  // one line. Location line: only the parts that change within that type of Prueba (no Subtema). An open row: the full
+  // stem, «Respuesta correcta» with the correct option (every row), «Explicación». One row open at a time.
+  function locLine(R, q) {
+    const x = tema(q.materia, q.tema), tn = esc(x ? x.name : q.tema);
+    if (R.tipo === 'grado') return `${micon(q.materia)}<span>${esc(materia(q.materia).name)} › ${tn}</span>`;
+    if (R.tipo === 'materia') return `<span>${esc(t('textos.temaN', { n: temaNum(q.tema) }))} · ${tn}</span>`;
+    return '';
+  }
+  function viewRespuestas() {
+    const R = state.resultado;
+    if (!R) return go('home');
+    head({ back: ['back', 'textos.volver', () => go('resultado')], title: t('textos.misRespuestas'), pill: true });
+    const rows = R.respuestas.map((r, k) => {
+      const q = Q(r.id); if (!q) return '';
+      const mk = r.correcta ? '<span class="mk ok" aria-hidden="true">✓</span>' : '<span class="mk no2" aria-hidden="true">✗</span>';
+      const loc = locLine(R, q);
+      return `<li style="--mt:var(--${q.materia.toLowerCase()}-t)">
+        <button class="rrow" data-row="${k}" aria-expanded="false" aria-controls="ar-${k}"><span class="no">${k + 1}</span>${mk}<span class="rst"><span class="sr">${esc(t(r.correcta ? 'textos.correcto' : 'textos.incorrecto'))} </span>${fmt(q.stem)}</span><span class="chev" aria-hidden="true">›</span>${loc ? `<span class="rloc">${loc}</span>` : ''}</button>
+        <div class="ropen" id="ar-${k}" hidden>
+          <p class="qlbl">${esc(t('textos.respuestaCorrecta'))}</p>
+          <div class="rans"><span class="mk ok" aria-hidden="true">✓</span> ${fmt(q.options[q.correct])}</div>
+          <p class="qlbl">${esc(t('textos.explicacion'))}</p>
+          <p class="qexp">${fmt(q.feedback)}</p>
+        </div></li>`;
+    }).join('');
+    app.innerHTML = `<section class="apage"><ol class="rlist">${rows}</ol></section>`;
+    // Only one row open at a time; no row opens by itself; no re-render, so the scroll stays put
+    app.querySelectorAll('.rrow').forEach(b => b.onclick = () => {
       const open = b.getAttribute('aria-expanded') === 'true';
-      app.querySelectorAll('.arow').forEach(o => { o.setAttribute('aria-expanded', 'false'); document.getElementById(o.getAttribute('aria-controls')).hidden = true; });
+      app.querySelectorAll('.rrow').forEach(o => { o.setAttribute('aria-expanded', 'false'); document.getElementById(o.getAttribute('aria-controls')).hidden = true; });
       if (!open) { b.setAttribute('aria-expanded', 'true'); document.getElementById(b.getAttribute('aria-controls')).hidden = false; }
     });
   }
@@ -1868,11 +2058,14 @@ body.s-login .stage { padding: 0; max-width: none; margin: 0; }
     bindSwitch();
   }
 
-  const VIEWS = { tabla: viewTabla, login: viewLogin, apodo: viewApodo, config: viewConfig, ayuda: viewAyuda, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, progreso: viewProgreso };
+  const VIEWS = { tabla: viewTabla, login: viewLogin, apodo: viewApodo, config: viewConfig, ayuda: viewAyuda, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, respuestas: viewRespuestas, progreso: viewProgreso };
   function render() {
     if (!state.uid) state.view = 'login';                                  // not signed in
     else if (!state.user && state.view !== 'login') state.view = 'apodo';  // signed in, no nickname yet
     if (!VIEWS[state.view]) state.view = 'home';
+    if ((state.view === 'resultado' || state.view === 'respuestas') && !state.resultado) state.view = 'home';
+    if (state.view === 'pregunta' && !state.prueba) state.view = 'home';
+    if (state.view === 'intro' && !state.pick) state.view = 'home';
     // Surfaces (8 Nov 2026): reading screens on the soft Materia tint; inside a Materia the deep Materia tone;
     // every other screen on the deep grade colour. The landscape shows on the deep surfaces only.
     const v = state.view;
@@ -1888,6 +2081,7 @@ body.s-login .stage { padding: 0; max-width: none; margin: 0; }
     document.body.setAttribute('style', (tone ? '--mc:' + MCOLOR[tone] + ';' : '') + (deep ? MDEEP(deep) : ''));
     HEAD = null;
     VIEWS[v]();
+    prevView = v;
     renderRail();
     renderTop();
   }
@@ -1912,7 +2106,7 @@ body.s-login .stage { padding: 0; max-width: none; margin: 0; }
   // the speaker button plays its own tick when sound is turned back on.
   document.addEventListener('click', e => {
     const b = e.target.closest('button');
-    if (!b || b.disabled || b.matches('.opt, #snd')) return;
+    if (!b || b.disabled || b.matches('.qo, #snd')) return;
     sfx('clic');
   }, true);
 

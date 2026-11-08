@@ -13,47 +13,47 @@ async function page(b, w, h, dark) {
   await p.waitForTimeout(150); await p.fill('#nick', 'Ana'); await p.click('#go'); await p.waitForTimeout(150);
   return p;
 }
-async function play(p) { let n = 0; while (await p.locator('.qscreen .opt').count() && n < 30) { await p.locator('.qscreen .opt').nth(n % 4).click(); await p.waitForTimeout(40); await p.locator('.side .btn-main').click(); await p.waitForTimeout(40); n++; } return n; }
+async function play(p) { let n = 0; while (await p.locator('.qo').count() && n < 30) { await p.locator('.qo').nth(n % 4).click(); await p.waitForTimeout(40); await p.click('#next'); await p.waitForTimeout(40); n++; } return n; }
 (async () => {
   const b = await chromium.launch();
   for (const [w, h, dark] of [[1180, 820, false], [820, 1180, false], [390, 844, true]]) {
     const p = await page(b, w, h, dark); const tag = `${w}x${h}${dark ? ' dark' : ''}`;
     for (const [m, act] of [['CIE', 12], ['LEN', 12], ['MAT', 12], ['SOC', 11]]) {
       await p.click(`[data-m="${m}"]`); await p.waitForTimeout(80);
-      ok(`${tag} ${m}: ${act} active, ${12 - act} grey`, (await p.locator('.mt.tema').count()) === act && (await p.locator('.mt.inact').count()) === 12 - act);
+      ok(`${tag} ${m}: ${act} active, ${12 - act} grey`, (await p.locator('.ttile[data-t]').count()) === act && (await p.locator('.ttile.off').count()) === 12 - act);
       await p.click('#back'); await p.waitForTimeout(60);
     }
     if (w === 1180) {
       for (const t of ['T05', 'T10', 'T12']) {
-        await p.click('[data-m="CIE"]'); await p.click(`[data-t="${t}"]`); await p.locator('.btn-main').first().click();
+        await p.click('[data-m="CIE"]'); await p.click(`[data-t="${t}"]`); await p.click('#start');
         const n = await play(p); ok(`CIE ${t} Prueba has 10 questions`, n === 10); await p.waitForTimeout(150);
         await p.click('text=/Inicio|inicio/').catch(() => {}); if (!(await p.locator('[data-m="CIE"]').count())) await p.goto(URL, { waitUntil: 'networkidle' });
       }
-      await p.click('[data-m="CIE"]'); await p.click('#all'); await p.locator('.btn-main').first().click();
+      await p.click('[data-m="CIE"]'); await p.click('#all'); await p.click('#start');
       ok('Todo Ciencias Prueba has 10 questions', (await play(p)) === 10);
       await p.goto(URL, { waitUntil: 'networkidle' });
       for (const t of ['T06', 'T07', 'T08', 'T09', 'T10', 'T11', 'T12']) {
-        await p.click('[data-m="LEN"]'); await p.click(`[data-t="${t}"]`); await p.locator('.btn-main').first().click();
+        await p.click('[data-m="LEN"]'); await p.click(`[data-t="${t}"]`); await p.click('#start');
         const n = await play(p); ok(`LEN ${t} Prueba has 10 questions`, n === 10); await p.waitForTimeout(150);
         await p.goto(URL, { waitUntil: 'networkidle' });
       }
-      await p.click('[data-m="LEN"]'); await p.click('#all'); await p.locator('.btn-main').first().click();
+      await p.click('[data-m="LEN"]'); await p.click('#all'); await p.click('#start');
       ok('Todo Lengua Prueba has 10 questions', (await play(p)) === 10);
       await p.goto(URL, { waitUntil: 'networkidle' });
       for (const t of ['T06', 'T07', 'T08', 'T09', 'T10', 'T11']) {
-        await p.click('[data-m="SOC"]'); await p.click(`[data-t="${t}"]`); await p.locator('.btn-main').first().click();
+        await p.click('[data-m="SOC"]'); await p.click(`[data-t="${t}"]`); await p.click('#start');
         const n = await play(p); ok(`SOC ${t} Prueba has 10 questions`, n === 10); await p.waitForTimeout(150);
         await p.goto(URL, { waitUntil: 'networkidle' });
       }
-      await p.click('[data-m="SOC"]'); await p.click('#all'); await p.locator('.btn-main').first().click();
+      await p.click('[data-m="SOC"]'); await p.click('#all'); await p.click('#start');
       ok('Todo Sociales Prueba has 10 questions', (await play(p)) === 10);
       await p.goto(URL, { waitUntil: 'networkidle' });
       for (const t of ['T06', 'T07', 'T08', 'T09', 'T10', 'T11', 'T12']) {
-        await p.click('[data-m="MAT"]'); await p.click(`[data-t="${t}"]`); await p.locator('.btn-main').first().click();
+        await p.click('[data-m="MAT"]'); await p.click(`[data-t="${t}"]`); await p.click('#start');
         const n = await play(p); ok(`MAT ${t} Prueba has 10 questions`, n === 10); await p.waitForTimeout(150);
         await p.goto(URL, { waitUntil: 'networkidle' });
       }
-      await p.click('[data-m="MAT"]'); await p.click('#all'); await p.locator('.btn-main').first().click();
+      await p.click('[data-m="MAT"]'); await p.click('#all'); await p.click('#start');
       ok('Todo Matemáticas Prueba has 10 questions', (await play(p)) === 10);
     }
     await p.click('[data-rail="progreso"]').catch(async () => { await p.goto(URL); });
