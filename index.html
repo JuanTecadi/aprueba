@@ -540,6 +540,8 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
 .mtr { height: 35px; border-radius: 9px; display: flex; align-items: center; gap: 8px; padding: 0 10px; box-sizing: border-box;
   font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; color: var(--ink); }
 .mtr b { min-width: 18px; flex: none; }
+.mtr .mti { width: 18px; flex: none; display: flex; }   /* Tema icon in place of the number (8 Nov 2026) */
+.mtr .mti .ic { width: 18px; height: 18px; stroke-width: 2; }
 .mtr > span:not(.sr) { overflow: hidden; text-overflow: ellipsis; }
 .mtr.lv5 { color: #fff; }
 .mtr.lv0 { background: #fff; border: 1.5px dashed var(--rb); color: var(--t); }
@@ -641,7 +643,7 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
 
 <!-- Materia icons and the generic "Todo" icon i-ALL (decided 28 Oct 2026): 24 grid, 2px round strokes, coloured by currentColor -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <!-- v0.3 (8 Nov 2026): one outline family, the icons of the approved mockup; Tema icons for Ciencias (pilot) -->
+  <!-- v0.3 (8 Nov 2026): one outline family, the icons of the approved mockup; Tema icons for all four Materias (Ciencias pilot; the other 35 approved 8 Nov 2026) -->
   <symbol id="i-CIE" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3M7 15h10"/></symbol>
   <symbol id="i-LEN" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4zM8 9h8M8 12h5"/></symbol>
   <symbol id="i-MAT" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v6M3 7h6M15 7h6M4 15l4 4M8 15l-4 4M15 16h6M15 19h6"/></symbol>
@@ -663,6 +665,42 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
   <symbol id="i-CIE-T10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="20" rx="3"/><circle cx="12" cy="7" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="17" r="1.5"/></symbol>
   <symbol id="i-CIE-T11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6zM12 9v6M9 12h6"/></symbol>
   <symbol id="i-CIE-T12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 15.5l7-7a3.5 3.5 0 0 0-5-5l-7 7a3.5 3.5 0 0 0 5 5zM7 7l5 5"/></symbol>
+  <!-- Tema icons for Lengua, Matemáticas and Sociales (approved 8 Nov 2026) -->
+  <symbol id="i-LEN-T01" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h11v7H8l-3 3v-3H3zM10 15v2h6l3 3v-3h2v-7h-4"/></symbol>
+  <symbol id="i-LEN-T02" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></symbol>
+  <symbol id="i-LEN-T03" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V6a1.5 1.5 0 0 1 3 0v6M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v8c0 4-2.5 7-6 7-3 0-4.5-1.5-6-4l-2-3.5a1.5 1.5 0 0 1 2.5-1.5L8 13"/></symbol>
+  <symbol id="i-LEN-T04" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-1.5-5-2-9-2v14c4 0 7 .5 9 2 2-1.5 5-2 9-2V4c-4 0-7 .5-9 2zM12 6v14"/></symbol>
+  <symbol id="i-LEN-T05" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6zM14 3v4h4M9 11h6M9 14h6M9 17h4"/></symbol>
+  <symbol id="i-LEN-T06" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4l5 5-10 10H5v-5zM13 6l5 5M4 21h3"/><path d="M18 18v1.5a1.5 1.5 0 0 1-1.5 1.5"/></symbol>
+  <symbol id="i-LEN-T07" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="8" height="8" rx="2"/><rect x="14" y="8" width="8" height="8" rx="2"/><path d="M10 12h4"/></symbol>
+  <symbol id="i-LEN-T08" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></symbol>
+  <symbol id="i-LEN-T09" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="15" r="4.5"/><path d="M15.5 10.5v9M10 8l3.5-3"/></symbol>
+  <symbol id="i-LEN-T10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v6c0 6-4 10-8 10s-8-4-8-10zM8 9h2M14 9h2M8.5 14c2 2 5 2 7 0"/></symbol>
+  <symbol id="i-LEN-T11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 3C12 3 7 9 6 18l-2 3M6 18c6 0 11-4 12-10l-5 2M10 13l-2 1"/></symbol>
+  <symbol id="i-LEN-T12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h3l9 5V5L6 10zM6 14l1.5 6h3L9 15M18 9a4 4 0 0 1 0 6"/></symbol>
+  <symbol id="i-MAT-T01" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8h18M3 13h18M3 18h18"/><circle cx="8" cy="8" r="1.6"/><circle cx="14" cy="13" r="1.6"/><circle cx="10" cy="18" r="1.6"/></symbol>
+  <symbol id="i-MAT-T02" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10M7 9h10M7 19h10"/></symbol>
+  <symbol id="i-MAT-T03" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9 11M12 9l-9 11M15 5.5a2.5 2.5 0 0 1 5 0c0 2-5 3.5-5 6h5"/></symbol>
+  <symbol id="i-MAT-T04" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><circle cx="12" cy="6" r="1.5"/><circle cx="12" cy="18" r="1.5"/></symbol>
+  <symbol id="i-MAT-T05" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9h9"/></symbol>
+  <symbol id="i-MAT-T06" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="6" height="6" rx="1"/><path d="M3 12h8"/><rect x="4" y="15" width="6" height="6" rx="1"/><path d="M15 12h6M18 9v6"/></symbol>
+  <symbol id="i-MAT-T07" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></symbol>
+  <symbol id="i-MAT-T08" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l6.4-6.4"/><circle cx="12" cy="12" r=".9"/></symbol>
+  <symbol id="i-MAT-T09" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 17H3zM12 3v17"/><path d="M12 17h2.5v3"/></symbol>
+  <symbol id="i-MAT-T10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16L16 3l5 5L8 21zM7 12l2 2M10 9l2 2M13 6l2 2"/></symbol>
+  <symbol id="i-MAT-T11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M6 16l4-5 4 3 6-8"/><circle cx="10" cy="11" r=".9"/><circle cx="14" cy="14" r=".9"/></symbol>
+  <symbol id="i-MAT-T12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2"/><circle cx="15" cy="15" r="1.2"/><circle cx="12" cy="12" r="1.2"/></symbol>
+  <symbol id="i-SOC-T01" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="7" r="2.5"/><path d="M3 20v-4a4 4 0 0 1 8 0M13 16a4 4 0 0 1 8 0v4M12 14.5s-2-1.2-2-2.5a1 1 0 0 1 2-.4 1 1 0 0 1 2 .4c0 1.3-2 2.5-2 2.5z"/></symbol>
+  <symbol id="i-SOC-T02" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11s-4-2.3-4-5a2 2 0 0 1 4-.8A2 2 0 0 1 16 6c0 2.7-4 5-4 5zM3 14h3l3 2h5a1.5 1.5 0 0 1 0 3H9M6 21H3M14 17.5l5-2.5a1.5 1.5 0 0 1 2 2l-6 4H6"/></symbol>
+  <symbol id="i-SOC-T03" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-5 9 5zM5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 21h18M3 18h18"/></symbol>
+  <symbol id="i-SOC-T04" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V3M5 4h13l-3 4 3 4H5"/></symbol>
+  <symbol id="i-SOC-T05" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.5"/><circle cx="5" cy="9" r="2"/><circle cx="19" cy="9" r="2"/><path d="M8 20v-5a4 4 0 0 1 8 0v5M2 19v-3a3 3 0 0 1 4-2.8M22 19v-3a3 3 0 0 0-4-2.8"/></symbol>
+  <symbol id="i-SOC-T06" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 21h12M7 3v3l5 6-5 6v3M17 3v3l-5 6 5 6v3M9 18h6"/></symbol>
+  <symbol id="i-SOC-T07" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19c0-7 4-14 9-16 5 2 9 9 9 16zM2 19h20M10 19v-3a2 2 0 0 1 4 0v3M8 8l-2 6M16 8l2 6"/></symbol>
+  <symbol id="i-SOC-T08" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8H7a4 4 0 0 0 0 8h2M15 8h2a4 4 0 0 1 0 8h-2M8 12h2M14 12h2M12 3v3M12 18v3"/></symbol>
+  <symbol id="i-SOC-T09" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-4 3-6 6-6 9.5S8 20 12 21c4-1 6-5 6-8.5S16 6 12 3zM12 3v18M9 7.5c1 3 1 8 0 11.5M15 7.5c-1 3-1 8 0 11.5"/></symbol>
+  <symbol id="i-SOC-T10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h11a2 2 0 0 1 0 4h-2v12a2 2 0 0 1-2 2H5a2 2 0 0 1 0-4h2zM7 17V3M10 8h3M10 11h3M10 14h3"/></symbol>
+  <symbol id="i-SOC-T11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s-7 8-7 12a7 7 0 0 0 14 0c0-4-7-12-7-12z"/><path d="M9 17c0-3 2-5 6-5 0 3.5-2 5-6 5zM9 17l3-2.5"/></symbol>
   <symbol id="i-ALL" viewBox="0 0 56 56"><rect x="21.5" y="1.9" width="13.1" height="20.5" rx="5.6" fill="#0A6E9C"/><rect x="33.6" y="21.5" width="20.5" height="13.1" rx="5.6" fill="#B3266D"/><rect x="21.5" y="33.6" width="13.1" height="20.5" rx="5.6" fill="#A64B00"/><rect x="1.9" y="21.5" width="20.5" height="13.1" rx="5.6" fill="#3236B0"/></symbol>
 </defs></svg>
 <svg class="land" aria-hidden="true" viewBox="0 0 1180 820" preserveAspectRatio="none"><path class="l1" d="M500 820 C640 690 780 690 900 740 C990 660 1090 650 1180 690 L1180 820 Z"/><path class="l2" d="M700 820 C840 760 960 765 1180 785 L1180 820 Z"/></svg>
@@ -687,7 +725,7 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
   const LETTERS = ['A', 'B', 'C', 'D'];
   // Materia icon (always shown next to the Materia name) and icon on a coloured badge
   const micon = id => `<svg class="ic${id === 'ALL' ? ' todo' : ''}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
-  // Tema icon (v0.3): only for Temas whose icon is drawn (pilot: Ciencias); otherwise null and the screen shows the number
+  // Tema icon (v0.3): every active Tema of the four Materias has one since 8 Nov 2026; null for a Tema without a drawn icon (the screen then shows the number)
   const temaIcon = (mid, tid) => document.getElementById(`i-${mid}-${tid}`) ? micon(`${mid}-${tid}`) : null;
   // Watermark tile: the Materia icon twice, offset like bricks, used as a CSS mask
   const pattern = id => {
@@ -1284,7 +1322,7 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
     app.innerHTML = `
       <section class="qpage" style="--mt:var(--${k}-t);--sft:var(--${k}-s)">
         <article class="qcard3" style="--bc:var(--${k}-t)">
-          <div class="qband">${micon(m.id)}<span class="qloc">${esc(m.name)} · ${esc(x ? x.name : q.tema)}</span><span class="rate3">${vote3(1)}${vote3(-1)}</span></div>
+          <div class="qband">${(x && temaIcon(m.id, x.id)) || micon(m.id)}<span class="qloc">${esc(m.name)} · ${esc(x ? x.name : q.tema)}</span><span class="rate3">${vote3(1)}${vote3(-1)}</span></div>
           <div class="qbody3">
             <p class="qstem">${fmt(q.stem)}</p>
             <div class="qopts" role="group">${opts}</div>
@@ -1451,7 +1489,8 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
       const rows = temaSlots(m).map(({ n, tema: x }) => {
         if (!x) return `<li class="mtr off"><b>${n}</b><span>${esc(t('textos.temaN', { n }))}</span></li>`;
         const lv = lvOf(S[m.id + '|' + x.id]), sr = lv === 0 ? t('textos.mapaAunNo') : lv === LVMAX() ? t('textos.mapaDominado') : '';
-        return `<li class="mtr lv${lv}" title="${esc(x.name)}"><b>${n}</b><span>${esc(x.name)}</span>${sr ? `<span class="sr"> · ${esc(sr)}</span>` : ''}</li>`;
+        const ti = temaIcon(m.id, x.id);
+        return `<li class="mtr lv${lv}" title="${esc(x.name)}">${ti ? `<span class="mti">${ti}</span><span class="sr">${esc(t('textos.temaN', { n }))} · </span>` : `<b>${n}</b>`}<span>${esc(x.name)}</span>${sr ? `<span class="sr"> · ${esc(sr)}</span>` : ''}</li>`;
       }).join('');
       return `<section class="mcol" style="${MSCALE(m.id)}">
           <button class="mch" data-go="${m.id}"><span class="mchi">${micon(m.id)}</span><b>${esc(m.name)}</b><span class="ar2" aria-hidden="true">›</span></button>

@@ -84,6 +84,8 @@ const contrast = (p, sel) => p.locator(sel).first().evaluate(e => {
     ok(`${tag} Todo map: not started = white with a dashed outline`, (await css(p, row('CIE', 5), 'borderTopStyle')) === 'dashed' && (await css(p, row('CIE', 5), 'backgroundColor')) === 'rgb(255, 255, 255)');
     ok(`${tag} Todo map: Sociales «Tema 12» not active`, (await p.locator(row('SOC', 12)).getAttribute('class')).includes('off') && (await p.locator(row('SOC', 12)).innerText()).includes('Tema 12'));
     ok(`${tag} Todo map: rows show the Tema names`, (await p.locator(row('LEN', 1)).innerText()).includes(temaName('LEN', 'T01')));
+    ok(`${tag} Todo map: 47 rows show the Tema icon in place of the number (8 Nov 2026)`, (await p.locator('.mtr .mti .ic').count()) === 47 && (await p.locator('.mtr:not(.off) > b').count()) === 0
+      && (await p.locator(row('SOC', 4) + ' use').getAttribute('href')) === '#i-SOC-T04' && (await p.locator(row('LEN', 1) + ' .sr').first().innerText()).includes('Tema 1'));
     ok(`${tag} Todo map: key «Aún no», «Por practicar», five steps, «Dominado»`, (await p.locator('.mkey').innerText()).replace(/\s+/g, ' ').trim() === `${TX.mapaAunNo} ${TX.mapaPorPracticar} ${TX.mapaDominado}` && (await p.locator('.mkey .sw4').count()) === 6);
     ok(`${tag} Todo map: no points, no mascot`, !/puntos/i.test(await p.locator('#app').innerText()) && (await p.locator('#app img').count()) === 0);
     if (w === 1180) ok(`${tag} Todo map: all 48 rows and the key fit on screen`, (await p.locator('.mkey').evaluate(e => e.getBoundingClientRect().bottom)) <= h);
@@ -109,7 +111,7 @@ const contrast = (p, sel) => p.locator(sel).first().evaluate(e => {
     if (w === 1180) ok(`${tag} Ciencias map: 12 cards and the note fit on screen`, (await p.locator('.mnote').evaluate(e => e.getBoundingClientRect().bottom)) <= h);
     await shot('2-mapa-ciencias');
     await p.click('[data-mat="LEN"]'); await p.waitForTimeout(60);
-    ok(`${tag} Lengua map: no Tema icons yet, «TEMA N» only, deep Lengua background`, (await p.locator('.tc4 .tch .ic').count()) === 0 && (await p.evaluate(() => getComputedStyle(document.body).backgroundColor)) === 'rgb(129, 27, 78)');
+    ok(`${tag} Lengua map: 12 Tema icons on the cards, deep Lengua background`, (await p.locator('.tc4 .tch .ic').count()) === 12 && (await p.evaluate(() => getComputedStyle(document.body).backgroundColor)) === 'rgb(129, 27, 78)');
     await p.click('[data-mat="SOC"]'); await p.waitForTimeout(60);
     ok(`${tag} Sociales map: 11 cards and «Tema 12» not active`, (await p.locator('.tc4:not(.off)').count()) === 11 && (await p.locator('.tc4.off').innerText()) === 'TEMA 12');
     await p.click('[data-mat="MAT"]'); await p.waitForTimeout(60);

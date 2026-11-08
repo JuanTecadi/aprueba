@@ -60,8 +60,13 @@ async function playAll(p, right) {
     if (w !== 390) ok(`${tag} Materia: all 12 Tema tiles visible without scrolling`, Math.max(...boxes.map(x => x[3])) <= h);
     await shot('1-materia');
     await p.click('#back'); await p.click('[data-m="LEN"]'); await p.waitForTimeout(60);
-    ok(`${tag} Lengua: the number sits in the icon slot`, (await p.locator('.ttile[data-t] .tslot .tnum').count()) === 12 && (await p.locator('.ttile[data-t="T03"] .tnum').innerText()) === '3');
+    ok(`${tag} Lengua: every Tema tile has its Tema icon (8 Nov 2026), no number`, (await p.locator('.ttile[data-t] .tslot .ic').count()) === 12 && (await p.locator('.ttile .tnum').count()) === 0
+      && (await p.locator('.ttile[data-t="T03"] use').getAttribute('href')) === '#i-LEN-T03');
     await p.click('#back'); await p.click('[data-m="SOC"]'); await p.waitForTimeout(60);
+    ok(`${tag} Matemáticas: every Tema tile has its Tema icon`, await (async () => { await p.click('#back'); await p.click('[data-m="MAT"]'); await p.waitForTimeout(60);
+      return (await p.locator('.ttile[data-t] .tslot .ic').count()) === 12 && (await p.locator('.ttile[data-t="T12"] use').getAttribute('href')) === '#i-MAT-T12'; })());
+    await p.click('#back'); await p.click('[data-m="SOC"]'); await p.waitForTimeout(60);
+    ok(`${tag} Sociales: 11 active with their Tema icons`, (await p.locator('.ttile[data-t] .tslot .ic').count()) === 11 && (await p.locator('.ttile[data-t="T11"] use').getAttribute('href')) === '#i-SOC-T11');
     ok(`${tag} Sociales: 11 active, «Tema 12» faint and not a button`, (await p.locator('.ttile[data-t]').count()) === 11 && (await p.locator('div.ttile.off').innerText()) === 'Tema 12');
     await p.click('#back');
 
@@ -82,7 +87,7 @@ async function playAll(p, right) {
     ok(`${tag} Question: rail hidden, reading tint`, (await p.evaluate(() => document.getElementById('rail').hidden && document.body.classList.contains('s-read'))));
     ok(`${tag} Question: 10 dots, first ringed; chip «Tema 1» with the Tema icon`, (await p.locator('.dots3 .dt').count()) === 10 && (await p.locator('.dots3 .dt.cur').count()) === 1
       && (await p.locator('.pchip').innerText()) === 'Tema 1' && (await p.locator('.pchip use').getAttribute('href')) === '#i-CIE-T01');
-    ok(`${tag} Question: band «Ciencias · Tema», no feedback before answering, no watermark`, (await p.locator('.qloc').innerText()) === 'Ciencias · ' + T01 && (await p.locator('#fb').count()) === 0 && (await p.locator('.wmp').count()) === 0);
+    ok(`${tag} Question: band with the Tema icon and «Ciencias · Tema», no feedback before answering, no watermark`, (await p.locator('.qloc').innerText()) === 'Ciencias · ' + T01 && (await p.locator('.qband > .ic use').getAttribute('href')) === '#i-CIE-T01' && (await p.locator('#fb').count()) === 0 && (await p.locator('.wmp').count()) === 0);
     const tops = await p.locator('.qo').evaluateAll(els => els.map(e => Math.round(e.getBoundingClientRect().top)));
     ok(`${tag} Question: 2 × 2 options (one column on phones)`, tops.length === 4 && (w === 390 ? new Set(tops).size === 4 : tops[0] === tops[1] && tops[2] === tops[3] && tops[2] > tops[0]));
     await shot('3-pregunta');
@@ -150,6 +155,8 @@ async function playAll(p, right) {
     // Todo 5to: chip and location line with the Materia
     await p.click('[data-rail="home"]'); await p.click('#c-grado'); await p.click('#start'); await p.waitForTimeout(60);
     ok(`${tag} Todo 5to: chip «Todo 5to» with the four-colour +`, (await p.locator('.pchip').innerText()) === 'Todo 5to' && (await p.locator('.pchip use').getAttribute('href')) === '#i-ALL');
+    ok(`${tag} Todo 5to: the band shows the icon of the question's own Tema`, await p.evaluate(() => { const loc = document.querySelector('.qloc').textContent, h = document.querySelector('.qband > .ic use').getAttribute('href');
+      return /^#i-(CIE|LEN|MAT|SOC)-T\d\d$/.test(h) && !!document.getElementById(h.slice(1)); }));
     await shot('9-todo5to');
     await playAll(p, true);
     await shot('10-resultado-todo');
