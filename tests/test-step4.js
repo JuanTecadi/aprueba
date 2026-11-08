@@ -150,6 +150,7 @@ const contrast = (p, sel) => p.locator(sel).first().evaluate(e => {
     ok(`${tag} Mi práctica: this week ${now} and last week ${ciePts}`, nums[0] === String(now) && nums[1] === String(ciePts));
     ok(`${tag} Mi práctica: 8 weeks, current in yellow, «N pruebas» under each`, (await p.locator('.wk4').count()) === 8 && (await css(p, '.wk4.cur .bt4 i', 'backgroundColor')) === 'rgb(255, 201, 60)'
       && (await p.locator('.wk4.cur .wn').innerText()) === '3 pruebas' && (await p.locator('.wk4.cur .wd b').innerText()) === TX.progresoSemanaActual);
+    ok(`${tag} Mi práctica: one Prueba last week says «1 prueba», empty weeks «0 pruebas»`, (await p.locator('.wk4:nth-child(7) .wn').innerText()) === '1 prueba' && (await p.locator('.wk4:nth-child(1) .wn').innerText()) === '0 pruebas');
     ok(`${tag} Mi práctica: title and «Solo tú ves esta página.»`, (await p.locator('.chart4 h2').innerText()) === TX.progresoTitulo && (await p.locator('.chart4').innerText()).includes(TX.progresoNota));
     ok(`${tag} Mi práctica: the tallest bar is the best week`, await p.evaluate(() => { const hs = [...document.querySelectorAll('.bt4 i')].map(i => i.getBoundingClientRect().height); return hs[7] === Math.max(...hs) && hs[6] > 6; }));
     ok(`${tag} Mi práctica: week labels stay inside their column`, await p.evaluate(() => [...document.querySelectorAll('.wk4')].every(c => { const r = c.getBoundingClientRect(); return [...c.querySelectorAll('.wn, .wd')].every(e => e.scrollWidth <= Math.ceil(r.width) + 1); })));

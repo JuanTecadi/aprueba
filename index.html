@@ -2169,7 +2169,7 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
     const bars = W.map(w => `<div class="wk4${w.cur ? ' cur' : ''}${w.p ? '' : ' zero'}"><b class="wv">${w.p}</b>`
       + `<span class="bt4"><i style="height:${w.p ? Math.max(2, Math.round(w.p / maxP * 100)) : 0}%"></i></span>`
       + `<span class="wd">${w.cur ? `<b>${esc(t('textos.progresoSemanaActual'))}</b><span>&nbsp;</span>` : dayMonth(w.k)}</span>`
-      + `<span class="wn">${esc(t('textos.progresoPruebas', { n: w.n }))}</span></div>`).join('');
+      + `<span class="wn">${esc(t(w.n === 1 ? 'textos.progresoPrueba' : 'textos.progresoPruebas', { n: w.n }))}</span></div>`).join('');
     return `
         <div class="pgrid4">
           <div class="pnums">

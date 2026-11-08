@@ -48,7 +48,7 @@ FIXED = {
     "tablaSiempre": [], "tablaSwitch": [], "tablaDentroNota": [], "tablaFueraNota": [],
     "tablaTu": ["apodo"], "tablaReinicio": [], "tablaVacia": [],
     "progresoEstaSemana": [], "progresoSemanaPasada": [], "progresoTitulo": [],
-    "progresoSemanaActual": [], "progresoPruebas": ["n"], "progresoNota": [],
+    "progresoSemanaActual": [], "progresoPruebas": ["n"], "progresoPrueba": ["n"], "progresoNota": [],
     # Configuración
     "configuracion": [], "guardar": [], "guardado": [], "sonido": [], "tablaConfig": [], "grado": [],
     "cuenta": [], "cerrarSesion": [],
