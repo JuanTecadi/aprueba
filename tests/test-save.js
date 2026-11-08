@@ -34,7 +34,7 @@ async function playPrueba(p, opts = {}) {
   const b = await chromium.launch();
   // Device 1: sign up, nickname, a Prueba with thumbs
   const p = await newPage(b);
-  await p.click('#tab-crear'); await p.fill('#email', 'mama@x.com'); await p.fill('#pass', 'clave123'); await p.check('#adulto'); await p.click('#go');
+  await p.click('#swap'); await p.fill('#email', 'mama@x.com'); await p.fill('#pass', 'clave123'); await p.check('#adulto'); await p.click('#go');
   await p.waitForTimeout(150); await p.fill('#nick', 'Ana'); await p.click('#go'); await p.waitForTimeout(150);
   let firstQ;
   const n1 = await playPrueba(p, { thumbs: async () => {
@@ -63,8 +63,8 @@ async function playPrueba(p, opts = {}) {
   // Device 2 (other browser): same account sees the same points, map and thumb
   const p2 = await newPage(b, { db: JSON.stringify(d) });
   await p2.fill('#email', 'mama@x.com'); await p2.fill('#pass', 'clave123'); await p2.click('#go'); await p2.waitForTimeout(250);
-  ok('other device: same nickname and points', (await p2.locator('#app').innerText()).includes('¡Hola, Ana!') && (await p2.locator('.pts').innerText()) === pts1);
-  await p2.click('#c-progreso'); await p2.waitForTimeout(150);
+  ok('other device: same nickname and points', (await p2.locator('#top').innerText()).includes('¡Hola, Ana!') && (await p2.locator('.pts').innerText()) === pts1);
+  await p2.click('[data-rail="progreso"]'); await p2.waitForTimeout(150);
   ok('other device: map is no longer empty', !(await p2.locator('#app').innerText()).includes('todavía está vacío'));
   ok('no page errors on device 2', p2.errs.length === 0);
   await p2.context().close();

@@ -796,6 +796,156 @@ body.s-read .seg { background: rgba(22,33,58,.07); } body.s-read .seg button { c
   .actions { flex-direction: column-reverse; }
 }
 @media (min-width: 600px) and (max-width: 959px) { .stage, body.has-rail .stage { padding-left: 24px; padding-right: 24px; } }
+
+/* ===================== v0.3 step 2 (8 Nov 2026): login, nickname, Pruebas, Ayuda, Configuración ===================== */
+.flabel { font-size: 15px; font-weight: 700; color: var(--ink); }
+.field { height: 52px; min-height: 0; border: 1.5px solid var(--sec-line); border-radius: 12px; padding: 0 14px; font-size: 17px; font-family: inherit; color: var(--ink); background: #fff; width: 100%; box-sizing: border-box; }
+.field:focus { outline: 3px solid rgba(46,74,154,.35); outline-offset: 1px; border-color: var(--g-pill); }
+.b.wide { width: 100%; min-width: 0; }
+.b-link { position: relative; align-self: center; height: 44px; border: 0; background: none; color: var(--ink); font-weight: 700; font-size: 16px; text-decoration: underline; text-underline-offset: 3px; padding: 0 12px; }
+.b-link::before { content: ""; position: absolute; inset: -6px 0; }
+.note { margin: 0; font-size: 14px; line-height: 1.45; color: var(--muted2); }
+.error { margin: 0; font-size: 15px; font-weight: 700; color: #B42323; }
+.error:empty, .okmsg:empty { display: none; }
+.okmsg { margin: 0; font-size: 15px; font-weight: 700; color: #17713D; }
+.check { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.45; color: var(--ink); }
+.check input { width: 24px; height: 24px; margin: 0; flex: none; accent-color: var(--g-pill); }
+/* The switch (one style): 56 × 32, green when on; touch area 56 px */
+.tg { position: relative; width: 56px; height: 32px; border-radius: 16px; border: 0; padding: 0; flex: none; background: #B8C0D0; transition: background .15s; }
+.tg::before { content: ""; position: absolute; inset: -12px -4px; }
+.tg span { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: left .15s; }
+.tg[aria-checked="true"] { background: #1F9D55; }
+.tg[aria-checked="true"] span { left: 28px; }
+.tg:disabled { opacity: .6; }
+@media (prefers-reduced-motion: reduce) { .tg, .tg span { transition: none; } }
+
+/* Login: brand panel on the left, form card on the right; no rail, no information area */
+body.s-login { background: #F3F4F6; }
+body.s-login .land { display: none; }
+body.s-login .stage { padding: 0; max-width: none; margin: 0; }
+.lgn { display: grid; grid-template-columns: minmax(0, 1fr) 520px; min-height: 100vh; }
+.lbrand { position: relative; overflow: hidden; background: var(--g-bg); padding: calc(56px + env(safe-area-inset-top, 0px)) 48px 56px; display: flex; flex-direction: column; gap: 18px; color: #fff; }
+.lbrand .bland { position: absolute; inset: 0; width: 100%; height: 100%; }
+.lbrand .bland .l1 { fill: var(--g-land1); } .lbrand .bland .l2 { fill: var(--g-land2); }
+.lbrand .logo { position: relative; height: 84px; align-self: flex-start; }
+.lbrand .lema { position: relative; margin: 24px 0 0; font-family: var(--display); font-weight: 800; font-size: 48px; line-height: 1.05; }
+.lbrand .apoyo { position: relative; margin: 0; max-width: 400px; font-size: 19px; line-height: 1.5; color: var(--on-dark-2); }
+.lbrand .chivo { position: absolute; right: 40px; bottom: 24px; height: min(400px, 48vh); }
+.lside { display: flex; align-items: center; justify-content: center; padding: 40px; }
+.lcard { width: 420px; max-width: 100%; background: #fff; border-radius: 24px; padding: 36px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 2px 10px rgba(22,33,58,.06); }
+.lcard h1 { margin: 0 0 6px; font-family: var(--display); font-weight: 800; font-size: 32px; line-height: 1.1; color: var(--ink); }
+.lcard .b-pri { margin-top: 8px; }
+.lcard .divider { height: 1px; background: #E3E6EE; margin: 8px 0; }
+.lcard .pv { margin: 0; font-size: 15px; color: var(--muted2); text-align: center; }
+@media (min-width: 600px) and (max-width: 959px) {
+  .lgn { grid-template-columns: minmax(0, 1fr) 440px; }
+  .lbrand { padding: 48px 32px; }
+  .lbrand .logo { height: 64px; }
+  .lbrand .lema { font-size: 38px; }
+  .lbrand .apoyo { font-size: 17px; }
+  .lbrand .chivo { right: 24px; height: min(320px, 36vh); }
+  .lside { padding: 24px; }
+}
+@media (max-width: 599px) {
+  .lgn { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .lcard { width: 100%; }
+  .lbrand { padding: calc(20px + env(safe-area-inset-top, 0px)) 20px 22px; gap: 8px; }
+  .lbrand .logo { height: 48px; }
+  .lbrand .lema { margin: 6px 0 0; font-size: 28px; }
+  .lbrand .apoyo, .lbrand .chivo { display: none; }
+  .lside { padding: 16px 16px 32px; }
+  .lcard { padding: 24px 20px; }
+  .lcard h1 { font-size: 26px; }
+}
+
+/* Nickname: one card on the grade background, the chivo beside it */
+.apodo { min-height: calc(100vh - 58px); display: flex; align-items: center; justify-content: center; gap: 40px; }
+.ncard { width: 480px; max-width: 100%; background: #fff; border-radius: 24px; padding: 36px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px; }
+.ncard .lchip { align-self: flex-start; background: var(--g-bg); border-radius: 12px; padding: 8px 12px; line-height: 0; }
+.ncard .lchip .logo { height: 44px; }
+.ncard h1 { margin: 8px 0 0; font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1.15; color: var(--ink); }
+.swbox { display: flex; align-items: center; gap: 14px; background: #F4F6FA; border-radius: 14px; padding: 14px 16px; margin-top: 6px; }
+.swbox .txt, .crow .txt { flex: 1; min-width: 0; }
+.swbox b, .crow b { display: block; font-size: 16px; color: var(--ink); }
+.swbox small, .crow small { display: block; margin-top: 4px; font-size: 14px; line-height: 1.4; color: var(--muted2); }
+.ncard .actions { margin-top: 8px; }
+.apodo .chivo { height: 420px; }
+@media (min-width: 600px) and (max-width: 959px) { .apodo .chivo { height: 300px; } .apodo { gap: 20px; } }
+@media (max-width: 599px) {
+  .apodo { min-height: 0; display: block; }
+  .ncard { padding: 24px 20px; }
+  .ncard h1 { font-size: 26px; }
+  .apodo .chivo { display: none; }
+}
+
+/* Information area on phones: the grade pill is left out (the grade is in Configuración), so the title, sound and points fit */
+@media (max-width: 599px) { .info .gpill { display: none; } }
+.info .pts .ic { color: inherit; stroke: currentColor; }
+
+/* Pages after login: the content sits under the information area */
+.page { color: var(--on-dark); }
+.page .lead { margin: 0; font-size: 19px; line-height: 1.45; color: var(--on-dark-2); }
+.pcard2 { width: 620px; max-width: 100%; background: #fff; color: var(--ink); border-radius: 22px; padding: 26px 32px; box-sizing: border-box; }
+.pcard2 h2 { margin: 0 0 10px; font-family: var(--display); font-weight: 800; font-size: 26px; }
+
+/* Main page «Pruebas»: four Materia tiles, then «Todo 5to» across the full width; the chivo in the corner */
+.hpage .hgrid { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; margin-top: 28px; margin-right: 246px; position: relative; z-index: 1; }
+.htiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; width: 100%; }
+.mtile { height: 200px; border: 0; border-radius: 22px; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 8px;
+  font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.1; }
+.mtile .ic { width: 60px; height: 60px; stroke-width: 1.8; }
+.mtile.m-CIE { background: var(--cie-t); } .mtile.m-LEN { background: var(--len-t); }
+.mtile.m-MAT { background: var(--mat-tile); } .mtile.m-SOC { background: var(--soc-t); }
+.gtile { grid-column: 1 / -1; height: 150px; border: 0; border-radius: 22px; background: var(--sun); color: var(--ink); display: flex; align-items: center; justify-content: center; gap: 18px;
+  font-family: var(--display); font-weight: 800; font-size: 28px; }
+.gtile .ic { width: 56px; height: 56px; }
+.mtile:active, .gtile:active { transform: translateY(1px); }
+.hpage .deco { position: fixed; right: 28px; bottom: 26px; height: min(330px, 40vh); z-index: 0; pointer-events: none; }
+@media (min-width: 600px) and (max-width: 959px) {
+  .hpage .hgrid { margin-right: 0; }
+  .mtile { height: 170px; font-size: 20px; }
+  .hpage .deco { height: min(300px, 26vh); }
+}
+@media (max-width: 599px) {
+  .page .lead { font-size: 17px; }
+  .hpage .hgrid { margin: 20px 0 0; gap: 12px; }
+  .htiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .mtile { height: 132px; font-size: 19px; gap: 10px; }
+  .mtile .ic { width: 48px; height: 48px; }
+  .gtile { height: 100px; font-size: 24px; }
+  .gtile .ic { width: 44px; height: 44px; }
+  .hpage .b-sec.on-dark { width: auto; }
+  .hpage .deco { display: none; }
+}
+
+/* Ayuda: one card with five lines, the chivo «Pensando» beside it */
+.ayuda { display: flex; align-items: flex-end; gap: 24px; margin-top: 18px; }
+.ayuda .pcard2 { padding-bottom: 14px; }
+.alist { list-style: none; margin: 0; padding: 0; }
+.alist li { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #E3E6EE; font-size: 18px; line-height: 1.45; }
+.alist .aic { width: 44px; height: 44px; border-radius: 12px; background: #E9EEF8; color: var(--g-pill); display: flex; align-items: center; justify-content: center; flex: none; }
+.alist .aic .ic { width: 24px; height: 24px; stroke-width: 2; }
+.ayuda .chivo { height: 360px; flex: none; }
+@media (min-width: 600px) and (max-width: 959px) { .ayuda .pcard2 { flex: 1; } .ayuda .chivo { height: 240px; } }
+@media (max-width: 599px) { .ayuda { margin-top: 8px; } .ayuda .pcard2 { padding: 20px 18px 8px; } .alist li { font-size: 17px; } .ayuda .chivo { display: none; } }
+
+/* Configuración: one card with sections */
+.page > .cfgcard { margin-top: 18px; display: flex; flex-direction: column; gap: 16px; padding: 28px 32px; }
+.cfgcard form { display: flex; flex-direction: column; gap: 10px; }
+.cfgcard .sec { margin: 0; font-size: 13px; font-weight: 700; color: var(--muted2); letter-spacing: .5px; text-transform: uppercase; }
+.cfgcard .frow { display: flex; gap: 10px; align-items: center; }
+.cfgcard .frow .field { flex: 1; min-width: 0; }
+.cfgcard .b-sec { min-width: 140px; }
+.cfgcard .line { height: 1px; background: #E3E6EE; }
+.crow { display: flex; align-items: center; gap: 12px; min-height: 44px; }
+.crow > b { flex: 1; font-size: 17px; }
+.crow .txt b { font-size: 17px; }
+.crow .email { flex: 1; min-width: 0; font-size: 17px; overflow-wrap: anywhere; }
+@media (max-width: 599px) {
+  .page > .cfgcard { padding: 20px 18px; margin-top: 8px; }
+  .cfgcard .frow, .crow:last-child { flex-wrap: wrap; }
+  .cfgcard .frow .b-sec, .crow:last-child .b-sec { width: 100%; }
+}
 </style>
 </head>
 <body>
@@ -975,14 +1125,15 @@ body.s-read .seg { background: rgba(22,33,58,.07); } body.s-read .seg button { c
   const newId = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
     : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, ch => { const r = Math.random() * 16 | 0; return (ch === 'x' ? r : (r & 3 | 8)).toString(16); });
   // Returns null when saved, or the text key of the message to show
-  async function saveNickname(name) {
+  // extra: other columns saved in the same update (the nickname screen saves the leaderboard switch with it, 8 Nov 2026)
+  async function saveNickname(name, extra = {}) {
     name = name.trim();
     if ([...name].length < 2 || [...name].length > 20) return 'textos.apodoAyuda';
     try {
       const c = client(); if (!c) return 'textos.errorConexion';
-      const { error } = await c.from('students').update({ nickname: name }).eq('id', state.uid).select('nickname').single();
+      const { error } = await c.from('students').update({ nickname: name, ...extra }).eq('id', state.uid).select('nickname').single();
       if (error) return error.code === '23505' ? 'textos.apodoOcupado' : 'textos.errorConexion';
-      state.user = name; return null;
+      state.user = name; if ('leaderboard' in extra) { state.enTabla = !!extra.leaderboard; tablaCache = {}; } return null;
     } catch (e) { return 'textos.errorConexion'; }
   }
   async function signOut() {
@@ -1174,36 +1325,42 @@ body.s-read .seg { background: rgba(22,33,58,.07); } body.s-read .seg button { c
   const backBtn = (id, key) => `<button class="btn btn-ghost back" id="${id}"><span class="ar" aria-hidden="true">‹</span>${esc(t(key))}</button>`;
   const bigCoach = () => '';   // v0.3: see coach()
 
-  // Login (v0.2): two tabs. «Crear cuenta» is addressed to the parent and has a required tick box.
-  const field = (id, key, type, auto) => `<label class="flabel" for="${id}">${esc(t(key))}</label><input class="field" id="${id}" type="${type}" autocomplete="${auto}" autocapitalize="none" spellcheck="false">`;
+  // Login and sign-up (v0.3, 8 Nov 2026): split screen. Left, the brand panel (grade background and landscape, logo,
+  // tagline, support line, the chivo «Saludo»); right, one form card. «Crear cuenta» switches the card to the sign-up
+  // form addressed to the parent (required tick box); «Ya tengo cuenta» switches back. No tabs, no WhatsApp line.
+  // Phones: the brand panel becomes a header strip with the logo and the tagline.
+  const field = (id, key, type, auto, val = '') => `<label class="flabel" for="${id}">${esc(t(key))}</label><input class="field" id="${id}" type="${type}" autocomplete="${auto}" autocapitalize="none" spellcheck="false" value="${esc(val)}">`;
+  const tablaDefault = () => CFG.tablaPorDefecto === 'activado';
   function viewLogin() {
     const crear = state.loginTab === 'crear';
     app.innerHTML = `
-      <section class="screen loginwrap">
-        <div class="sidegrid" style="grid-template-columns:260px minmax(0,1fr)">
-          ${bigCoach('neutral', t('textos.profe.login'), true)}
-          <div class="pcard">
-            ${logo()}
-            <div class="ltabs" role="tablist">
-              <button class="ltab" role="tab" id="tab-entrar" aria-selected="${!crear}">${esc(t('textos.tabEntrar'))}</button>
-              <button class="ltab" role="tab" id="tab-crear" aria-selected="${crear}">${esc(t('textos.tabCrear'))}</button>
-            </div>
+      <section class="lgn">
+        <div class="lbrand">
+          <svg class="bland" aria-hidden="true" viewBox="0 0 660 820" preserveAspectRatio="none"><path class="l1" d="M0 820 C120 690 260 670 380 720 C470 650 580 640 660 670 L660 820 Z"/><path class="l2" d="M0 820 C180 760 360 760 660 780 L660 820 Z"/></svg>
+          ${logo()}
+          <p class="lema">${esc(t('textos.loginLema'))}</p>
+          <p class="apoyo">${esc(t('textos.loginApoyo', { n: CFG.preguntasPorPrueba }))}</p>
+          <img class="chivo" src="img/chivo-saludo.svg" alt="" aria-hidden="true">
+        </div>
+        <div class="lside">
+          <form id="f" class="lcard" novalidate>
             <h1>${esc(t(crear ? 'textos.crearTitulo' : 'textos.loginTitulo'))}</h1>
             ${crear ? `<p class="note">${esc(t('textos.crearNota'))}</p>` : ''}
-            <form id="f" class="stack" novalidate>
-              ${field('email', 'textos.correo', 'email', 'email')}
-              ${field('pass', 'textos.contrasena', 'password', crear ? 'new-password' : 'current-password')}
-              ${crear ? `<label class="check"><input type="checkbox" id="adulto"><span>${esc(t('textos.crearAdulto'))}</span></label>` : ''}
-              <p class="error" id="err" role="alert"></p>
-              <div><button class="btn btn-main" type="submit" id="go">${esc(t(crear ? 'textos.crearBoton' : 'textos.entrarBoton'))}</button></div>
-            </form>
-            ${crear ? '' : `<p class="note">${esc(t('textos.olvideContrasena'))}</p>`}
-          </div>
+            ${field('email', 'textos.correo', 'email', 'email', state.loginEmail || '')}
+            ${field('pass', 'textos.contrasena', 'password', crear ? 'new-password' : 'current-password')}
+            ${crear ? `<label class="check"><input type="checkbox" id="adulto"><span>${esc(t('textos.crearAdulto'))}</span></label>` : ''}
+            ${crear && tablaDefault() ? `<p class="note">${esc(t('textos.crearAvisoTabla'))}</p>` : ''}
+            <p class="error" id="err" role="alert"></p>
+            <button class="b b-pri wide" type="submit" id="go">${esc(t(crear ? 'textos.crearBoton' : 'textos.entrarBoton'))}</button>
+            <div class="divider"></div>
+            ${crear ? `<button class="b-link" type="button" id="swap">${esc(t('textos.entrarDeNuevo'))}</button>`
+              : `<p class="pv">${esc(t('textos.primeraVez'))}</p><button class="b b-sec wide" type="button" id="swap">${esc(t('textos.crearBoton'))}</button>`}
+          </form>
         </div>
       </section>`;
     const $ = id => document.getElementById(id);
-    $('tab-entrar').onclick = () => go('login', { loginTab: 'entrar' });
-    $('tab-crear').onclick = () => go('login', { loginTab: 'crear' });
+    // Switching between the two forms keeps the email already typed
+    $('swap').onclick = () => go('login', { loginTab: crear ? 'entrar' : 'crear', loginEmail: $('email').value });
     const fail = key => { $('err').textContent = t(key, { n: MIN_PASS }); $('go').disabled = false; };
     $('f').addEventListener('submit', async e => {
       e.preventDefault();
@@ -1225,44 +1382,50 @@ body.s-read .seg { background: rgba(22,33,58,.07); } body.s-read .seg button { c
           return fail('textos.errorDatos');
         }
         if (!data || !data.user || !data.session) return fail('textos.errorDatos');
+        state.loginEmail = null;
         await enterAs(data.user);
       } catch (err) { fail('textos.errorConexion'); }
     });
   }
 
-  // Nickname after the first login (v0.2). Addressed to the child.
+  // One on/off switch style (v0.3): leaderboard on the nickname card and in Configuración, sound in Configuración
+  const toggle = (id, on, label) => `<button type="button" class="tg" id="${id}" role="switch" aria-checked="${on}" aria-label="${esc(label)}"><span aria-hidden="true"></span></button>`;
+
+  // Nickname after the first login (v0.3): one card on the grade background, the chivo «Saludo» beside it.
+  // The leaderboard switch starts as set by tablaPorDefecto and is saved together with the nickname.
   function viewApodo() {
+    if (state.apodoTabla == null) state.apodoTabla = tablaDefault();
+    const on = state.apodoTabla;
     app.innerHTML = `
-      <section class="screen loginwrap">
-        <div class="sidegrid" style="grid-template-columns:260px minmax(0,1fr)">
-          ${bigCoach('neutral', t('textos.profe.apodo'))}
-          <div class="pcard">
-            ${logo()}
-            <form id="f" class="stack" novalidate>
-              <label class="flabel" for="nick">${esc(t('textos.apodoEtiqueta'))}</label>
-              <input class="field" id="nick" maxlength="20" autocomplete="nickname" spellcheck="false">
-              <p class="note" id="help">${esc(t('textos.apodoAyuda'))}</p>
-              <p class="error" id="err" role="alert"></p>
-              <div><button class="btn btn-main" type="submit" id="go">${esc(t('textos.apodoBoton'))}</button></div>
-            </form>
-          </div>
-        </div>
+      <section class="apodo">
+        <form id="f" class="ncard" novalidate>
+          <span class="lchip">${logo()}</span>
+          <h1>${esc(t('textos.apodoTitulo'))}</h1>
+          <label class="flabel" for="nick">${esc(t('textos.apodoEtiqueta'))}</label>
+          <input class="field" id="nick" maxlength="20" autocomplete="nickname" spellcheck="false" value="${esc(state.apodoDraft || '')}">
+          <p class="note">${esc(t('textos.apodoAyuda'))}</p>
+          <div class="swbox"><div class="txt"><b>${esc(t('textos.tablaConfig'))}</b><small>${esc(t('textos.apodoTablaNota'))}</small></div>${toggle('swt', on, t('textos.tablaConfig'))}</div>
+          <p class="error" id="err" role="alert"></p>
+          <div class="actions"><button class="b b-pri" type="submit" id="go">${esc(t('textos.apodoBoton'))}</button></div>
+        </form>
+        <img class="chivo" src="img/chivo-saludo.svg" alt="" aria-hidden="true">
       </section>`;
     const $ = id => document.getElementById(id);
+    $('swt').onclick = () => { state.apodoTabla = !state.apodoTabla; state.apodoDraft = $('nick').value; viewApodo(); $('swt').focus(); };
     $('f').addEventListener('submit', async e => {
       e.preventDefault(); $('go').disabled = true; $('err').textContent = '';
-      const key = await saveNickname($('nick').value);
+      const key = await saveNickname($('nick').value, { leaderboard: state.apodoTabla });
       if (key) { $('err').textContent = t(key); $('go').disabled = false; return; }
+      state.apodoTabla = null; state.apodoDraft = null;
       go('home');
     });
   }
 
-  // Leaderboard switch (4 Nov 2026): one tap to join or leave, with a line saying what others see.
-  // label: the switch's own text (Configuración) or null (the page uses «Apareces en la tabla» / «No apareces en la tabla»).
+  // Leaderboard switch of the v0.2 Tabla page (rebuilt in step 4)
   const tablaSwitch = label => {
     const on = !!state.enTabla;
     return `<button class="sw" id="sw" role="switch" aria-checked="${on}"><span class="knob" aria-hidden="true"></span>`
-      + `<span><b>${esc(t(label || (on ? 'textos.tablaDentro' : 'textos.tablaFuera')))}</b><small>${esc(t(on ? 'textos.tablaDentroNota' : 'textos.tablaFueraNota'))}</small></span></button>`
+      + `<span><b>${esc(t(label || 'textos.tablaSwitch'))}</b><small>${esc(t(on ? 'textos.tablaDentroNota' : 'textos.tablaFueraNota'))}</small></span></button>`
       + `<p class="error" id="swerr" role="alert"></p>`;
   };
   function bindSwitch() {
@@ -1275,63 +1438,84 @@ body.s-read .seg { background: rgba(22,33,58,.07); } body.s-read .seg button { c
     };
   }
 
-  // Configuración (v0.2): nickname, sound, leaderboard switch (4 Nov 2026), account email and Cerrar sesión.
-  // Reached from the name in the top bar (4 Nov 2026).
+  // Configuración (v0.3, 8 Nov 2026): from the gear in the rail; no «Volver». One card: nickname, sound switch,
+  // leaderboard switch, grade (read only), account email and «Cerrar sesión».
   function viewConfig() {
-    const on = soundOn();
+    head({ title: t('textos.configuracion'), pill: true });
+    const snd = soundOn(), tab = !!state.enTabla;
     app.innerHTML = `
-      <section class="screen narrow">
-        <div class="navrow">${backBtn('back', 'textos.volver')}</div>
-        <h1>${esc(t('textos.configuracion'))}</h1>
-        <div class="pcard config">
-          <form id="f" class="stack" novalidate>
-            <label class="flabel" for="nick">${esc(t('textos.apodoEtiqueta'))}</label>
-            <input class="field" id="nick" maxlength="20" autocomplete="nickname" spellcheck="false" value="${esc(state.user)}">
-            <p class="note">${esc(t('textos.apodoAyuda'))}</p>
-            <p class="error" id="err" role="alert"></p>
-            <div class="row"><button class="btn btn-main" type="submit" id="go">${esc(t('textos.guardar'))}</button><span class="okmsg" id="ok" role="status"></span></div>
+      <section class="page">
+        <div class="pcard2 cfgcard">
+          <form id="f" novalidate>
+            <label class="sec" for="nick">${esc(t('textos.apodoEtiqueta'))}</label>
+            <div class="frow"><input class="field" id="nick" maxlength="20" autocomplete="nickname" spellcheck="false" value="${esc(state.user)}">
+              <button class="b b-sec" type="submit" id="go">${esc(t('textos.guardar'))}</button></div>
+            <p class="error" id="err" role="alert"></p><p class="okmsg" id="ok" role="status"></p>
           </form>
-          <div class="csec"><h2>${esc(t('textos.sonido'))}</h2>
-            <button class="btn btn-ghost" id="sndbtn" aria-pressed="${on}">${soundIcon(on)}${esc(t(on ? 'textos.sonidoSilenciar' : 'textos.sonidoActivar'))}</button></div>
-          <div class="csec"><h2>${esc(t('textos.tablaTitulo'))}</h2>${tablaSwitch('textos.tablaConfig')}</div>
-          <div class="csec"><h2>${esc(t('textos.cuenta'))}</h2>
-            <p class="email">${esc(state.email)}</p>
-            <button class="btn btn-ghost" id="salir">${esc(t('textos.cerrarSesion'))}</button></div>
+          <div class="line"></div>
+          <div class="crow"><b>${esc(t('textos.sonido'))}</b>${toggle('swsnd', snd, t('textos.sonido'))}</div>
+          <div class="line"></div>
+          <div class="crow"><div class="txt"><b>${esc(t('textos.tablaConfig'))}</b><small>${esc(t(tab ? 'textos.tablaDentroNota' : 'textos.tablaFueraNota'))}</small></div>${toggle('swtab', tab, t('textos.tablaConfig'))}</div>
+          <p class="error" id="swerr" role="alert"></p>
+          <div class="line"></div>
+          <div class="crow"><b>${esc(t('textos.grado'))}</b><span class="gpill">${esc(CFG.grado)}</span></div>
+          <div class="line"></div>
+          <p class="sec">${esc(t('textos.cuenta'))}</p>
+          <div class="crow"><span class="email">${esc(state.email)}</span><button class="b b-sec" id="salir">${esc(t('textos.cerrarSesion'))}</button></div>
         </div>
       </section>`;
     const $ = id => document.getElementById(id);
-    $('back').onclick = () => go('home');
-    $('sndbtn').onclick = () => { toggleSound(); viewConfig(); };
-    bindSwitch();
+    $('swsnd').onclick = () => { toggleSound(); viewConfig(); $('swsnd').focus(); };
+    $('swtab').onclick = async () => {
+      $('swtab').disabled = true;
+      const ok = await setEnTabla(!state.enTabla);
+      if (!ok) { $('swtab').disabled = false; $('swerr').textContent = t('textos.errorConexion'); return; }
+      viewConfig(); $('swtab').focus();
+    };
     $('salir').onclick = signOut;
     $('f').addEventListener('submit', async e => {
       e.preventDefault(); $('go').disabled = true; $('err').textContent = ''; $('ok').textContent = '';
       const key = await saveNickname($('nick').value);
       $('go').disabled = false;
       if (key) { $('err').textContent = t(key); return; }
-      renderTop(); $('ok').textContent = t('textos.guardado');
+      $('ok').textContent = t('textos.guardado');
     });
   }
 
+  // Main page «Pruebas» (v0.3, 8 Nov 2026): practice only. The greeting in the information area, the invitation,
+  // the four Materias as solid tiles, «Todo 5to» across the full width in yellow, «Danos tu opinión» under the tiles,
+  // and the chivo «Saludo» as decoration at the bottom right.
   function viewHome() {
+    head({ title: t('textos.hola', { nombre: state.user }) });
     app.innerHTML = `
-      <section class="screen">
-        <h1>${esc(t('textos.hola', { nombre: state.user }))}</h1>
-        <div class="homegrid">
-        <div class="menu home7">
-          <button class="mt grade" id="c-grado">${mbadge('ALL')}<span class="mrow"><b>${esc(t('textos.tipoGrado'))}</b></span></button>
-          <button class="mt prog" id="c-progreso">${mbadge('PRG')}<span class="mrow"><b>${esc(t('textos.miProgreso'))}</b></span></button>
-          <button class="mt prog" id="c-tabla">${mbadge('TAB')}<span class="mrow"><b>${esc(t('textos.tablaTitulo'))}</b></span></button>
-          ${BANK.materias.map(m => `<button class="mt mat" data-m="${m.id}" style="--mc:${MCOLOR[m.id]}">${mbadge(m.id)}<span class="mrow"><b>${esc(m.name)}</b></span></button>`).join('')}
+      <section class="page hpage">
+        <p class="lead">${esc(t('textos.invitacion', { n: CFG.preguntasPorPrueba }))}</p>
+        <div class="hgrid">
+          <div class="htiles">
+            ${BANK.materias.map(m => `<button class="mtile m-${m.id}" data-m="${m.id}">${micon(m.id)}<span>${esc(m.name)}</span></button>`).join('')}
+            <button class="gtile" id="c-grado">${micon('ALL')}<span>${esc(t('textos.tipoGrado'))}</span></button>
+          </div>
+          ${CFG.enlaceOpinion ? `<a class="b b-sec on-dark" href="${esc(CFG.enlaceOpinion)}" target="_blank" rel="noopener">${esc(t('textos.opinion'))}</a>` : ''}
         </div>
-        
-        </div>
-        ${CFG.enlaceOpinion ? `<div class="row homelinks"><a class="btn btn-ghost opinion" href="${esc(CFG.enlaceOpinion)}" target="_blank" rel="noopener">${micon('LEN')}${esc(t('textos.opinion'))}</a></div>` : ''}
+        <img class="deco" src="img/chivo-saludo.svg" alt="" aria-hidden="true">
       </section>`;
     document.getElementById('c-grado').onclick = () => go('intro', { pick: { tipo: 'grado' } });
     app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => go('materia', { materia: b.dataset.m }));
-    document.getElementById('c-progreso').onclick = () => go('progreso');
-    document.getElementById('c-tabla').onclick = () => go('tabla');
+  }
+
+  // Ayuda (new, 8 Nov 2026): one card «Cómo funciona aPrueba», five short lines with an icon each; the chivo «Pensando».
+  function viewAyuda() {
+    head({ title: t('textos.ayudaTitulo'), pill: true });
+    const vars = { n: CFG.preguntasPorPrueba, p: CFG.puntosPorCorrecta };
+    const lines = [['ayuda1', 'CIE'], ['ayuda2', 'AYU'], ['ayuda3', 'TAB'], ['ayuda4', 'PRO'], ['ayuda5', 'TAB']];
+    app.innerHTML = `
+      <section class="page ayuda">
+        <div class="pcard2">
+          <h2>${esc(t('textos.ayudaSubtitulo'))}</h2>
+          <ul class="alist">${lines.map(([k, ic]) => `<li><span class="aic">${micon(ic)}</span><span>${esc(t('textos.' + k, vars))}</span></li>`).join('')}</ul>
+        </div>
+        <img class="chivo" src="img/chivo-pensando.svg" alt="" aria-hidden="true">
+      </section>`;
   }
 
   // Tema slots 1..temasPorMateria: the included Temas are active, the others show as "Tema N" (not active yet)
@@ -1684,7 +1868,7 @@ body.s-read .seg { background: rgba(22,33,58,.07); } body.s-read .seg button { c
     bindSwitch();
   }
 
-  const VIEWS = { tabla: viewTabla, login: viewLogin, apodo: viewApodo, config: viewConfig, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, progreso: viewProgreso };
+  const VIEWS = { tabla: viewTabla, login: viewLogin, apodo: viewApodo, config: viewConfig, ayuda: viewAyuda, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, progreso: viewProgreso };
   function render() {
     if (!state.uid) state.view = 'login';                                  // not signed in
     else if (!state.user && state.view !== 'login') state.view = 'apodo';  // signed in, no nickname yet
@@ -1697,6 +1881,7 @@ body.s-read .seg { background: rgba(22,33,58,.07); } body.s-read .seg button { c
     const deep = v === 'materia' ? state.materia : v === 'intro' && state.pick ? state.pick.mid || null
       : v === 'resultado' && state.resultado ? state.resultado.materia || null
       : v === 'progreso' && state.mapMateria && state.mapMateria !== 'ALL' ? state.mapMateria : null;
+    document.body.classList.toggle('s-login', v === 'login');   // full-bleed split screen
     document.body.classList.toggle('s-read', !!read);
     document.body.classList.toggle('tinted', !!(read || deep));
     const tone = read && read !== 'ALL' ? read : deep;

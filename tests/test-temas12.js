@@ -9,7 +9,7 @@ async function page(b, w, h, dark) {
   await p.route('**/cdn.jsdelivr.net/**', r => r.fulfill({ contentType: 'application/javascript', body: MOCK }));
   await p.route('**/fonts.googleapis.com/**', r => r.abort()); await p.route('**/fonts.gstatic.com/**', r => r.abort());
   await p.goto(URL, { waitUntil: 'networkidle' });
-  await p.click('#tab-crear'); await p.fill('#email', 'a@x.com'); await p.fill('#pass', 'clave123'); await p.check('#adulto'); await p.click('#go');
+  await p.click('#swap'); await p.fill('#email', 'a@x.com'); await p.fill('#pass', 'clave123'); await p.check('#adulto'); await p.click('#go');
   await p.waitForTimeout(150); await p.fill('#nick', 'Ana'); await p.click('#go'); await p.waitForTimeout(150);
   return p;
 }
@@ -56,7 +56,7 @@ async function play(p) { let n = 0; while (await p.locator('.qscreen .opt').coun
       await p.click('[data-m="MAT"]'); await p.click('#all'); await p.locator('.btn-main').first().click();
       ok('Todo Matemáticas Prueba has 10 questions', (await play(p)) === 10);
     }
-    await p.click('#c-progreso').catch(async () => { await p.goto(URL); });
+    await p.click('[data-rail="progreso"]').catch(async () => { await p.goto(URL); });
     const over = await p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     ok(`${tag} map: no horizontal scroll`, !over);
     ok(`${tag} no page errors`, p.errs.length === 0); if (p.errs.length) console.log(p.errs.slice(0, 3));
