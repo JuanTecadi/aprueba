@@ -12,6 +12,7 @@
   "progresoSemanas": 8,
   "inicioSemana": "lunes",
   "zonaHoraria": "America/Caracas",
+  "tablaPorDefecto": "activado",
   "temasIncluidos": [
     "T01",
     "T02",

@@ -51,7 +51,7 @@ def which(v):
 
 
 def onoff(v):
-    v = str(v or '').strip().lower()
+    v = str(v or '').strip().strip('*').strip().lower()   # the document may show the value in bold
     if v not in ('activado', 'desactivado'):
         raise ValueError('must be Activado or Desactivado')
     return v
@@ -118,6 +118,8 @@ RULES = {
     'progresoSemanas': whole(2, 26),
     'inicioSemana': weekday,
     'zonaHoraria': timezone,
+    # Leaderboard default for new accounts (8 November 2026, v0.3)
+    'tablaPorDefecto': onoff,
 }
 
 
@@ -172,7 +174,7 @@ def main(src, questions, out='ajustes.json'):
     if found.get('mensajeAltoDesde', 1) <= found.get('mensajeMedioDesde', 0):
         errors.append('End message "high" must start above "medium"')
     if found.get('mascotaFelizDesde', 1) < found.get('mensajeAltoDesde', 0):
-        errors.append('Profe Ariel happy from must not be lower than End message "high"')
+        errors.append('Mascot celebrates from must not be lower than End message "high"')
     limits = [found.get(f'nivel{i}Desde') for i in range(1, 6)]
     if None not in limits and any(b <= a for a, b in zip(limits, limits[1:])):
         errors.append('Level limits must go up: level 1 < level 2 < level 3 < level 4 < level 5')

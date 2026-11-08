@@ -11,59 +11,58 @@ import re
 import sys
 
 # Keys the app needs, with the placeholders each one may use.
+# v0.3 interface revamp (texts of 8 November 2026): Profe Ariel no longer speaks.
 FIXED = {
     "marca": [], "cargando": [], "errorCarga": [], "errorConexion": [],
-    "puntosTotales": ["n"], "sonidoActivar": [], "sonidoSilenciar": [],
-    # Top bar (4 Nov 2026): name and gear open Configuración; the points chip opens the Tabla de posiciones
-    "abrirConfiguracion": [], "verTabla": ["p"],
-    "volver": [], "inicio": [],
-    # Login and sign-up (v0.2, 30 Oct 2026)
-    "loginTitulo": [], "tabEntrar": [], "tabCrear": [], "correo": [], "contrasena": [],
-    "entrarBoton": [], "olvideContrasena": [], "crearTitulo": [], "crearNota": [],
-    "crearAdulto": [], "crearBoton": [], "errorDatos": [], "errorExiste": [],
+    # Rail and information area (v0.3)
+    "railPruebas": [], "railProgreso": [], "railTabla": [], "railAyuda": [], "railConfiguracion": [],
+    "puntosTotales": ["n"], "verTabla": ["p"], "sonidoActivar": [], "sonidoSilenciar": [], "volver": [],
+    # Login and sign-up (split screen, v0.3)
+    "loginLema": [], "loginApoyo": ["n"], "loginTitulo": [], "correo": [], "contrasena": [],
+    "entrarBoton": [], "primeraVez": [], "crearBoton": [], "crearTitulo": [], "crearNota": [],
+    "crearAdulto": [], "crearAvisoTabla": [], "entrarDeNuevo": [], "errorDatos": [], "errorExiste": [],
     "errorContrasenaCorta": ["n"], "errorAdulto": [],
-    # Nickname and Configuración (v0.2)
-    "apodoEtiqueta": [], "apodoAyuda": [], "apodoBoton": [], "apodoOcupado": [],
-    "configuracion": [], "guardar": [], "guardado": [], "sonido": [], "cuenta": [], "cerrarSesion": [],
-    "hola": ["nombre"], "tipoGrado": ["grado"],
-    "miProgreso": [], "tablaTitulo": [], "opinion": [], "tablaConfig": [],
-    "materiaSub": [], "todosLosTemas": ["materia"],
-    "temaN": ["n"], "proximamente": [],
+    # Nickname (first login)
+    "apodoTitulo": [], "apodoEtiqueta": [], "apodoAyuda": [], "apodoTablaNota": [], "apodoBoton": [],
+    "apodoOcupado": [],
+    # Main page «Pruebas» and Materia screen
+    "hola": ["nombre"], "invitacion": ["n"], "tipoGrado": ["grado"], "opinion": [],
+    "materiaSub": [], "todosLosTemas": ["materia"], "temaN": ["n"],
+    # Prueba intro (game card)
     "introGrado": ["grado"], "introGradoSub": [], "introMateria": ["materia"],
     "introMateriaSub": ["materia"], "introTema": ["tema"], "introTemaSub": ["materia", "n"],
-    "introDatos": ["n", "p"], "empezar": [],
-    "preguntaDe": ["i", "n"], "esperaRespuesta": [], "correcto": [], "incorrecto": [],
-    "masPuntos": ["p"], "explicacion": [], "siguiente": [], "verResultado": [],
-    "votoArriba": [], "votoAbajo": [], "salir": [], "salirPregunta": [],
-    "salirSi": [], "salirNo": [],
+    "introPreguntas": ["n"], "introPuntos": ["p"], "introInstruccion": [], "empezar": [],
+    # Question
+    "preguntaDe": ["i", "n"], "correcto": [], "incorrecto": [], "masPuntos": ["p"], "explicacion": [],
+    "siguiente": [], "verResultado": [], "votoArriba": [], "votoAbajo": [], "salir": [],
+    "salirPregunta": [], "salirSi": [], "salirNo": [],
+    # End of Prueba (back of the card) and «Mis respuestas»
     "resultadoTitulo": [], "resultadoCorrectas": ["c", "n"], "resultadoCorrectasSub": [],
-    "resultadoPuntos": ["p"], "resumenTitulo": [],
-    "otraPrueba": [], "verRespuestas": [], "ocultarRespuestas": [], "tusRespuestas": [],
-    "tuRespuesta": [], "respuestaCorrecta": [],
-    "mapaTodoTab": ["grado"], "mapaTodoTitulo": ["grado"], "mapaTitulo": ["materia"],
-    "mapaInactivos": [],
-    # Tabla de posiciones and «Tu progreso» (4 Nov 2026)
-    "tablaSemana": [], "tablaMes": [], "tablaSiempre": [], "tablaDentro": [], "tablaDentroNota": [],
-    "tablaFuera": [], "tablaFueraNota": [], "tablaTu": ["apodo"], "tablaReinicio": [], "tablaVacia": [],
-    "progresoTitulo": [], "progresoEstaSemana": [], "progresoSemanaPasada": [], "progresoSemanaActual": [],
-    "progresoNota": [],
-    "profe.nombre": [], "profe.login": [], "profe.inicio": [], "profe.apodo": [], "profe.nivel5": ["tema"],
-    "profe.mapa": [], "profe.mapaVacio": [],
+    "resultadoPuntos": ["p"], "nivel5": ["tema"], "otraPrueba": [], "misRespuestas": [],
+    "respuestaCorrecta": [],
+    # Progreso (maps)
+    "mapaTodoTab": ["grado"], "mapaTodoTitulo": [], "mapaTitulo": ["materia"], "mapaAunNo": [],
+    "mapaPorPracticar": [], "mapaDominado": [], "mapaNota": ["p"],
+    # Tabla: «Posiciones» and «Mi práctica»
+    "tablaTitulo": [], "tablaPosiciones": [], "tablaPractica": [], "tablaSemana": [], "tablaMes": [],
+    "tablaSiempre": [], "tablaSwitch": [], "tablaDentroNota": [], "tablaFueraNota": [],
+    "tablaTu": ["apodo"], "tablaReinicio": [], "tablaVacia": [],
+    "progresoEstaSemana": [], "progresoSemanaPasada": [], "progresoTitulo": [],
+    "progresoSemanaActual": [], "progresoPruebas": ["n"], "progresoNota": [],
+    # Configuración
+    "configuracion": [], "guardar": [], "guardado": [], "sonido": [], "tablaConfig": [], "grado": [],
+    "cuenta": [], "cerrarSesion": [],
+    # Ayuda (new in v0.3)
+    "ayudaTitulo": [], "ayudaSubtitulo": [], "ayuda1": ["n"], "ayuda2": [], "ayuda3": ["p"],
+    "ayuda4": [], "ayuda5": [],
 }
-# Rotating groups: allowed moods and maximum length (characters).
+# Rotating groups: allowed moods (None = the app's voice, no mood column) and maximum length.
+# v0.3: only the end-of-Prueba message remains, up to 120 characters.
 ROTATING = {
-    "profe.intro": ({"neutral", "reto"}, 90),
-    "profe.final.feliz": ({"feliz"}, 90),
-    "profe.final.alto": ({"neutral"}, 90),
-    "profe.final.medio": ({"neutral"}, 90),
-    "profe.final.bajo": ({"reto"}, 90),
-    "profe.pregunta.correcta": ({"feliz"}, 40),
-    "profe.pregunta.incorrecta": ({"neutral"}, 40),
-    # «Tu resumen» at the end of a Prueba: the app's voice (no mood), by score band
-    "resumen.feliz": (None, 250),
-    "resumen.alto": (None, 250),
-    "resumen.medio": (None, 250),
-    "resumen.bajo": (None, 250),
+    "resumen.feliz": (None, 120),
+    "resumen.alto": (None, 120),
+    "resumen.medio": (None, 120),
+    "resumen.bajo": (None, 120),
 }
 MOODS = {"neutral", "reto", "feliz"}
 
@@ -77,6 +76,8 @@ def parse(md):
     current = None  # rotating group being read
     for raw in md.splitlines():
         line = raw.strip()
+        if re.match(r"^## Parked", line):   # Profe Ariel's parked lines: not used by the app
+            break
         m = re.match(r"^#{2,3} .*\(`([\w.]+)`\)\s*$", line)
         if m:
             current = m.group(1)

@@ -1,226 +1,62 @@
 {
   "textos": {
-    "profe": {
-      "nombre": "Profe Ariel",
-      "inicio": "¿Qué quieres practicar hoy?",
-      "login": "Aprende mientras practicas. Más pruebas, más oportunidades de aprender.",
-      "apodo": "Antes de empezar: ¿cómo quieres que te llame?",
-      "nivel5": "Dominaste {tema}. Bien hecho.",
-      "mapa": "Este es tu mapa. Los temas más claros son los que más necesitan práctica.",
-      "mapaVacio": "Tu mapa todavía está vacío. Haz tu primera prueba y empieza a llenarlo.",
-      "intro": [
-        {
-          "animo": "neutral",
-          "texto": "Lee con calma. Cada pregunta es una oportunidad de aprender."
-        },
-        {
-          "animo": "reto",
-          "texto": "Concéntrate y dale con todo."
-        },
-        {
-          "animo": "neutral",
-          "texto": "Antes de responder, lee todas las opciones."
-        },
-        {
-          "animo": "reto",
-          "texto": "Hoy vamos por una buena. ¡Dale!"
-        },
-        {
-          "animo": "neutral",
-          "texto": "Si te equivocas, lee la explicación. Así también se aprende."
-        }
-      ],
-      "final": {
-        "feliz": [
-          {
-            "animo": "feliz",
-            "texto": "Así se practica. Bien hecho."
-          },
-          {
-            "animo": "feliz",
-            "texto": "Concentración y constancia. Eso se nota."
-          },
-          {
-            "animo": "feliz",
-            "texto": "Bien hecho. Ese es el nivel."
-          },
-          {
-            "animo": "feliz",
-            "texto": "Eso estuvo muy bien. Sigue así."
-          },
-          {
-            "animo": "feliz",
-            "texto": "Buen trabajo. Te lo ganaste."
-          }
-        ],
-        "alto": [
-          {
-            "animo": "neutral",
-            "texto": "Buen trabajo. La próxima vamos por todas."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Revisa lo que fallaste y vamos por otra."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Bien. Con un poco más de calma, llegas arriba."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Vas bien. Una más y lo mejoras."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Buen nivel. Ahora a pulir los detalles."
-          }
-        ],
-        "medio": [
-          {
-            "animo": "neutral",
-            "texto": "Vas por buen camino. Lee las explicaciones y vamos por otra."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Hay base. Con práctica, esto sube."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Nada mal. Mira las explicaciones: ahí está la clave."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Paso a paso. Cada prueba suma."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Repasa las que no salieron y repite."
-          }
-        ],
-        "bajo": [
-          {
-            "animo": "reto",
-            "texto": "Tú das más que esto. Revisa las explicaciones y otra."
-          },
-          {
-            "animo": "reto",
-            "texto": "Hoy costó. Lee las explicaciones y repite."
-          },
-          {
-            "animo": "reto",
-            "texto": "No pasa nada. Practicar es justo esto. Otra."
-          },
-          {
-            "animo": "reto",
-            "texto": "Esto se mejora practicando. Dale con otra."
-          },
-          {
-            "animo": "reto",
-            "texto": "Arrancamos. La próxima va mejor, ya verás."
-          }
-        ]
-      },
-      "pregunta": {
-        "correcta": [
-          {
-            "animo": "feliz",
-            "texto": "¡Eso es!"
-          },
-          {
-            "animo": "feliz",
-            "texto": "Bien pensado."
-          },
-          {
-            "animo": "feliz",
-            "texto": "Así se hace."
-          },
-          {
-            "animo": "feliz",
-            "texto": "Correcto. Sigue así."
-          },
-          {
-            "animo": "feliz",
-            "texto": "¡Chévere!"
-          }
-        ],
-        "incorrecta": [
-          {
-            "animo": "neutral",
-            "texto": "Pasa. Mira la explicación."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Ahora ya lo sabes. Lee por qué."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Con calma: lee la explicación."
-          },
-          {
-            "animo": "neutral",
-            "texto": "No era esa. La explicación te ayuda."
-          },
-          {
-            "animo": "neutral",
-            "texto": "Equivocarse también es practicar."
-          }
-        ]
-      }
-    },
     "marca": "aPrueba",
     "cargando": "Cargando preguntas…",
     "errorCarga": "No se pudieron cargar las preguntas. Revisa tu conexión y vuelve a abrir la página.",
     "errorConexion": "No hay conexión. Revisa tu internet e inténtalo de nuevo.",
+    "railPruebas": "Pruebas",
+    "railProgreso": "Progreso",
+    "railTabla": "Tabla",
+    "railAyuda": "Ayuda",
+    "railConfiguracion": "Configuración",
     "puntosTotales": "{n} puntos",
+    "verTabla": "{p} puntos. Ver la tabla de posiciones",
     "sonidoActivar": "Activar el sonido",
     "sonidoSilenciar": "Silenciar el sonido",
     "volver": "Volver",
-    "inicio": "Inicio",
-    "loginTitulo": "¡Te damos la bienvenida a aPrueba!",
-    "tabEntrar": "Entrar",
-    "tabCrear": "Crear cuenta",
+    "loginLema": "Practica y aprende.",
+    "loginApoyo": "Pruebas cortas de {n} preguntas, con la explicación de cada respuesta.",
+    "loginTitulo": "¡Qué bueno verte!",
     "correo": "Correo electrónico",
     "contrasena": "Contraseña",
     "entrarBoton": "Entrar",
-    "olvideContrasena": "¿Olvidaste tu contraseña? Escríbenos por WhatsApp.",
+    "primeraVez": "¿Primera vez?",
+    "crearBoton": "Crear cuenta",
     "crearTitulo": "Crea la cuenta de tu hijo o hija",
     "crearNota": "Esta parte la hace una persona adulta.",
     "crearAdulto": "Soy madre, padre o representante y creo esta cuenta para mi hijo o hija.",
-    "crearBoton": "Crear cuenta",
+    "crearAvisoTabla": "Tu hijo o hija aparecerá en la tabla con su apodo. Puede salir cuando quiera.",
+    "entrarDeNuevo": "Ya tengo cuenta",
     "errorDatos": "El correo o la contraseña no coinciden.",
     "errorExiste": "Ya existe una cuenta con ese correo. Entra con tu contraseña.",
     "errorContrasenaCorta": "La contraseña debe tener al menos {n} caracteres.",
     "errorAdulto": "Marca la casilla para continuar.",
+    "apodoTitulo": "¿Cómo quieres que te llamemos?",
     "apodoEtiqueta": "Tu apodo",
-    "apodoAyuda": "Entre 2 y 20 caracteres. Así aparecerás en aPrueba.",
+    "apodoAyuda": "Entre 2 y 20 caracteres. No uses tu nombre completo.",
+    "apodoTablaNota": "Los demás verán tu apodo y tus puntos. Puedes salir cuando quieras.",
     "apodoBoton": "Listo",
     "apodoOcupado": "Ese apodo ya lo tiene otra persona. Prueba con otro.",
     "hola": "¡Hola, {nombre}!",
+    "invitacion": "Elige qué practicar. Son {n} preguntas y aprendes con cada respuesta.",
     "tipoGrado": "Todo {grado}",
-    "miProgreso": "Mi progreso",
     "opinion": "Danos tu opinión",
-    "configuracion": "Configuración",
-    "materiaSub": "Elige un tema o practica todos",
+    "materiaSub": "Elige un tema o practica todos.",
     "todosLosTemas": "Todo {materia}",
     "temaN": "Tema {n}",
-    "proximamente": "Próximamente",
-    "guardar": "Guardar",
-    "guardado": "Listo, guardado.",
-    "sonido": "Sonido",
-    "cuenta": "Cuenta",
-    "cerrarSesion": "Cerrar sesión",
     "introGrado": "Todo {grado}",
     "introGradoSub": "Ciencias, Lengua, Matemáticas y Sociales",
     "introMateria": "Todo {materia}",
     "introMateriaSub": "Prueba de {materia}",
     "introTema": "{tema}",
     "introTemaSub": "{materia} · Tema {n}",
-    "introDatos": "{n} preguntas · +{p} puntos por respuesta correcta",
+    "introPreguntas": "{n} preguntas",
+    "introPuntos": "+{p} por acierto",
+    "introInstruccion": "Responde con calma. Después de cada pregunta verás la explicación.",
     "empezar": "¡Empezar!",
     "preguntaDe": "Pregunta {i} de {n}",
-    "esperaRespuesta": "Elige una respuesta. Aquí verás la explicación.",
     "correcto": "¡Correcto!",
-    "incorrecto": "La respuesta correcta está marcada en verde.",
+    "incorrecto": "No es esa. La correcta está en verde.",
     "masPuntos": "+{p}",
     "explicacion": "Explicación",
     "siguiente": "Continuar",
@@ -235,105 +71,119 @@
     "resultadoCorrectas": "{c} de {n}",
     "resultadoCorrectasSub": "respuestas correctas",
     "resultadoPuntos": "+{p} puntos",
-    "resumenTitulo": "Tu resumen",
+    "nivel5": "Dominaste {tema}. Bien hecho.",
     "otraPrueba": "Otra prueba",
-    "verRespuestas": "Ver mis respuestas",
-    "ocultarRespuestas": "Ocultar mis respuestas",
-    "tusRespuestas": "Tus respuestas",
-    "mapaTodoTab": "Todo {grado}",
-    "mapaTodoTitulo": "Mapa de conocimientos · {grado} grado",
-    "mapaTitulo": "Mapa de conocimientos · {materia}",
-    "mapaInactivos": "Temas en gris: próximamente",
-    "resumen": {
-      "feliz": [
-        {
-          "texto": "Respondiste casi todo bien. Para que no se te olvide, vuelve a practicar estos temas en unos días: repasar con tiempo de por medio ayuda a recordar mejor."
-        },
-        {
-          "texto": "Muy buen resultado. Un reto para la próxima: prueba con otra materia o con todos los temas juntos. Mezclar temas también ayuda a aprender."
-        },
-        {
-          "texto": "Lo que practicaste hoy ya lo tienes bastante claro. Si alguna pregunta te costó, piensa por qué antes de seguir."
-        },
-        {
-          "texto": "Excelente práctica. Para seguir avanzando, busca en tu mapa un tema que todavía esté poco lleno y dale una prueba."
-        },
-        {
-          "texto": "Gran trabajo. Lo que sabes bien se mantiene si lo practicas de vez en cuando. Vuelve a estos temas la semana que viene."
-        }
-      ],
-      "alto": [
-        {
-          "texto": "Buen resultado. Las preguntas que fallaste son las que más te enseñan: piensa en qué te confundiste y vuelve a intentarlo con otra prueba."
-        },
-        {
-          "texto": "Estás muy cerca de dominar estos temas. Otra prueba ahora y otra en unos días te ayudarán a afianzar lo que sabes."
-        },
-        {
-          "texto": "Buen trabajo. Antes de responder, lee todas las opciones: muchas veces la diferencia está en un detalle."
-        },
-        {
-          "texto": "Vas muy bien. Para subir un poco más, practica este mismo tema otra vez; las preguntas cambian en cada prueba."
-        },
-        {
-          "texto": "Buen nivel. Cuando dudes entre dos opciones, piensa por qué una de ellas no puede ser: así se aprende a razonar."
-        }
-      ],
-      "medio": [
-        {
-          "texto": "Vas por buen camino. En la próxima prueba, lee con calma cada explicación, sobre todo cuando falles: ahí está lo que te falta."
-        },
-        {
-          "texto": "Ya tienes una base. Practicar un poco cada día rinde más que mucho de una sola vez. Vuelve mañana por otra prueba."
-        },
-        {
-          "texto": "Buen avance. Elige un solo tema y haz varias pruebas seguidas; enfocarte en uno a la vez ayuda a afianzarlo."
-        },
-        {
-          "texto": "Cada prueba suma. Fíjate en tu mapa qué temas están menos llenos y empieza por ahí la próxima vez."
-        },
-        {
-          "texto": "Más de la mitad, bien. Si una pregunta te cuesta, léela otra vez despacio antes de elegir: a veces la clave está en una palabra."
-        }
-      ],
-      "bajo": [
-        {
-          "texto": "Este tema todavía es nuevo para ti, y eso está bien: para eso se practica. Lee cada explicación con calma y vuelve a intentarlo."
-        },
-        {
-          "texto": "Equivocarse es parte de aprender. En la próxima prueba, toma tu tiempo con cada pregunta y lee la explicación después de responder."
-        },
-        {
-          "texto": "No te preocupes por el resultado de hoy. Lo importante es seguir practicando: cada prueba te deja algo nuevo."
-        },
-        {
-          "texto": "Empieza por un solo tema y practícalo varias veces. Poco a poco las preguntas se vuelven más fáciles."
-        },
-        {
-          "texto": "Hoy costó, y es normal. Lee con calma las explicaciones en la próxima prueba y verás cómo mejoras."
-        }
-      ]
-    },
-    "abrirConfiguracion": "Abrir configuración",
-    "verTabla": "{p} puntos. Ver la tabla de posiciones",
-    "tablaTitulo": "Tabla de posiciones",
-    "tablaConfig": "Aparecer en la tabla de posiciones",
-    "tuRespuesta": "Tu respuesta",
+    "misRespuestas": "Mis respuestas",
     "respuestaCorrecta": "Respuesta correcta",
+    "mapaTodoTab": "Todo {grado}",
+    "mapaTodoTitulo": "Mapa de conocimientos",
+    "mapaTitulo": "Mapa · {materia}",
+    "mapaAunNo": "Aún no",
+    "mapaPorPracticar": "Por practicar",
+    "mapaDominado": "Dominado",
+    "mapaNota": "Cada barra: preguntas que ya respondiste bien en ese tema. Desde {p} %: Dominado.",
+    "tablaTitulo": "Tabla",
+    "tablaPosiciones": "Posiciones",
+    "tablaPractica": "Mi práctica",
     "tablaSemana": "Esta semana",
     "tablaMes": "Este mes",
     "tablaSiempre": "Siempre",
-    "tablaDentro": "Apareces en la tabla",
+    "tablaSwitch": "Aparecer en la tabla",
     "tablaDentroNota": "Los demás ven tu apodo y tus puntos. Puedes salir cuando quieras.",
-    "tablaFuera": "No apareces en la tabla",
     "tablaFueraNota": "Nadie ve tus puntos. Actívalo si quieres aparecer con tu apodo.",
     "tablaTu": "{apodo} (tú)",
     "tablaReinicio": "La tabla empieza de cero cada lunes.",
     "tablaVacia": "Todavía nadie aparece aquí. ¡Puedes ser la primera persona!",
-    "progresoTitulo": "Tu progreso",
     "progresoEstaSemana": "puntos esta semana",
     "progresoSemanaPasada": "la semana pasada",
+    "progresoTitulo": "Puntos por semana",
     "progresoSemanaActual": "Esta",
-    "progresoNota": "Puntos por semana. Debajo, las pruebas que hiciste. Solo tú ves esto."
+    "progresoPruebas": "{n} pruebas",
+    "progresoNota": "Solo tú ves esta página.",
+    "configuracion": "Configuración",
+    "guardar": "Guardar",
+    "guardado": "Listo, guardado.",
+    "sonido": "Sonido",
+    "tablaConfig": "Aparecer en la tabla de posiciones",
+    "grado": "Grado",
+    "cuenta": "Cuenta",
+    "cerrarSesion": "Cerrar sesión",
+    "ayudaTitulo": "Ayuda",
+    "ayudaSubtitulo": "Cómo funciona aPrueba",
+    "ayuda1": "Elige una materia o un tema y responde {n} preguntas.",
+    "ayuda2": "Después de cada respuesta verás la explicación. Ahí está lo que aprendes.",
+    "ayuda3": "Cada respuesta correcta suma {p} puntos.",
+    "ayuda4": "En Progreso ves cuánto dominas cada tema.",
+    "ayuda5": "En Tabla puedes compararte con otros, si quieres aparecer.",
+    "resumen": {
+      "feliz": [
+        {
+          "texto": "Muy bien. Prueba ahora un tema nuevo para seguir sumando."
+        },
+        {
+          "texto": "Bien hecho. Repite este tema en unos días para que no se te olvide."
+        },
+        {
+          "texto": "Así se practica. Mezcla materias en tu próxima prueba."
+        },
+        {
+          "texto": "Buen trabajo. Lee las explicaciones aunque hayas acertado: siempre traen algo nuevo."
+        },
+        {
+          "texto": "Lo lograste. Vuelve en unos días y comprueba que lo sigues sabiendo."
+        }
+      ],
+      "alto": [
+        {
+          "texto": "Casi todas. Revisa en Mis respuestas las que fallaste."
+        },
+        {
+          "texto": "Muy cerca. Lee la explicación de cada error y repite el tema."
+        },
+        {
+          "texto": "Buen resultado. Una prueba más de este tema y vas por todas."
+        },
+        {
+          "texto": "Vas muy bien. Fíjate en qué te confundió y vuelve a intentarlo."
+        },
+        {
+          "texto": "Bien. Practica este tema otro día para afianzarlo."
+        }
+      ],
+      "medio": [
+        {
+          "texto": "Vas bien. Lee las explicaciones de las que fallaste y repite."
+        },
+        {
+          "texto": "Buen avance. Repite este tema hasta que las preguntas te resulten fáciles."
+        },
+        {
+          "texto": "Paso a paso. Revisa Mis respuestas antes de la próxima prueba."
+        },
+        {
+          "texto": "Cada prueba suma. Vuelve a este tema mañana y compara."
+        },
+        {
+          "texto": "Ya tienes la base. Lee con calma cada pregunta y cada explicación."
+        }
+      ],
+      "bajo": [
+        {
+          "texto": "Este tema pide más práctica. Lee las explicaciones y vuelve a intentarlo."
+        },
+        {
+          "texto": "Hoy costó. Empieza por un solo tema y practícalo varias veces."
+        },
+        {
+          "texto": "Equivocarse también enseña. Revisa Mis respuestas: ahí está la clave."
+        },
+        {
+          "texto": "Sigue practicando. Cada vez que repites un tema, las preguntas se vuelven más fáciles."
+        },
+        {
+          "texto": "No pasa nada. Lee cada explicación con calma y haz otra prueba."
+        }
+      ]
+    }
   }
 }
