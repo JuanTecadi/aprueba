@@ -768,7 +768,8 @@ body.s-read .info .snd, body.s-read .info .pts { background: rgba(22,33,58,.07);
 .b-pri:active { transform: translateY(1px); }
 .b-pri:disabled { background: #E3E7EF; color: var(--muted2); cursor: default; }
 .b-sec { background: #fff; color: var(--ink); border: 1.5px solid var(--sec-line); }
-.b-sec.on-dark { background: transparent; color: var(--on-dark); border-color: rgba(255,255,255,.4); height: 48px; min-width: 0; padding: 0 20px; font-size: 15px; }
+.b-sec.on-dark { background: transparent; color: var(--on-dark); border-color: rgba(255,255,255,.4); height: 48px; min-width: 0; padding: 0 20px; font-size: 15px; position: relative; }
+.b-sec.on-dark::before { content: ""; position: absolute; inset: -5px 0; }   /* step 5: 56 px touch area, same look */
 .actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
 .b-back { position: relative; display: inline-flex; align-items: center; gap: 4px; height: 44px; padding: 0 12px 0 4px; border: 0; background: none;
   color: inherit; font-weight: 700; font-size: 16px; white-space: nowrap; }
@@ -799,7 +800,7 @@ body.s-read .seg { background: rgba(22,33,58,.07); } body.s-read .seg button { c
 
 /* ===================== v0.3 step 2 (8 Nov 2026): login, nickname, Pruebas, Ayuda, Configuración ===================== */
 .flabel { font-size: 15px; font-weight: 700; color: var(--ink); }
-.field { height: 52px; min-height: 0; border: 1.5px solid var(--sec-line); border-radius: 12px; padding: 0 14px; font-size: 17px; font-family: inherit; color: var(--ink); background: #fff; width: 100%; box-sizing: border-box; }
+.field { height: 56px; min-height: 0; border: 1.5px solid var(--sec-line); border-radius: 12px; padding: 0 14px; font-size: 17px; font-family: inherit; color: var(--ink); background: #fff; width: 100%; box-sizing: border-box; }
 .field:focus { outline: 3px solid rgba(46,74,154,.35); outline-offset: 1px; border-color: var(--g-pill); }
 .b.wide { width: 100%; min-width: 0; }
 .b-link { position: relative; align-self: center; height: 44px; border: 0; background: none; color: var(--ink); font-weight: 700; font-size: 16px; text-decoration: underline; text-underline-offset: 3px; padding: 0 12px; }
@@ -1049,7 +1050,7 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
 .qband .qloc { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .qband .rate3 { display: flex; gap: 8px; }
 .qband .vote3 { position: relative; width: 44px; height: 40px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,.5); background: transparent; color: #fff; display: flex; align-items: center; justify-content: center; padding: 0; }
-.qband .vote3::before { content: ""; position: absolute; inset: -8px -4px; }
+.qband .vote3::before { content: ""; position: absolute; inset: -8px -6px; }   /* step 5: 56 × 56 touch area */
 .qband .vote3 svg { width: 18px; height: 18px; }
 .qband .vote3[aria-pressed="true"] { background: #fff; color: var(--bc); border-color: #fff; }
 .qbody3 { padding: 22px 26px 24px; }
@@ -1135,6 +1136,7 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
 .mcol { background: #fff; color: var(--ink); border-radius: 18px; padding: 12px; min-width: 0; }
 .mch { width: 100%; min-height: 48px; display: flex; align-items: center; gap: 8px; border: 0; background: none; padding: 0 4px; margin-bottom: 6px;
   color: var(--ink); font-size: 16px; text-align: left; position: relative; }
+.mch::before { content: ""; position: absolute; inset: -4px 0; }   /* step 5: 56 px touch area, same look */
 .mch b { flex: 1; min-width: 0; }
 .mchi { width: 30px; height: 30px; border-radius: 9px; background: var(--t); color: #fff; display: flex; align-items: center; justify-content: center; flex: none; }
 .mchi .ic { width: 18px; height: 18px; stroke-width: 2.2; }
@@ -1146,7 +1148,7 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
 .mtr > span:not(.sr) { overflow: hidden; text-overflow: ellipsis; }
 .mtr.lv5 { color: #fff; }
 .mtr.lv0 { background: #fff; border: 1.5px dashed var(--rb); color: var(--t); }
-.mtr.off { background: transparent; border: 1.5px solid #E3E6EE; color: #A9B0C0; }
+.mtr.off { background: transparent; border: 1.5px solid #E3E6EE; color: #6B7385; }   /* step 5: 4.8:1 on white (was #A9B0C0, 2.2:1) */
 .mkey { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; color: var(--on-dark-2); font-size: 13px; font-weight: 700; }
 .mkey .gap4 { width: 18px; }
 .sw4 { width: 18px; height: 18px; border-radius: 5px; display: inline-block; flex: none; }
