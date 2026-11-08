@@ -1113,6 +1113,131 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
   .rrow { grid-template-columns: 20px 18px minmax(0, 1fr) 16px; column-gap: 10px; padding: 10px 14px; }
   .ropen { padding: 0 14px 16px 14px; }
 }
+/* ===================== v0.3 step 4 (8 Nov 2026): Progreso (maps) and Tabla ===================== */
+/* Materia colour scale for the maps (8 Nov 2026): levels 1 to 4 mix the soft tint towards the text tone (6, 20, 34, 48%),
+   navy text on all four (weakest 5.6:1, Matemáticas level 4); level 5 «Dominado» = the text tone with white text.
+   Not started: card --ns with a dashed --nb outline; row: white with a dashed --rb outline. Same values as the mockup. */
+:root {
+  --cie-v1: #D6ECF6; --cie-v2: #B8D9E9; --cie-v3: #99C6DB; --cie-v4: #7BB4CE; --cie-ns: #EEF8FD; --cie-nb: #A0CADE; --cie-rb: #6CAAC7;
+  --len-v1: #F9DAE9; --len-v2: #EEC0D7; --len-v3: #E4A5C4; --len-v4: #D98AB2; --len-ns: #FEF0F7; --len-nb: #E6AAC8; --len-rb: #D47CA8;
+  --mat-v1: #DCDDF4; --mat-v2: #C3C4EA; --mat-v3: #A9ABE0; --mat-v4: #9093D5; --mat-ns: #F1F1FB; --mat-nb: #AFB1E2; --mat-rb: #8386D0;
+  --soc-v1: #F9E4D0; --soc-v2: #ECCDB1; --soc-v3: #E0B792; --soc-v4: #D4A073; --soc-ns: #FEF5EB; --soc-nb: #E3BB98; --soc-rb: #CE9463;
+}
+.segrow { margin: 6px 0 14px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.segrow::-webkit-scrollbar { display: none; }
+.seg button { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; flex: none; }
+.seg .mdot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.lv1 { background: var(--v1); } .lv2 { background: var(--v2); } .lv3 { background: var(--v3); } .lv4 { background: var(--v4); }
+.lv5 { background: var(--t); color: #fff; }
+
+/* Todo 5to: four columns of named rows */
+.mcols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.mcol { background: #fff; color: var(--ink); border-radius: 18px; padding: 12px; min-width: 0; }
+.mch { width: 100%; min-height: 48px; display: flex; align-items: center; gap: 8px; border: 0; background: none; padding: 0 4px; margin-bottom: 6px;
+  color: var(--ink); font-size: 16px; text-align: left; position: relative; }
+.mch b { flex: 1; min-width: 0; }
+.mchi { width: 30px; height: 30px; border-radius: 9px; background: var(--t); color: #fff; display: flex; align-items: center; justify-content: center; flex: none; }
+.mchi .ic { width: 18px; height: 18px; stroke-width: 2.2; }
+.mch .ar2 { font-size: 22px; color: #9AA3B5; line-height: 1; }
+.mrows { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.mtr { height: 35px; border-radius: 9px; display: flex; align-items: center; gap: 8px; padding: 0 10px; box-sizing: border-box;
+  font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; color: var(--ink); }
+.mtr b { min-width: 18px; flex: none; }
+.mtr > span:not(.sr) { overflow: hidden; text-overflow: ellipsis; }
+.mtr.lv5 { color: #fff; }
+.mtr.lv0 { background: #fff; border: 1.5px dashed var(--rb); color: var(--t); }
+.mtr.off { background: transparent; border: 1.5px solid #E3E6EE; color: #A9B0C0; }
+.mkey { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; color: var(--on-dark-2); font-size: 13px; font-weight: 700; }
+.mkey .gap4 { width: 18px; }
+.sw4 { width: 18px; height: 18px; border-radius: 5px; display: inline-block; flex: none; }
+.sw4.lv0 { border: 1.5px dashed var(--nb); box-sizing: border-box; }
+
+/* One Materia: 12 Tema cards coloured by level */
+.tcards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.tc4 { height: 140px; border-radius: 18px; padding: 14px 16px; box-sizing: border-box; display: flex; flex-direction: column; color: var(--ink); min-width: 0; }
+.tch { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; min-height: 22px; }
+.tch .ic { width: 18px; height: 18px; stroke-width: 2; color: var(--t); flex: none; }
+.tc4.lv4 .tch .ic { color: var(--ink); }
+.tc4.lv5 .tch .ic { color: #fff; }
+.tch .dom { margin-left: auto; background: #fff; color: var(--t); border-radius: 999px; padding: 3px 10px; font-size: 12px; text-transform: none; letter-spacing: 0; white-space: nowrap; }
+.tcn { font-size: 18px; line-height: 1.2; margin-top: 6px; flex: 1; min-height: 0; overflow: hidden; }
+.tcb { display: flex; align-items: center; gap: 10px; }
+.trk { flex: 1; height: 14px; border-radius: 7px; background: #fff; overflow: hidden; display: block; }
+.trk i { display: block; height: 100%; border-radius: 7px; background: var(--t); }
+.tcb b { font-size: 20px; min-width: 52px; text-align: right; white-space: nowrap; }
+.tc4.lv5 { color: #fff; }
+.tc4.lv5 .trk { background: rgba(255,255,255,.3); } .tc4.lv5 .trk i { background: #fff; }
+.tc4.lv0 { background: var(--ns); border: 2px dashed var(--nb); }
+.tc4.lv0 .tcno { font-size: 14px; font-weight: 700; color: var(--t); }
+.tc4.off { background: transparent; border: 1.5px solid rgba(255,255,255,.25); color: rgba(255,255,255,.6); }
+.mnote { margin: 12px 0 0; color: var(--on-dark-2); font-size: 14px; line-height: 1.45; }
+
+/* Tabla */
+.frow4 { display: flex; gap: 14px; }
+.pcard4 { background: #fff; color: var(--ink); border-radius: 18px; padding: 14px; box-sizing: border-box; min-width: 0; }
+.tgrid4 { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.brd4 { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.brd4 li { height: 52px; border-radius: 12px; display: flex; align-items: center; gap: 14px; padding: 0 16px; box-sizing: border-box; background: #F4F6FA; font-size: 16px; }
+.brd4 li.me { background: #FFF3CC; box-shadow: inset 0 0 0 2px var(--sun); }
+.brd4 li.gap { height: 20px; background: none; justify-content: center; color: #9AA3B5; font-weight: 700; }
+.brd4 li.ph .nk { height: 14px; border-radius: 7px; background: #E3E6EE; max-width: 40%; }
+.rk4 { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex: none; }
+.rk4.md1 { background: var(--sun); } .rk4.md2 { background: #D5DBE6; } .rk4.md3 { background: #E8B48A; }
+.brd4 .nk { flex: 1; min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.brd4 .pp { white-space: nowrap; }
+.tnote4 { margin: 10px 4px 2px; font-size: 13px; line-height: 1.4; color: var(--muted2); }
+.pcard4 > .tnote4:first-child { margin-top: 4px; }
+.pcard4 > .error { margin: 6px 4px; }
+.swcard { padding: 18px; }
+.swcard .crow b { flex: 1; }
+.swcard p { margin: 8px 0 0; font-size: 14px; line-height: 1.45; color: var(--muted2); }
+.swcard p.error:empty { display: none; }
+.pgrid4 { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 16px; align-items: start; }
+.pnums { display: grid; gap: 14px; }
+.pnum { background: #fff; color: var(--ink); border-radius: 18px; padding: 20px; }
+.pnum b { display: block; font-family: var(--display); font-weight: 800; font-size: 44px; line-height: 1.1; }
+.pnum span { display: block; color: var(--muted2); font-size: 15px; font-weight: 700; }
+.pnum.dim { background: var(--glass); color: var(--on-dark); }
+.pnum.dim b { font-size: 34px; } .pnum.dim span { color: var(--on-dark-2); }
+.chart4 { padding: 20px 22px; }
+.chart4 h2 { margin: 0 0 14px; font-size: 16px; font-weight: 700; font-family: inherit; }
+.bars4 { display: flex; align-items: stretch; gap: 8px; height: 360px; }
+.wk4 { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.wk4 .wv { font-size: 14px; }
+.bt4 { flex: 1; width: 100%; max-width: 56px; display: flex; align-items: flex-end; }
+.bt4 i { display: block; width: 100%; border-radius: 10px 10px 4px 4px; background: #8C9BC8; }
+.wk4.cur .bt4 i { background: var(--sun); }
+.wk4.zero .bt4 i { height: 6px !important; background: #E3E6EE; }
+.wd { display: flex; flex-direction: column; align-items: center; font-size: 13px; font-weight: 700; line-height: 1.2; }
+.wd span { color: var(--muted2); font-weight: 700; }
+.wn { font-size: 12px; color: var(--muted2); white-space: nowrap; }
+
+@media (min-width: 600px) and (max-width: 959px) {
+  .mcols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tcards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .frow4 { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .tgrid4 { grid-template-columns: minmax(0, 1fr); }
+  .pgrid4 { grid-template-columns: minmax(0, 1fr); } .pnums { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 599px) {
+  .mcols { grid-template-columns: minmax(0, 1fr); }
+  .tcards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .tc4 { height: auto; min-height: 136px; padding: 12px; }
+  .tch .dom { display: none; }
+  .tc4.lv5 .tch::after { content: "✓"; margin-left: auto; }
+  .tcn { font-size: 16px; margin-bottom: 8px; }
+  .tcb { gap: 6px; } .tcb b { font-size: 16px; min-width: 0; }
+  .segrow { margin-right: -16px; padding-right: 16px; }
+  .frow4 { flex-direction: column; gap: 10px; }
+  .tgrid4 { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .brd4 li { gap: 10px; padding: 0 12px; }
+  .pgrid4 { grid-template-columns: minmax(0, 1fr); gap: 12px; } .pnums { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pnum { padding: 14px 16px; } .pnum b { font-size: 34px; } .pnum.dim b { font-size: 28px; }
+  .chart4 { padding: 16px 10px; }
+  .bars4 { height: 240px; gap: 2px; }
+  .wd { font-size: 12px; }
+  .wn { font-size: 10px; white-space: normal; text-align: center; line-height: 1.15; overflow-wrap: anywhere; }
+}
 </style>
 </head>
 <body>
@@ -1351,8 +1476,6 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
     CFG.niveles.forEach((l, i) => { if (pct >= l.desde) n = i + 1; });
     return n;
   }
-  const levelColor = n => CFG.niveles[n - 1].color;
-  const levelInk = n => n >= 4 ? '#ffffff' : '#10301c';   // readable text on light and dark greens
   /* ---------- reviewer ratings (thumbs up / down per question) ----------
      Since v0.2 step 4: one row per account and question in Supabase (table ratings); tapping again removes it. */
   let votes = {};                              // { questionId: 1 | -1 } for this account, loaded after login
@@ -1487,10 +1610,9 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
   }
 
   /* ---------- views ---------- */
-  function go(view, extra = {}) { if (view !== state.view) state.introLine = null; if (view === 'tabla' && state.view !== 'tabla') tablaCache = {};   /* fresh board on each visit */ Object.assign(state, { view }, extra); render(); window.scrollTo(0, 0); }
+  function go(view, extra = {}) { if (view !== state.view) state.introLine = null; if (view === 'tabla' && state.view !== 'tabla') { tablaCache = {}; state.tView = 'pos'; }   /* fresh board, «Posiciones» first */ if (view === 'progreso' && state.view !== 'progreso') state.mapMateria = 'ALL';   /* the map opens on Todo 5to */ Object.assign(state, { view }, extra); render(); window.scrollTo(0, 0); }
 
-  // Shared pieces (30 Oct 2026): back/leave button at the top left; Profe Ariel large with the bubble above (as on the main page)
-  const backBtn = (id, key) => `<button class="btn btn-ghost back" id="${id}"><span class="ar" aria-hidden="true">‹</span>${esc(t(key))}</button>`;
+  // Shared piece (30 Oct 2026): Profe Ariel large with the bubble above; v0.3: returns nothing
   const bigCoach = () => '';   // v0.3: see coach()
 
   // Login and sign-up (v0.3, 8 Nov 2026): split screen. Left, the brand panel (grade background and landscape, logo,
@@ -1587,23 +1709,6 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
       state.apodoTabla = null; state.apodoDraft = null;
       go('home');
     });
-  }
-
-  // Leaderboard switch of the v0.2 Tabla page (rebuilt in step 4)
-  const tablaSwitch = label => {
-    const on = !!state.enTabla;
-    return `<button class="sw" id="sw" role="switch" aria-checked="${on}"><span class="knob" aria-hidden="true"></span>`
-      + `<span><b>${esc(t(label || 'textos.tablaSwitch'))}</b><small>${esc(t(on ? 'textos.tablaDentroNota' : 'textos.tablaFueraNota'))}</small></span></button>`
-      + `<p class="error" id="swerr" role="alert"></p>`;
-  };
-  function bindSwitch() {
-    const b = document.getElementById('sw'); if (!b) return;
-    b.onclick = async () => {
-      b.disabled = true;
-      const ok = await setEnTabla(!state.enTabla);
-      if (!ok) { b.disabled = false; document.getElementById('swerr').textContent = t('textos.errorConexion'); return; }
-      render();
-    };
   }
 
   // Configuración (v0.3, 8 Nov 2026): from the gear in the rail; no «Volver». One card: nickname, sound switch,
@@ -1922,65 +2027,81 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
     });
   }
 
-  // Mi progreso (30 Oct 2026): "Mapa de conocimientos". Each Tema fills like a glass in its Materia colour:
-  // level n of 5 fills n × 20% (thresholds in the settings). Not started: dashed outline. Coming Temas: grey.
-  const mapTabs = cur => `<div class="tabs" role="tablist">
-      <button class="tab" role="tab" data-mat="ALL" style="--mc:var(--ink)" aria-selected="${cur === 'ALL'}">${esc(t('textos.mapaTodoTab'))}</button>
-      ${BANK.materias.map(x => `<button class="tab" role="tab" data-mat="${x.id}" style="--mc:${MCOLOR[x.id]}" aria-selected="${x.id === cur}">${micon(x.id)}${esc(x.name)}</button>`).join('')}</div>`;
+  /* ---------- Progreso (v0.3 step 4, 8 Nov 2026): «Mapa de conocimientos» ----------
+     Segmented tabs: Todo 5to and each Materia. Level colour scale of the Materia (8 Nov 2026): levels 1 to 4 are light
+     tints of the Materia colour with navy text, level 5 «Dominado» the full Materia text tone with white text.
+     Not started (no question answered): white with a dashed outline, «Aún no». Not active yet: a faint outline.
+     No points on the maps (4 Nov 2026), no mascot, no Subtemas (hidden from students since 8 Nov 2026). */
   const started = x => !!(x && x.a);
-  const glass = x => started(x) ? `glass" style="--p:${level(x) * (100 / CFG.niveles.length)}%` : 'ns2';
-  const mapCoach = () => '';   // v0.3: no mascot on the maps
-  const mapHead = (cur, title) => `<div class="navrow">${backBtn('back', 'textos.inicio')}</div>${mapCoach()}<div class="mapnav">${mapTabs(cur)}<h1>${esc(title)}</h1></div>`;
-  const offCaption = () => `<p class="cap2"><i></i>${esc(t('textos.mapaInactivos'))}</p>`;
+  const lvOf = x => started(x) ? level(x) : 0;                           // 0 = not started
+  const pctOf = x => x && x.n ? Math.floor(x.c / x.n * 100) : 0;          // rounded down, so «80 %» always means Dominado
+  const LVMAX = () => CFG.niveles.length;
+  // The Materia's scale as CSS variables: --t text tone, --v1…--v4 tints, --ns/--nb not-started card, --rb not-started row
+  const MSCALE = id => { const k = id.toLowerCase();
+    return `--t:var(--${k}-t);--v1:var(--${k}-v1);--v2:var(--${k}-v2);--v3:var(--${k}-v3);--v4:var(--${k}-v4);--ns:var(--${k}-ns);--nb:var(--${k}-nb);--rb:var(--${k}-rb)`; };
+  // One segmented-control button; the Materia buttons carry a small square in the Materia fill
+  const segBtn = (attr, val, on, label, mid) => `<button data-${attr}="${val}" aria-pressed="${on}">${mid ? `<i class="mdot" style="background:var(--${mid.toLowerCase()})" aria-hidden="true"></i>` : ''}${esc(label)}</button>`;
+  const mapTabs = cur => `<div class="segrow"><div class="seg" role="group" aria-label="${esc(t('textos.mapaTodoTitulo'))}">`
+    + segBtn('mat', 'ALL', cur === 'ALL', t('textos.mapaTodoTab'))
+    + BANK.materias.map(x => segBtn('mat', x.id, x.id === cur, x.name, x.id)).join('') + `</div></div>`;
+  const bindMapTabs = () => app.querySelectorAll('[data-mat]').forEach(b => b.onclick = () => { state.mapMateria = b.dataset.mat; render(); window.scrollTo(0, 0); });
 
+  // Todo 5to: four Materia columns (white cards), each with the Materia icon, name and «›» (opens that Materia's map)
+  // and 12 named rows coloured by level; a one-line key under the map.
   function viewMapaTodo(S) {
-    const areas = BANK.materias.map(m => {
-      const sq = temaSlots(m).map(({ n, tema: x }) => x
-        ? `<span class="sq ${glass(S[m.id + '|' + x.id])}"><span><em>${n}</em>${esc(x.name)}</span></span>`
-        : `<span class="sq soon2"><em>${n}</em></span>`).join('');
-      const sm = S[m.id], share = sm && sm.n ? Math.round(sm.c / sm.n * 100) : 0;
-      return `<button class="area2" data-go="${m.id}" style="--mc:${MCOLOR[m.id]}" aria-label="${esc(m.name)}">
-          <span class="ahd">${micon(m.id)}<b>${esc(m.name)}</b><span class="abar" aria-hidden="true"><i style="width:${share}%"></i></span></span>
-          <span class="tsq">${sq}</span></button>`;
+    head({ title: t('textos.mapaTodoTitulo'), pill: true });
+    const cols = BANK.materias.map(m => {
+      const rows = temaSlots(m).map(({ n, tema: x }) => {
+        if (!x) return `<li class="mtr off"><b>${n}</b><span>${esc(t('textos.temaN', { n }))}</span></li>`;
+        const lv = lvOf(S[m.id + '|' + x.id]), sr = lv === 0 ? t('textos.mapaAunNo') : lv === LVMAX() ? t('textos.mapaDominado') : '';
+        return `<li class="mtr lv${lv}" title="${esc(x.name)}"><b>${n}</b><span>${esc(x.name)}</span>${sr ? `<span class="sr"> · ${esc(sr)}</span>` : ''}</li>`;
+      }).join('');
+      return `<section class="mcol" style="${MSCALE(m.id)}">
+          <button class="mch" data-go="${m.id}"><span class="mchi">${micon(m.id)}</span><b>${esc(m.name)}</b><span class="ar2" aria-hidden="true">›</span></button>
+          <ol class="mrows">${rows}</ol></section>`;
     }).join('');
+    const sw = n => `<i class="sw4 lv${n}" aria-hidden="true"></i>`;
     app.innerHTML = `
-      <section class="screen">
-        ${mapHead('ALL', t('textos.mapaTodoTitulo'))}
-        <div class="quad2">${areas}</div>
-        ${offCaption()}
+      <section class="page mapw">
+        ${mapTabs('ALL')}
+        <div class="mcols">${cols}</div>
+        <p class="mkey" style="${MSCALE('CIE')}">${sw(0)}<span>${esc(t('textos.mapaAunNo'))}</span><span class="gap4"></span><span>${esc(t('textos.mapaPorPracticar'))}</span>${[1, 2, 3, 4, 5].map(sw).join('')}<span>${esc(t('textos.mapaDominado'))}</span></p>
       </section>`;
-    app.querySelectorAll('[data-mat]').forEach(b => b.onclick = () => { state.mapMateria = b.dataset.mat; render(); });
+    bindMapTabs();
     app.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { state.mapMateria = b.dataset.go; render(); window.scrollTo(0, 0); });
-    document.getElementById('back').onclick = () => go('home');
   }
 
-  // One Materia: a card per Tema with its three Subtemas, each row filling from the left. No points on the map (4 Nov 2026):
-  // points belong to practice and the leaderboard; the fill alone shows mastery.
+  // One Materia (deep Materia background): 12 Tema cards (4 × 3) coloured by level, with the Tema icon (or none until
+  // drawn) and «TEMA N», the name, and a bar filled to the exact percentage with the number; «✓ Dominado» from level 5.
+  // Not started: dashed card with «Aún no». One explanation line under the map.
   function viewProgreso() {
     const S = perf();
     if (!state.mapMateria) state.mapMateria = 'ALL';
     if (state.mapMateria === 'ALL') return viewMapaTodo(S);
     const m = materia(state.mapMateria);
+    head({ title: t('textos.mapaTitulo', { materia: m.name }), pill: true });
     const cards = temaSlots(m).map(({ n, tema: x }) => {
-      if (!x) return `<article class="tc2 soonc"><div class="hd"><em>${n}</em><b>${esc(t('textos.temaN', { n }))}</b></div></article>`;
-      const subs = x.subtemas.map(s => { const ss = S[m.id + '|' + s.id];
-        return `<div class="srow ${glass(ss)}"><b>${esc(s.name)}</b></div>`; }).join('');
-      return `<article class="tc2"><div class="hd"><em>${n}</em><b>${esc(x.name)}</b></div>${subs}</article>`;
+      if (!x) return `<div class="tc4 off"><span class="tch">${esc(t('textos.temaN', { n }))}</span></div>`;
+      const s = S[m.id + '|' + x.id], lv = lvOf(s), p = pctOf(s);
+      const hd = `<span class="tch">${temaIcon(m.id, x.id) || ''}<span>${esc(t('textos.temaN', { n }))}</span>`
+        + (lv === LVMAX() ? `<span class="dom">✓ ${esc(t('textos.mapaDominado'))}</span>` : '') + `</span><b class="tcn">${esc(x.name)}</b>`;
+      return lv === 0 ? `<div class="tc4 lv0">${hd}<span class="tcno">${esc(t('textos.mapaAunNo'))}</span></div>`
+        : `<div class="tc4 lv${lv}">${hd}<span class="tcb"><span class="trk" aria-hidden="true"><i style="width:${p}%"></i></span><b>${p} %</b></span></div>`;
     }).join('');
     app.innerHTML = `
-      <section class="screen" style="--mc:${MCOLOR[m.id]}">
-        ${mapHead(m.id, t('textos.mapaTitulo', { materia: m.name }))}
-        <div class="tcg">${cards}</div>
-        ${offCaption()}
+      <section class="page mapw">
+        ${mapTabs(m.id)}
+        <div class="tcards" style="${MSCALE(m.id)}">${cards}</div>
+        <p class="mnote">${esc(t('textos.mapaNota', { p: Math.round(CFG.niveles[LVMAX() - 1].desde * 100) }))}</p>
       </section>`;
-    app.querySelectorAll('[data-mat]').forEach(b => b.onclick = () => { state.mapMateria = b.dataset.mat; render(); });
-    document.getElementById('back').onclick = () => go('home');
+    bindMapTabs();
   }
 
-  /* ---------- Tabla de posiciones (v0.2 step 5, defined 4 Nov 2026) ----------
-     Score = points (every correct answer, repeats included). Only students who opted in appear; the database
-     function tabla_posiciones returns only rank, nickname and points. Views: this week (default), this month,
-     always; whole grade or one Materia. Weeks Monday to Sunday in Venezuela time (settings). No Profe Ariel here. */
+  /* ---------- Tabla (v0.3 step 4, 8 Nov 2026; board logic from v0.2 step 5, 4 Nov 2026) ----------
+     Two views in one segmented control: «Posiciones» (default) and «Mi práctica». Score = points (every correct answer,
+     repeats included). Only students who opted in appear; the database function tabla_posiciones returns only rank,
+     nickname and points. «Posiciones»: period and Materia filters in one row, the list (medal circles for ranks 1 to 3,
+     own row in yellow), the switch card at the side. «Mi práctica»: points this week and last week, bars per week. */
   let tablaCache = {};
   const TPER = [['semana', 'textos.tablaSemana'], ['mes', 'textos.tablaMes'], ['siempre', 'textos.tablaSiempre']];
   async function loadTabla(key, per, mat) {
@@ -2002,7 +2123,7 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
     return u.toISOString().slice(0, 10);
   };
   const addDays = (k, n) => { const u = new Date(k + 'T00:00:00Z'); u.setUTCDate(u.getUTCDate() + n); return u.toISOString().slice(0, 10); };
-  // «Tu progreso»: the student's own points and Pruebas per week, from the Pruebas already loaded after login
+  // «Mi práctica»: the student's own points and Pruebas per week, from the Pruebas already loaded after login
   function semanas() {
     const cur = weekKey(new Date()), by = {};
     for (const p of userData().pruebas) { const k = weekKey(new Date(p.fin)); (by[k] = by[k] || { p: 0, n: 0 }); by[k].p += p.puntos; by[k].n++; }
@@ -2010,52 +2131,76 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
   }
   // Week label: the date the week starts, day above month (fits eight bars on a phone)
   const dayMonth = k => { const d = new Date(k + 'T00:00:00Z'), f = o => new Intl.DateTimeFormat('es-VE', { ...o, timeZone: 'UTC' }).format(d).replace('.', '');
-    return `<b>${f({ day: 'numeric' })}</b>${esc(f({ month: 'short' }))}`; };
+    return `<b>${f({ day: 'numeric' })}</b><span>${esc(f({ month: 'short' }))}</span>`; };
 
-  function viewTabla() {
+  function tablaPos() {
     const per = state.tPer || 'semana', mat = state.tMat || null, key = per + '|' + (mat || 'ALL');
     const T0 = tablaCache[key];
     if (!T0) loadTabla(key, per, mat);
-    const rows = T0 && T0.rows;
     let list;
-    if (!T0 || T0.loading) list = `<ol class="board" aria-busy="true">${'<li class="ph"><span class="rk"></span><span class="nk">&nbsp;</span><span class="pp"></span></li>'.repeat(3)}</ol>`;
+    if (!T0 || T0.loading) list = `<ol class="brd4" aria-busy="true">${'<li class="ph"><span class="rk4"></span><span class="nk"></span></li>'.repeat(3)}</ol>`;
     else if (T0.error) list = `<p class="error">${esc(t('textos.errorConexion'))}</p>`;
     else {
+      const rows = T0.rows;
       const ranked = rows.filter(r => r.rango !== null && !(r.soy_yo && rows.indexOf(r) >= CFG.tablaTop));
       const own = rows.filter(r => r.soy_yo && (r.rango === null || rows.indexOf(r) >= CFG.tablaTop));
-      const li = r => `<li class="${r.soy_yo ? 'me2' : ''}"><span class="rk">${r.rango === null ? '–' : r.rango}</span><span class="nk">${esc(r.soy_yo ? t('textos.tablaTu', { apodo: r.apodo }) : r.apodo)}</span><span class="pp">${esc(t('textos.puntosTotales', { n: r.puntos }))}</span></li>`;
-      list = (ranked.length ? '' : `<p class="tnote">${esc(t('textos.tablaVacia'))}</p>`)
-        + (rows.length ? `<ol class="board">${ranked.map(li).join('')}${own.length && ranked.length ? '<li class="gap" aria-hidden="true">⋮</li>' : ''}${own.map(li).join('')}</ol>` : '');
+      const li = r => `<li class="${r.soy_yo ? 'me' : ''}"><span class="rk4${r.rango >= 1 && r.rango <= 3 ? ' md' + r.rango : ''}">${r.rango === null ? '–' : r.rango}</span>`
+        + `<span class="nk">${esc(r.soy_yo ? t('textos.tablaTu', { apodo: r.apodo }) : r.apodo)}</span><b class="pp">${esc(t('textos.puntosTotales', { n: r.puntos }))}</b></li>`;
+      list = (ranked.length ? '' : `<p class="tnote4">${esc(t('textos.tablaVacia'))}</p>`)
+        + (rows.length ? `<ol class="brd4">${ranked.map(li).join('')}${own.length && ranked.length ? '<li class="gap" aria-hidden="true">⋮</li>' : ''}${own.map(li).join('')}</ol>` : '');
     }
-    const W = semanas(), maxP = Math.max(1, ...W.map(w => w.p)), last = W[W.length - 1], prev = W[W.length - 2];
-    const bars = W.map(w => `<div class="wk ${w.cur ? 'cur' : ''}"><span class="bv">${w.p}</span><i style="height:${Math.round(w.p / maxP * 100)}%"></i>`
-      + `<span class="wl">${w.cur ? `<b>${esc(t('textos.progresoSemanaActual'))}</b>&nbsp;` : dayMonth(w.k)}</span><span class="wp">${w.n}</span></div>`).join('');
-    app.innerHTML = `
-      <section class="screen">
-        <div class="navrow">${backBtn('back', 'textos.volver')}</div>
-        <h1>${esc(t('textos.tablaTitulo'))}</h1>
-        <div class="tgrid">
-          <div class="pcard">
-            ${tablaSwitch(null)}
-            <div class="tabs ttabs" role="tablist">${TPER.map(([k, l]) => `<button class="tab" role="tab" data-per="${k}" aria-selected="${k === per}">${esc(t(l))}</button>`).join('')}</div>
-            <div class="tabs" role="tablist">
-              <button class="tab" role="tab" data-tm="ALL" style="--mc:var(--ink)" aria-selected="${!mat}">${esc(t('textos.tipoGrado'))}</button>
-              ${BANK.materias.map(x => `<button class="tab" role="tab" data-tm="${x.id}" style="--mc:${MCOLOR[x.id]}" aria-selected="${x.id === mat}">${micon(x.id)}${esc(x.name)}</button>`).join('')}</div>
-            ${list}
-            ${per === 'semana' ? `<p class="tnote">${esc(t('textos.tablaReinicio'))}</p>` : ''}
-          </div>
-          <div class="pcard prog2">
-            <h2>${esc(t('textos.progresoTitulo'))}</h2>
-            <div class="nums"><div><b>${last.p}</b><span>${esc(t('textos.progresoEstaSemana'))}</span></div><div><b>${prev.p}</b><span>${esc(t('textos.progresoSemanaPasada'))}</span></div></div>
-            <div class="bars" role="img" aria-label="${esc(t('textos.progresoNota'))}">${bars}</div>
-            <p class="tnote">${esc(t('textos.progresoNota'))}</p>
-          </div>
+    const on = !!state.enTabla;
+    return `
+        <div class="segrow frow4">
+          <div class="seg" role="group" aria-label="${esc(t('textos.tablaPosiciones'))}">${TPER.map(([k, l]) => segBtn('per', k, k === per, t(l))).join('')}</div>
+          <div class="seg" role="group" aria-label="${esc(t('textos.tablaPosiciones'))}">${segBtn('tm', 'ALL', !mat, t('textos.tipoGrado'))}${BANK.materias.map(x => segBtn('tm', x.id, x.id === mat, x.name, x.id)).join('')}</div>
         </div>
+        <div class="tgrid4">
+          <div class="pcard4">${list}${per === 'semana' ? `<p class="tnote4">${esc(t('textos.tablaReinicio'))}</p>` : ''}</div>
+          <div class="pcard4 swcard">
+            <div class="crow"><b>${esc(t('textos.tablaSwitch'))}</b>${toggle('swt4', on, t('textos.tablaSwitch'))}</div>
+            <p>${esc(t(on ? 'textos.tablaDentroNota' : 'textos.tablaFueraNota'))}</p>
+            <p class="error" id="swerr" role="alert"></p>
+          </div>
+        </div>`;
+  }
+  function tablaPractica() {
+    const W = semanas(), maxP = Math.max(1, ...W.map(w => w.p)), last = W[W.length - 1], prev = W[W.length - 2];
+    const bars = W.map(w => `<div class="wk4${w.cur ? ' cur' : ''}${w.p ? '' : ' zero'}"><b class="wv">${w.p}</b>`
+      + `<span class="bt4"><i style="height:${w.p ? Math.max(2, Math.round(w.p / maxP * 100)) : 0}%"></i></span>`
+      + `<span class="wd">${w.cur ? `<b>${esc(t('textos.progresoSemanaActual'))}</b><span>&nbsp;</span>` : dayMonth(w.k)}</span>`
+      + `<span class="wn">${esc(t('textos.progresoPruebas', { n: w.n }))}</span></div>`).join('');
+    return `
+        <div class="pgrid4">
+          <div class="pnums">
+            <div class="pnum"><b>${last.p}</b><span>${esc(t('textos.progresoEstaSemana'))}</span></div>
+            <div class="pnum dim"><b>${prev.p}</b><span>${esc(t('textos.progresoSemanaPasada'))}</span></div>
+          </div>
+          <div class="pcard4 chart4">
+            <h2>${esc(t('textos.progresoTitulo'))}</h2>
+            <div class="bars4">${bars}</div>
+            <p class="tnote4">${esc(t('textos.progresoNota'))}</p>
+          </div>
+        </div>`;
+  }
+  function viewTabla() {
+    head({ title: t('textos.tablaTitulo'), pill: true });
+    const vw = state.tView || 'pos';
+    app.innerHTML = `
+      <section class="page tpage">
+        <div class="segrow"><div class="seg" role="group" aria-label="${esc(t('textos.tablaTitulo'))}">${segBtn('tv', 'pos', vw === 'pos', t('textos.tablaPosiciones'))}${segBtn('tv', 'prac', vw === 'prac', t('textos.tablaPractica'))}</div></div>
+        ${vw === 'pos' ? tablaPos() : tablaPractica()}
       </section>`;
-    document.getElementById('back').onclick = () => go('home');
+    app.querySelectorAll('[data-tv]').forEach(b => b.onclick = () => { state.tView = b.dataset.tv; render(); });
     app.querySelectorAll('[data-per]').forEach(b => b.onclick = () => { state.tPer = b.dataset.per; render(); });
     app.querySelectorAll('[data-tm]').forEach(b => b.onclick = () => { state.tMat = b.dataset.tm === 'ALL' ? null : b.dataset.tm; render(); });
-    bindSwitch();
+    const sw = document.getElementById('swt4');
+    if (sw) sw.onclick = async () => {
+      sw.disabled = true;
+      const ok = await setEnTabla(!state.enTabla);
+      if (!ok) { sw.disabled = false; document.getElementById('swerr').textContent = t('textos.errorConexion'); return; }
+      render(); const s2 = document.getElementById('swt4'); if (s2) s2.focus();
+    };
   }
 
   const VIEWS = { tabla: viewTabla, login: viewLogin, apodo: viewApodo, config: viewConfig, ayuda: viewAyuda, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, respuestas: viewRespuestas, progreso: viewProgreso };
