@@ -33,7 +33,7 @@ FIXED = {
     "introMateriaSub": ["materia"], "introTema": ["tema"], "introTemaSub": ["materia", "n"],
     "introPreguntas": ["n"], "introPuntos": ["p"], "introInstruccion": [], "empezar": [],
     # Question
-    "preguntaDe": ["i", "n"], "correcto": [], "incorrecto": [], "masPuntos": ["p"], "explicacion": [],
+    "preguntaDe": ["i", "n"], "correcto": [], "incorrecto": [], "explicacion": [],
     "siguiente": [], "verResultado": [], "votoArriba": [], "votoAbajo": [], "salir": [],
     "salirPregunta": [], "salirSi": [], "salirNo": [],
     # End of Prueba (back of the card) and «Mis respuestas»

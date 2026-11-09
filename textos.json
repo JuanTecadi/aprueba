@@ -57,7 +57,6 @@
     "preguntaDe": "Pregunta {i} de {n}",
     "correcto": "¡Correcto!",
     "incorrecto": "No es esa. La correcta está en verde.",
-    "masPuntos": "+{p}",
     "explicacion": "Explicación",
     "siguiente": "Continuar",
     "verResultado": "Ver resultado",

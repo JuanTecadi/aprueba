@@ -85,9 +85,16 @@ async function playAll(p, right) {
 
     // Question
     ok(`${tag} Question: rail hidden, reading tint`, (await p.evaluate(() => document.getElementById('rail').hidden && document.body.classList.contains('s-read'))));
-    ok(`${tag} Question: 10 dots, first ringed; chip «Tema 1» with the Tema icon`, (await p.locator('.dots3 .dt').count()) === 10 && (await p.locator('.dots3 .dt.cur').count()) === 1
-      && (await p.locator('.pchip').innerText()) === 'Tema 1' && (await p.locator('.pchip use').getAttribute('href')) === '#i-CIE-T01');
-    ok(`${tag} Question: band with the Tema icon and «Ciencias · Tema», no feedback before answering, no watermark`, (await p.locator('.qloc').innerText()) === 'Ciencias · ' + T01 && (await p.locator('.qband > .ic use').getAttribute('href')) === '#i-CIE-T01' && (await p.locator('#fb').count()) === 0 && (await p.locator('.wmp').count()) === 0);
+    ok(`${tag} Question: 10 dots in a white pill in the band, first ringed; no chip in the information area`, (await p.locator('.qband .dots3 .dt').count()) === 10 && (await p.locator('.dots3 .dt.cur').count()) === 1
+      && (await p.locator('.qband .dots3').evaluate(e => getComputedStyle(e).backgroundColor)) === 'rgb(255, 255, 255)' && (await p.locator('.pchip, #top .dots3').count()) === 0);
+    const edges = await p.evaluate(() => { const r = s => document.querySelector(s).getBoundingClientRect();
+      return { card: [r('.qcard3').left, r('.qcard3').right], back: r('#quit').left, pts: r('#ptsbtn').right, dots: r('.qband .dots3').right, opts: r('.qopts').right, stem: r('.qstem').left, ic: r('.qhd > .ic').left }; });
+    const near = (a, b) => Math.abs(a - b) <= 1;
+    ok(`${tag} Question: «Salir» and the points chip aligned with the card's edges`, near(edges.back, edges.card[0]) && near(edges.pts, edges.card[1]));
+    ok(`${tag} Question: the dots end on the options' right edge; the band icon starts on the stem's left edge`, (w === 390 || near(edges.dots, edges.opts)) && near(edges.ic, edges.stem));
+    if (!(near(edges.back, edges.card[0]) && near(edges.pts, edges.card[1]) && near(edges.ic, edges.stem))) console.log(edges);
+    ok(`${tag} Question: thumbs visible before answering, at the bottom left, no «Continuar» yet`, (await p.locator('.qfoot .vote3').count()) === 2 && (await p.locator('#next').count()) === 0);
+    ok(`${tag} Question: band with the Tema icon and «Ciencias · Tema», no feedback before answering, no watermark`, (await p.locator('.qloc').innerText()) === 'Ciencias · ' + T01 && (await p.locator('.qhd > .ic use').getAttribute('href')) === '#i-CIE-T01' && (await p.locator('#fb').count()) === 0 && (await p.locator('.wmp').count()) === 0);
     const tops = await p.locator('.qo').evaluateAll(els => els.map(e => Math.round(e.getBoundingClientRect().top)));
     ok(`${tag} Question: 2 × 2 options (one column on phones)`, tops.length === 4 && (w === 390 ? new Set(tops).size === 4 : tops[0] === tops[1] && tops[2] === tops[3] && tops[2] > tops[0]));
     await shot('3-pregunta');
@@ -97,17 +104,21 @@ async function playAll(p, right) {
     await answer(p, true); await p.waitForTimeout(600);
     const after = await p.locator('.qo').evaluateAll(els => els.map(e => { const r = e.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.top + scrollY)]; }).flat());
     ok(`${tag} Question: the options do not move when the feedback appears`, before.every((v, i) => Math.abs(v - after[i]) <= 1)); if (!before.every((v, i) => Math.abs(v - after[i]) <= 1)) console.log(before, after);
-    ok(`${tag} Question: correct verdict, +10, Explicación, Continuar`, (await p.locator('.qverd').innerText()).includes('✓ ¡Correcto!') && (await p.locator('.plus3').innerText()) === '+10'
+    ok(`${tag} Question: no visible verdict and no «+10»; the verdict for screen readers; Explicación, Continuar`, (await p.locator('.qverd, .plus3').count()) === 0
+      && (await p.locator('.qbody3 .sr[role="status"]').textContent()) === TEXTOS.correcto && !(await p.locator('.qfb').innerText()).includes('Correcto')
       && (await p.locator('.qfb .qlbl').innerText()).toUpperCase() === 'EXPLICACIÓN' && (await p.locator('#next').innerText()) === 'Continuar' && (await p.locator('.qo.right').count()) === 1);
+    ok(`${tag} Question: the explanation in the blue-grey panel; thumbs and «Continuar» on one row below it`, (await p.locator('.qfb').evaluate(e => getComputedStyle(e).backgroundColor)) === 'rgb(234, 240, 251)'
+      && (await p.evaluate(() => { const f = document.querySelector('.qfb').getBoundingClientRect(), t = document.querySelector('.qfoot .vote3').getBoundingClientRect(), n = document.getElementById('next').getBoundingClientRect();
+        return t.top > f.bottom && n.top > f.bottom && Math.abs((t.top + t.bottom) / 2 - (n.top + n.bottom) / 2) <= 1 && n.left > t.right; })));
     ok(`${tag} Question: points grow in the information area`, parseInt(await p.locator('#ptsbtn').innerText()) === pts0 + 10);
     ok(`${tag} Question: first dot green`, (await p.locator('.dots3 .dt').first().getAttribute('class')).includes('ok'));
-    ok(`${tag} Question: the feedback is on screen`, (await p.locator('#fb').evaluate(e => e.getBoundingClientRect().bottom)) <= h + 1);
+    ok(`${tag} Question: the explanation and «Continuar» are on screen`, (await p.locator('.qfoot').evaluate(e => e.getBoundingClientRect().bottom)) <= h + 1);
     await shot('4-correcta');
     await p.mouse.click(Math.round(w / 2), 30 + (w === 390 ? 60 : 0)); await p.waitForTimeout(450);   // tap anywhere (the information area, off its buttons)
     if (await p.locator('#fb').count()) { await p.click('#next'); await p.waitForTimeout(60); }
     ok(`${tag} Question: moved on to question 2`, (await p.locator('.dots3').getAttribute('aria-label')) === 'Pregunta 2 de 10');
     await answer(p, false); await p.waitForTimeout(80);
-    ok(`${tag} Question: wrong verdict, no +10, red and green`, (await p.locator('.qverd').innerText()).includes('✗ No es esa. La correcta está en verde.') && (await p.locator('.plus3').count()) === 0
+    ok(`${tag} Question: wrong: verdict for screen readers only, red and green`, (await p.locator('.qbody3 .sr[role="status"]').textContent()) === TEXTOS.incorrecto && (await p.locator('.qverd, .plus3').count()) === 0
       && (await p.locator('.qo.wrong').count()) === 1 && (await p.locator('.qo.right').count()) === 1);
     await shot('5-incorrecta');
     await p.click('#quit'); await p.waitForTimeout(60);
@@ -145,7 +156,7 @@ async function playAll(p, right) {
 
     // Todo Ciencias, all wrong → below 50%: Saludo, low band; location line «Tema N · Tema»
     await p.click('#back'); await p.click('#all'); await p.click('#start'); await p.waitForTimeout(60);
-    ok(`${tag} Todo Ciencias: chip «Todo Ciencias»`, (await p.locator('.pchip').innerText()) === 'Todo Ciencias');
+    ok(`${tag} Todo Ciencias: no chip; the band shows the question's Tema`, (await p.locator('.pchip').count()) === 0 && /^Ciencias · /.test(await p.locator('.qloc').innerText()));
     await playAll(p, false);
     ok(`${tag} Result below 50%: Saludo pose, low band`, (await p.locator('.rchivo').getAttribute('src')) === 'img/chivo-saludo.svg' && TEXTOS.resumen.bajo.map(x => x.texto).includes(await p.locator('.smsg').innerText()));
     ok(`${tag} Result Todo Ciencias: label`, (await p.locator('.glbl').innerText()) === 'TODO CIENCIAS');
@@ -154,8 +165,8 @@ async function playAll(p, right) {
 
     // Todo 5to: chip and location line with the Materia
     await p.click('[data-rail="home"]'); await p.click('#c-grado'); await p.click('#start'); await p.waitForTimeout(60);
-    ok(`${tag} Todo 5to: chip «Todo 5to» with the four-colour +`, (await p.locator('.pchip').innerText()) === 'Todo 5to' && (await p.locator('.pchip use').getAttribute('href')) === '#i-ALL');
-    ok(`${tag} Todo 5to: the band shows the icon of the question's own Tema`, await p.evaluate(() => { const loc = document.querySelector('.qloc').textContent, h = document.querySelector('.qband > .ic use').getAttribute('href');
+    ok(`${tag} Todo 5to: no chip in the information area`, (await p.locator('.pchip').count()) === 0);
+    ok(`${tag} Todo 5to: the band shows the icon of the question's own Tema`, await p.evaluate(() => { const loc = document.querySelector('.qloc').textContent, h = document.querySelector('.qhd > .ic use').getAttribute('href');
       return /^#i-(CIE|LEN|MAT|SOC)-T\d\d$/.test(h) && !!document.getElementById(h.slice(1)); }));
     await shot('9-todo5to');
     await playAll(p, true);

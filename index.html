@@ -348,7 +348,7 @@ body.s-login .stage { padding: 0; max-width: none; margin: 0; }
 .info .tt { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .info .tt > .tic2 { display: flex; color: inherit; }
 /* Phones: with a back link, the icon and title take their own line under it (step 3) */
-@media (max-width: 599px) { .info { flex-wrap: wrap; row-gap: 6px; } .info .ttl { display: contents; } .info .tt { flex: 1 1 0; } .info .tools { order: 2; } .info .b-back + .tt, .info .qmeta3 { order: 3; flex-basis: 100%; } }
+@media (max-width: 599px) { .info { flex-wrap: wrap; row-gap: 6px; } .info .ttl { display: contents; } .info .tt { flex: 1 1 0; } .info .tools { order: 2; } .info .b-back + .tt { order: 3; flex-basis: 100%; } }
 body.s-read .info .snd, body.s-read .info .pts { background: #fff; }
 body.s-read .rail { background: color-mix(in srgb, var(--sft, #F3F5F9) 92%, #16213A); }
 body.s-read .rail .ri { color: #47506A; } body.s-read .rail .ri.on { color: var(--ink); }
@@ -429,25 +429,26 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
 }
 
 /* Question: one centred card on the soft Materia tint; feedback grows below the options */
-.qmeta3 { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.dots3 { display: flex; gap: 6px; align-items: center; flex: none; }
+.dots3 { display: flex; gap: 6px; align-items: center; flex: none; background: #fff; border-radius: 999px; padding: 7px 10px; }   /* 9 Nov 2026: a white pill in the band */
 .dots3 .dt { width: 12px; height: 12px; border-radius: 50%; box-sizing: border-box; background: #fff; border: 1.5px solid color-mix(in srgb, var(--mt, #5B6478) 30%, #fff); }
 .dots3 .dt.cur { border: 3px solid var(--mt); }
 .dots3 .dt.ok { background: #1F9D55; border-color: #1F9D55; }
 .dots3 .dt.no { background: #D23F3F; border-color: #D23F3F; }
-.pchip { display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: 14px; color: var(--mt); white-space: nowrap; flex: none; }
-.info .pchip .ic { width: 18px; height: 18px; stroke-width: 2; }
-.info .pchip .ic.todo { stroke: none; }
 .qpage { margin-top: 14px; }
 .qcard3 { width: 780px; max-width: 100%; margin: 0 auto; background: #fff; border-radius: 22px; overflow: hidden; color: var(--ink); }
-.qband { background: var(--bc); color: #fff; min-height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 12px 0 20px; font-weight: 700; font-size: 15px; }
-.qband > .ic { width: 20px; height: 20px; stroke-width: 2; flex: none; }
+.qband { background: var(--bc); color: #fff; min-height: 52px; display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px; row-gap: 8px; padding: 0 26px; font-weight: 700; font-size: 15px; }   /* 9 Nov 2026: same side margin as the card body */
+.qband .qhd { display: flex; align-items: center; gap: 10px; flex: 1 1 220px; min-width: 0; }
+.qband .qhd > .ic { width: 20px; height: 20px; stroke-width: 2; flex: none; }
 .qband .qloc { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.qband .rate3 { display: flex; gap: 8px; }
-.qband .vote3 { position: relative; width: 44px; height: 40px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,.5); background: transparent; color: #fff; display: flex; align-items: center; justify-content: center; padding: 0; }
-.qband .vote3::before { content: ""; position: absolute; inset: -8px -6px; }   /* step 5: 56 × 56 touch area */
-.qband .vote3 svg { width: 18px; height: 18px; }
-.qband .vote3[aria-pressed="true"] { background: #fff; color: var(--bc); border-color: #fff; }
+/* 9 Nov 2026: «‹ Salir», sound and points aligned with the edges of the question card */
+body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-right: auto; }
+/* 9 Nov 2026: thumbs at the bottom left of the card, always visible; «Continuar» at their right after answering */
+.qfoot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; min-height: 56px; }
+.qfoot .rate3 { display: flex; gap: 10px; flex: none; }
+.vote3 { position: relative; width: 48px; height: 48px; border-radius: 12px; border: 1.5px solid var(--sec-line); background: #fff; color: #47506A; display: flex; align-items: center; justify-content: center; padding: 0; }
+.vote3::before { content: ""; position: absolute; inset: -4px; }   /* 56 × 56 touch area, same look */
+.vote3 svg { width: 22px; height: 22px; }
+.vote3[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 .qbody3 { padding: 22px 26px 24px; }
 .qstem { margin: 0 0 18px; font-size: 22px; font-weight: 700; line-height: 1.4; }
 .qopts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
@@ -460,10 +461,12 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
 .qo.wrong .mk { color: #A32D2D; }
 .qo.dim { border-color: #E3E8EF; background: #fff; color: #6B7488; }
 .qo:disabled { cursor: default; }
-.qfb { margin-top: 18px; border-top: 1px solid #E3E8EF; padding-top: 16px; }
-.qverd { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-weight: 700; font-size: 18px; }
-.qverd.ok { color: #17783F; } .qverd.no { color: #A32D2D; }
-.qverd .plus3 { background: var(--sun); color: var(--ink); border-radius: 999px; padding: 4px 12px; font-size: 15px; }
+.qfb { margin-top: 20px; background: #EAF0FB; border: 2px solid #B4C3E4; border-radius: 16px; padding: 14px 20px 16px; }   /* 9 Nov 2026: blue-grey panel, the same for every Materia */
+.qfb.in { animation: qfbin .28s ease-out; }
+@keyframes qfbin { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .qfb.in { animation: none; } }
+.qfb .qlbl { color: #2E4A9A; }
+.qfb .qexp { margin: 4px 0 0; }
 .qlbl { margin: 0; font-size: 13px; font-weight: 700; color: var(--mt); letter-spacing: .5px; text-transform: uppercase; }
 .qexp { margin: 4px 0 14px; font-size: 18px; line-height: 1.5; }
 /* «Salir» confirmation */
@@ -473,11 +476,10 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
 .qconfirm .actions .b { min-width: 0; }
 @media (min-width: 600px) and (max-width: 959px) { .qstem { font-size: 21px; } }
 @media (max-width: 599px) {
-  .info .qmeta3 { gap: 10px; }
-  .info .dots3 { gap: 5px; }
-  .pchip { padding: 5px 10px; }
+  .dots3 { gap: 5px; }
   .qpage { margin-top: 8px; }
-  .qband { padding-left: 14px; }
+  .qband { padding: 10px 16px; }
+  .qfoot .b-pri { flex: 1 1 auto; min-width: 0; }
   .qbody3 { padding: 18px 16px 20px; }
   .qstem { font-size: 19px; }
   .qopts { grid-template-columns: minmax(0, 1fr); gap: 10px; }
@@ -1301,12 +1303,10 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
     const P = state.prueba, it = P.items[P.i], q = Q(it.id), n = P.items.length;
     const m = materia(q.materia), k = m.id.toLowerCase(), x = tema(q.materia, q.tema);
     const dots = P.items.map((d, j) => `<span class="dt${j === P.i && !d.checked ? ' cur' : ''}${d.checked ? (d.chosen === Q(d.id).correct ? ' ok' : ' no') : ''}"></span>`).join('');
-    const chipTxt = P.tipo === 'grado' ? t('textos.tipoGrado') : P.tipo === 'materia' ? t('textos.todosLosTemas', { materia: materia(P.mid).name }) : t('textos.temaN', { n: temaNum(P.tid) });
-    const chipIc = P.tipo === 'tema' ? (temaIcon(P.mid, P.tid) || micon(P.mid)) : launchIcon(P);
-    const chipMt = P.tipo === 'grado' ? 'var(--ink)' : `var(--${P.mid.toLowerCase()}-t)`;
-    head({ back: ['quit', 'textos.salir', () => { P.quit = true; P.quitTo = null; render(); }],
-      extra: `<span class="qmeta3"><div class="dots3" role="img" aria-label="${esc(t('textos.preguntaDe', { i: P.i + 1, n }))}">${dots}</div><span class="pchip" style="--mt:${chipMt}">${chipIc}${esc(chipTxt)}</span></span>` });
+    // 9 Nov 2026: the information area holds only «‹ Salir», sound and points, aligned with the card (body.v-preg)
+    head({ back: ['quit', 'textos.salir', () => { P.quit = true; P.quitTo = null; render(); }] });
     const right = it.checked && it.chosen === q.correct;
+    const slide = !!it.fbNew; it.fbNew = false;   // the explanation slides in once, right after answering (not on a re-render)
     const opts = it.order.map(oi => {
       let cls = 'qo', mk = '';
       if (it.checked) {
@@ -1318,20 +1318,22 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
     }).join('');
     const vote3 = d => { const on = votes[q.id] === d, l = esc(t(d > 0 ? 'textos.votoArriba' : 'textos.votoAbajo'));
       return `<button class="vote3" data-v="${d}" aria-pressed="${on}" aria-label="${l}" title="${l}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${THUMB(d)}</svg></button>`; };
-    const plus = right ? CFG.puntosPorCorrecta : it.checked ? CFG.puntosPorIncorrecta : 0;
+    // 9 Nov 2026: dots in a white pill at the right of the band; thumbs at the bottom left, always visible; after
+    // answering, the explanation in a blue-grey panel (no visible verdict, no «+10»; the verdict is read by screen
+    // readers) and «Continuar» at the right of the thumbs.
     app.innerHTML = `
       <section class="qpage" style="--mt:var(--${k}-t);--sft:var(--${k}-s)">
         <article class="qcard3" style="--bc:var(--${k}-t)">
-          <div class="qband">${(x && temaIcon(m.id, x.id)) || micon(m.id)}<span class="qloc">${esc(m.name)} · ${esc(x ? x.name : q.tema)}</span><span class="rate3">${vote3(1)}${vote3(-1)}</span></div>
+          <div class="qband"><span class="qhd">${(x && temaIcon(m.id, x.id)) || micon(m.id)}<span class="qloc">${esc(m.name)} · ${esc(x ? x.name : q.tema)}</span></span><div class="dots3" role="img" aria-label="${esc(t('textos.preguntaDe', { i: P.i + 1, n }))}">${dots}</div></div>
           <div class="qbody3">
             <p class="qstem">${fmt(q.stem)}</p>
             <div class="qopts" role="group">${opts}</div>
-            ${it.checked ? `<div class="qfb" id="fb">
-              <div class="qverd ${right ? 'ok' : 'no'}" role="status"><span><span aria-hidden="true">${right ? '✓' : '✗'}</span> ${esc(t(right ? 'textos.correcto' : 'textos.incorrecto'))}</span>${plus ? `<span class="plus3">${esc(t('textos.masPuntos', { p: plus }))}</span>` : ''}</div>
+            ${it.checked ? `<p class="sr" role="status">${esc(t(right ? 'textos.correcto' : 'textos.incorrecto'))}</p>
+            <div class="qfb${slide ? ' in' : ''}" id="fb">
               <p class="qlbl">${esc(t('textos.explicacion'))}</p>
               <p class="qexp">${fmt(q.feedback)}</p>
-              <div class="actions"><button class="b b-pri" id="next">${esc(t(P.i === n - 1 ? 'textos.verResultado' : 'textos.siguiente'))}</button></div>
             </div>` : ''}
+            <div class="qfoot"><span class="rate3">${vote3(1)}${vote3(-1)}</span>${it.checked ? `<button class="b b-pri" id="next">${esc(t(P.i === n - 1 ? 'textos.verResultado' : 'textos.siguiente'))}</button>` : ''}</div>
           </div>
         </article>
       </section>
@@ -1341,13 +1343,13 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
     app.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
       if (it.checked) return;
       const before = totalPoints();
-      it.chosen = +b.dataset.o; it.checked = true; it.checkedAt = Date.now(); it.answeredAt = new Date().toISOString(); it.ms = Date.now() - P.qStart;
+      it.chosen = +b.dataset.o; it.checked = true; it.fbNew = true; it.checkedAt = Date.now(); it.answeredAt = new Date().toISOString(); it.ms = Date.now() - P.qStart;
       sfx(it.chosen === q.correct ? 'correcta' : 'incorrecta');
       // 4 Nov 2026: the top bar adds the points at the same moment the option turns green (no extra sound)
       const after = totalPoints(); if (after !== before) state.ptsAnim = { from: before, to: after };
       render();
-      // Phones and portrait: if the feedback ends below the screen, bring it up (on a tablet in landscape it fits)
-      const fb = document.getElementById('fb');
+      // Phones and portrait: if the explanation and «Continuar» end below the screen, bring them up (on a tablet in landscape it fits)
+      const fb = document.querySelector('.qfoot');
       if (fb && fb.getBoundingClientRect().bottom > innerHeight) {
         const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
         fb.scrollIntoView({ block: 'end', behavior: reduce ? 'auto' : 'smooth' });
@@ -1657,6 +1659,7 @@ button.ttile:active, .mtodo:active { transform: translateY(1px); }
       : v === 'progreso' && state.mapMateria && state.mapMateria !== 'ALL' ? state.mapMateria : null;
     document.body.classList.toggle('s-login', v === 'login');   // full-bleed split screen
     document.body.classList.toggle('s-read', !!read);
+    document.body.classList.toggle('v-preg', v === 'pregunta');   // 9 Nov 2026: information area aligned with the question card
     document.body.classList.toggle('tinted', !!(read || deep));
     const tone = read && read !== 'ALL' ? read : deep;
     document.body.setAttribute('style', (tone ? '--mc:' + MCOLOR[tone] + ';' : '') + (deep ? MDEEP(deep) : ''));
