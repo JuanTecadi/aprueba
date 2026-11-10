@@ -11,10 +11,12 @@ Tablet-first practice game for 5to grado students in Venezuela. This repository 
 | `ajustes.json` | Settings | Project document *Aprueba – Ajustes* |
 | `questions.json` | Approved questions, Temas and Subtemas | Master workbook `Aprueba_5to_Phase1_T01-T12.xlsx` |
 | `img/` | Logo version 2 (badge monogram; grade logos on light and dark, app icon) and the mascot version 2, the chivo (three poses) | Project folders `claude/images/logo/v2/` and `claude/images/mascot/v2/` |
+| `img/app/`, `manifest.webmanifest` | App icon for the home screen (iPad/iPhone, Android) and install on Windows/Mac (10 November 2026): PNG icons built from `img/aprueba-icon.svg` by `tools/make_appicons.py`; opens full screen | This repository |
 | `supabase/schema.sql` | Database: tables, access rules, save function, leaderboard function `tabla_posiciones`, backstage views | This repository (matches the live Supabase database) |
 | `tools/build_textos.py` | *Aprueba – Textos* → `textos.json`, with checks | This repository |
 | `tools/build_ajustes.py` | *Aprueba – Ajustes* → `ajustes.json`, with checks (moved here 4 November 2026) | This repository |
 | `tools/export_questions.py` | Master workbook → `questions.json`, with option codes K, D1, D2, D3 | This repository |
+| `tools/make_appicons.py` | `img/aprueba-icon.svg` → the app icons in `img/app/` (needs `rsvg-convert`) | This repository |
 | `tests/` | Local browser tests (Playwright) with a stand-in for Supabase (`mock-supabase.js`) and a helper that measures touch areas and contrast (`sweep.js`) | This repository |
 
 The JSON files are generated from the project documents; do not edit them by hand.
