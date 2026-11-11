@@ -17,6 +17,7 @@ Tablet-first practice game for 5to grado students in Venezuela. This repository 
 | `tools/build_ajustes.py` | *Aprueba – Ajustes* → `ajustes.json`, with checks (moved here 4 November 2026) | This repository |
 | `tools/export_questions.py` | Master workbook → `questions.json`, with option codes K, D1, D2, D3 | This repository |
 | `tools/make_appicons.py` | `img/aprueba-icon.svg` → the app icons in `img/app/` (needs `rsvg-convert`) | This repository |
+| `docs/code-notes.md` | How `index.html` and the tests are built now (structure, tokens, views, helpers, the database in short); read before changing the app (11 November 2026) | This repository |
 | `tests/` | Local browser tests (Playwright) with a stand-in for Supabase (`mock-supabase.js`) and a helper that measures touch areas and contrast (`sweep.js`) | This repository |
 
 The JSON files are generated from the project documents; do not edit them by hand.
@@ -27,7 +28,7 @@ No student data is stored in this repository. Accounts are in Supabase since v0.
 
 ## Tests
 
-From the repository folder: `python3 -m http.server 8765 &` then run each file with `node tests/<file>`: `test-accounts.js` (67 checks), `test-save.js` (19), `test-temas12.js` (45), `test-step2.js` (72), `test-step3.js` (176), `test-step4.js` (157) and `test-step5.js` (34); 570 checks in all, at 1180 × 820, 820 × 1180 and 390 × 844. Most take a folder for screenshots as an optional argument.
+From the repository folder: `python3 -m http.server 8765 &` then run each file with `node tests/<file>`: `test-accounts.js` (67 checks), `test-save.js` (19), `test-temas12.js` (45), `test-step2.js` (72), `test-step3.js` (197), `test-step4.js` (160) and `test-step5.js` (34); 594 checks in all, at 1180 × 820, 820 × 1180 and 390 × 844. Most take a folder for screenshots as an optional argument.
 
 ## History
 
