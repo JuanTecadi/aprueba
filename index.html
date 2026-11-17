@@ -696,6 +696,13 @@ body.s-read .info .pts .sc { background: var(--sft, #F3F5F9); }
   .stk-n { font-size: 27px; } .stk-n .ic { width: 20px; height: 20px; } .stk-t { font-size: 12px; }
   .rpage .score3 .sbig { font-size: 46px; }
 }
+/* Todo map (16 Nov 2026): the whole Materia card is one button, with a light press effect */
+.mcol[role="button"] { cursor: pointer; transition: transform .12s, box-shadow .12s; -webkit-tap-highlight-color: transparent; }
+.mcol[role="button"]:hover { box-shadow: 0 0 0 3px rgba(255,201,60,.6); }
+.mcol[role="button"]:active { transform: scale(.98); box-shadow: 0 0 0 4px var(--sun); }
+.mcol[role="button"]:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+.mcol .mch::before { content: none; }
+@media (prefers-reduced-motion: reduce) { .mcol[role="button"]:active { transform: none; } }
 </style>
 </head>
 <body>
@@ -1690,8 +1697,10 @@ body.s-read .info .pts .sc { background: var(--sft, #F3F5F9); }
         const ti = temaIcon(m.id, x.id);
         return `<li class="mtr lv${lv}" title="${esc(x.name)}">${ti ? `<span class="mti">${ti}</span><span class="sr">${esc(t('textos.temaN', { n }))} · </span>` : `<b>${n}</b>`}<span>${esc(x.name)}</span>${sr ? `<span class="sr"> · ${esc(sr)}</span>` : ''}</li>`;
       }).join('');
-      return `<section class="mcol" style="${MSCALE(m.id)}">
-          <button class="mch" data-go="${m.id}"><span class="mchi">${micon(m.id)}</span><b>${esc(m.name)}</b><span class="ar2" aria-hidden="true">›</span></button>
+      // 16 Nov 2026: the whole Materia card is one button that opens that Materia's map («Mapa de Ciencias»);
+      // the rows have no action of their own (role="button": a native button cannot hold a list)
+      return `<section class="mcol" role="button" tabindex="0" aria-label="${esc(t('textos.mapaDe', { materia: m.name }))}" data-go="${m.id}" style="${MSCALE(m.id)}">
+          <div class="mch"><span class="mchi">${micon(m.id)}</span><b>${esc(m.name)}</b><span class="ar2" aria-hidden="true">›</span></div>
           <ol class="mrows">${rows}</ol></section>`;
     }).join('');
     const sw = n => `<i class="sw4 lv${n}" aria-hidden="true"></i>`;
@@ -1699,10 +1708,14 @@ body.s-read .info .pts .sc { background: var(--sft, #F3F5F9); }
       <section class="page mapw">
         ${mapTabs('ALL')}
         <div class="mcols">${cols}</div>
-        <p class="mkey" style="${MSCALE('CIE')}">${sw(0)}<span>${esc(t('textos.mapaAunNo'))}</span><span class="gap4"></span><span>${esc(t('textos.mapaPorPracticar'))}</span>${[1, 2, 3, 4, 5].map(sw).join('')}<span>${esc(t('textos.mapaDominado'))}</span></p>
+        <p class="mkey" style="${MSCALE('CIE')}"><span>${esc(t('textos.mapaPorPracticar'))}</span>${[0, 1, 2, 3, 4, 5].map(sw).join('')}<span>${esc(t('textos.mapaDominado'))}</span></p>
       </section>`;
     bindMapTabs();
-    app.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { state.mapMateria = b.dataset.go; render(); window.scrollTo(0, 0); });
+    app.querySelectorAll('[data-go]').forEach(b => {
+      const open = () => { state.mapMateria = b.dataset.go; render(); window.scrollTo(0, 0); };
+      b.onclick = open;
+      b.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } };
+    });
   }
 
   // One Materia (deep Materia background): 12 Tema cards (4 × 3) coloured by level, with the Tema icon (or none until

@@ -86,7 +86,18 @@ const contrast = (p, sel) => p.locator(sel).first().evaluate(e => {
     ok(`${tag} Todo map: rows show the Tema names`, (await p.locator(row('LEN', 1)).innerText()).includes(temaName('LEN', 'T01')));
     ok(`${tag} Todo map: 47 rows show the Tema icon in place of the number (8 Nov 2026)`, (await p.locator('.mtr .mti .ic').count()) === 47 && (await p.locator('.mtr:not(.off) > b').count()) === 0
       && (await p.locator(row('SOC', 4) + ' use').getAttribute('href')) === '#i-SOC-T04' && (await p.locator(row('LEN', 1) + ' .sr').first().innerText()).includes('Tema 1'));
-    ok(`${tag} Todo map: key «Aún no», «Por practicar», five steps, «Dominado»`, (await p.locator('.mkey').innerText()).replace(/\s+/g, ' ').trim() === `${TX.mapaAunNo} ${TX.mapaPorPracticar} ${TX.mapaDominado}` && (await p.locator('.mkey .sw4').count()) === 6);
+    // 16 Nov 2026: the key is one scale: «Por practicar», the dashed box, the four tints, the full tone, «Dominado»
+    ok(`${tag} Todo map: key is one scale «Por practicar» dashed + five steps «Dominado»`, (await p.locator('.mkey').innerText()).replace(/\s+/g, ' ').trim() === `${TX.mapaPorPracticar} ${TX.mapaDominado}`
+      && (await p.locator('.mkey .sw4').count()) === 6 && (await p.locator('.mkey .sw4').first().getAttribute('class')).includes('lv0'));
+    // 16 Nov 2026: the whole Materia card is one button «Mapa de [Materia]»; a row inside it opens the map too
+    ok(`${tag} Todo map: each Materia card is one button «Mapa de …», focusable`, (await p.locator('.mcol[role="button"][tabindex="0"]').count()) === 4
+      && (await p.getAttribute('.mcol:nth-child(2)', 'aria-label')) === TX.mapaDe.replace('{materia}', 'Lengua'));
+    await p.click('.mcol:nth-child(3) .mtr:nth-child(6)'); await p.waitForTimeout(80);
+    ok(`${tag} Todo map: tapping a row opens that Materia's map`, (await p.locator('#top h1').innerText()) === TX.mapaTitulo.replace('{materia}', 'Matemáticas'));
+    await p.click('[data-mat="ALL"]'); await p.waitForTimeout(80);
+    await p.focus('.mcol:nth-child(4)'); await p.keyboard.press('Enter'); await p.waitForTimeout(80);
+    ok(`${tag} Todo map: Enter on a focused card opens its map`, (await p.locator('#top h1').innerText()) === TX.mapaTitulo.replace('{materia}', 'Sociales'));
+    await p.click('[data-mat="ALL"]'); await p.waitForTimeout(80);
     ok(`${tag} Todo map: no points, no mascot`, !/puntos/i.test(await p.locator('#app').innerText()) && (await p.locator('#app img').count()) === 0);
     if (w === 1180) ok(`${tag} Todo map: all 48 rows and the key fit on screen`, (await p.locator('.mkey').evaluate(e => e.getBoundingClientRect().bottom)) <= h);
     ok(`${tag} Todo map: navy text on every level passes 4.5:1`, Math.min(await contrast(p, row('MAT', 2)), await contrast(p, row('CIE', 1)), await contrast(p, row('CIE', 12)), await contrast(p, row('MAT', 1))) >= 4.5);
