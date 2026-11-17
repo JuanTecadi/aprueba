@@ -127,11 +127,12 @@ async function playAll(p, right) {
     await p.click('#quit-no'); await p.click('#ptsbtn'); await p.waitForTimeout(60);
     ok(`${tag} Points chip during a Prueba: the same confirmation`, (await p.locator('.qconfirm').count()) === 1);
     await p.click('#quit-no'); await p.click('#next'); await p.waitForTimeout(40);
-    // finish: questions 3 to 10 all correct → 9 of 10 = 90% → Festejo, top band
+    // finish: questions 3 to 10 all correct → 9 of 10 = 90% → Festejo, top band. 17 Nov 2026: 8 in a row, so questions 9
+    // and 10 earn the aciertos seguidos bonus: «+110 puntos» (90 + 2 × 10)
     while (await p.locator('.qo').count()) { await answer(p, true); await p.click('#next'); await p.waitForTimeout(40); }
     await p.waitForTimeout(150);
     ok(`${tag} Result: the back of the card (flip), label, title, score, points`, (await p.locator('.gcard.flip').count()) === 1 && (await p.locator('.glbl').innerText()) === ('CIENCIAS · TEMA 1 · ' + T01).toUpperCase()
-      && (await p.locator('.gcard h2').innerText()) === '¡Terminaste la prueba!' && (await p.locator('.sbig').innerText()) === '9 de 10' && (await p.locator('.score3 .gchip').innerText()) === '+90 puntos');
+      && (await p.locator('.gcard h2').innerText()) === '¡Terminaste la prueba!' && (await p.locator('.sbig').innerText()) === '9 de 10' && (await p.locator('.score3 .gchip').innerText()) === '+110 puntos');
     const msg = await p.locator('.smsg').innerText();
     ok(`${tag} Result: message from the top band (90%), no label`, (TEXTOS.resumen.feliz.some(x => x.texto === msg)) && (await p.locator('.resumen, .rpage h3').count()) === 0);
     ok(`${tag} Result: chivo «Festejo» (hidden on phones)`, (await p.locator('.rchivo').getAttribute('src')) === 'img/chivo-festejo.svg' && (await p.locator('.rchivo').isVisible()) === (w !== 390));

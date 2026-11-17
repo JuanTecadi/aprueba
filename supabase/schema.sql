@@ -58,7 +58,8 @@ create table if not exists public.pruebas (
   duracion_seg  integer not null check (duracion_seg >= 0),
   n_preguntas   smallint not null check (n_preguntas between 1 and 30),
   n_correctas   smallint not null check (n_correctas between 0 and n_preguntas),
-  puntos        integer not null check (puntos >= 0),                  -- as awarded at the time
+  puntos        integer not null check (puntos >= 0),                  -- as awarded at the time (correct answers × points)
+  bono_racha    integer not null default 0 check (bono_racha >= 0),    -- racha bonus earned by this Prueba (bonos_racha_aciertos, 17 Nov 2026)
   created_at    timestamptz not null default now()
 );
 create index if not exists pruebas_student on public.pruebas (student_id, finished_at);
@@ -74,6 +75,7 @@ create table if not exists public.answers (
   correcta     boolean not null,
   tiempo_ms    integer not null check (tiempo_ms >= 0),
   answered_at  timestamptz not null,
+  bono         integer not null default 0 check (bono >= 0),           -- aciertos seguidos bonus of this answer (17 Nov 2026)
   check (correcta = (opcion = 'K'))
 );
 create index if not exists answers_student on public.answers (student_id);
@@ -91,11 +93,29 @@ create table if not exists public.ratings (
 
 -- ---------- Saving a Prueba: the Prueba and its answers in one step (all or nothing) ----------
 -- p = {id, tipo, materia, tema, started_at, finished_at, duracion_seg, n_preguntas, n_correctas, puntos,
+--      ajustes: {bonoRacha, aciertosSeguidosDesde, bonoAciertoSeguido, zonaHoraria},   (17 Nov 2026; optional)
 --      answers: [{question_id, posicion, opcion, correcta, tiempo_ms, answered_at}, ...]}
+-- Bonuses (migration bonos_racha_aciertos, 17 Nov 2026) are worked out here and saved as awarded: from the
+-- aciertosSeguidosDesde-th correct answer in a row, each correct answer earns bonoAciertoSeguido (answers.bono); the first
+-- Prueba of a day (Venezuela time) that brings the racha to a multiple of 5 days earns bonoRacha (pruebas.bono_racha).
+-- Racha: a day with a Prueba counts; a Saturday or Sunday without one is skipped; a weekday without one stops it.
+-- Without ajustes (an app before the bonuses) every bonus is 0.
 -- The app gives each Prueba its id, so a retry after a dropped connection is ignored (no duplicates).
-create or replace function public.save_prueba(p jsonb) returns uuid
+create or replace function public.save_prueba(p jsonb)
+returns uuid
 language plpgsql security invoker set search_path = '' as $$
-declare pid uuid; wanted uuid := coalesce((p ->> 'id')::uuid, gen_random_uuid());
+declare
+  pid uuid;
+  wanted uuid := coalesce((p ->> 'id')::uuid, gen_random_uuid());
+  aj jsonb := coalesce(p -> 'ajustes', '{}'::jsonb);
+  b_racha int := least(greatest(coalesce((aj ->> 'bonoRacha')::int, 0), 0), 500);
+  desde int := least(greatest(coalesce((aj ->> 'aciertosSeguidosDesde')::int, 7), 2), 30);
+  b_acierto int := least(greatest(coalesce((aj ->> 'bonoAciertoSeguido')::int, 0), 0), 100);
+  zona text := coalesce(aj ->> 'zonaHoraria', 'America/Caracas');
+  dia date;
+  d date;
+  dias date[];
+  n int := 0;
 begin
   if auth.uid() is null then raise exception 'not signed in'; end if;
   if jsonb_array_length(p -> 'answers') <> (p ->> 'n_preguntas')::int then
@@ -109,11 +129,45 @@ begin
           (p ->> 'n_correctas')::int, (p ->> 'puntos')::int)
   on conflict (id) do nothing
   returning id into pid;
-  if pid is null then return wanted; end if;   -- already saved
-  insert into public.answers (prueba_id, student_id, question_id, posicion, opcion, correcta, tiempo_ms, answered_at)
-  select pid, auth.uid(), a ->> 'question_id', (a ->> 'posicion')::int, a ->> 'opcion',
-         (a ->> 'correcta')::boolean, (a ->> 'tiempo_ms')::int, (a ->> 'answered_at')::timestamptz
-  from jsonb_array_elements(p -> 'answers') a;
+  if pid is null then return wanted; end if;   -- already saved: nothing changes
+
+  -- Aciertos seguidos: from the desde-th correct answer in a row, each correct answer earns b_acierto.
+  insert into public.answers (prueba_id, student_id, question_id, posicion, opcion, correcta,
+                              tiempo_ms, answered_at, bono)
+  select pid, auth.uid(), x.qid, x.pos, x.opc, x.cor, x.t, x.at,
+         case when x.cor and b_acierto > 0 and x.pos - x.last_wrong >= desde then b_acierto else 0 end
+  from (
+    select a ->> 'question_id' as qid, (a ->> 'posicion')::int as pos, a ->> 'opcion' as opc,
+           (a ->> 'correcta')::boolean as cor, (a ->> 'tiempo_ms')::int as t,
+           (a ->> 'answered_at')::timestamptz as at,
+           max(case when (a ->> 'correcta')::boolean then 0 else (a ->> 'posicion')::int end)
+             over (order by (a ->> 'posicion')::int rows unbounded preceding) as last_wrong
+    from jsonb_array_elements(p -> 'answers') a
+  ) x;
+
+  -- Racha: only the first Prueba of a day (Venezuela time) can earn it.
+  if b_racha > 0 then
+    dia := ((p ->> 'finished_at')::timestamptz at time zone zona)::date;
+    if not exists (select 1 from public.pruebas q
+                   where q.student_id = auth.uid() and q.id <> pid
+                     and (q.finished_at at time zone zona)::date = dia) then
+      select array_agg(distinct (q.finished_at at time zone zona)::date) into dias
+      from public.pruebas q
+      where q.student_id = auth.uid() and (q.finished_at at time zone zona)::date <= dia;
+      d := dia;
+      loop   -- a day with a Prueba counts; a Saturday or Sunday without one is skipped; a weekday without one stops
+        if d = any(dias) then n := n + 1;
+        elsif extract(isodow from d) in (6, 7) then null;
+        else exit;
+        end if;
+        d := d - 1;
+        exit when d < dia - 3660;
+      end loop;
+      if n > 0 and n % 5 = 0 then
+        update public.pruebas set bono_racha = b_racha where id = pid;
+      end if;
+    end if;
+  end if;
   return pid;
 end $$;
 revoke all on function public.save_prueba(jsonb) from public, anon;
@@ -245,23 +299,27 @@ order by votos_abajo desc, votos_arriba desc, question_id;
 --            puntosPorCorrecta). Weeks and months are worked out in that time zone.
 -- Rows: the top_n students with points in the period (ties share a rank: 1, 1, 3), plus the caller's own row
 -- if the caller opted in and is not among them (rank null when the caller has no points in the period).
-create or replace function public.tabla_posiciones(
-  p_periodo text, p_materia text default null, p_top_n int default 8,
-  p_inicio_semana text default 'lunes', p_zona text default 'America/Caracas', p_pts_correcta int default 10)
-returns table (rango int, apodo text, puntos int, soy_yo boolean)
+-- 17 Nov 2026 (bonos_racha_aciertos): top_n null = everyone (tablaTop «Todos», the Tabla redesign); the score adds the
+-- bonuses: whole grade = Prueba points + racha bonuses + aciertos seguidos bonuses; one Materia = its correct answers ×
+-- points + its aciertos seguidos bonuses (the racha bonus belongs to the grade only).
+create or replace function public.tabla_posiciones(p_periodo text, p_materia text default null::text,
+  p_top_n integer default 8, p_inicio_semana text default 'lunes'::text,
+  p_zona text default 'America/Caracas'::text, p_pts_correcta integer default 10)
+returns table(rango integer, apodo text, puntos integer, soy_yo boolean)
 language plpgsql stable security definer set search_path = '' as $$
 declare
   me uuid := auth.uid();
   loc timestamp;
   desde timestamptz;
+  topn int;
 begin
   if me is null then raise exception 'not signed in'; end if;
   if p_periodo not in ('semana', 'mes', 'siempre') then raise exception 'periodo must be semana, mes or siempre'; end if;
   if p_materia is not null and p_materia not in ('CIE', 'LEN', 'MAT', 'SOC') then raise exception 'unknown materia'; end if;
   if p_inicio_semana not in ('lunes', 'domingo') then raise exception 'inicio_semana must be lunes or domingo'; end if;
-  p_top_n := least(greatest(coalesce(p_top_n, 8), 1), 50);
+  topn := case when p_top_n is null then 2147483647 else least(greatest(p_top_n, 1), 50) end;
   p_pts_correcta := least(greatest(coalesce(p_pts_correcta, 10), 0), 100);
-  loc := now() at time zone p_zona;                       -- fails on an unknown time zone
+  loc := now() at time zone p_zona;
   desde := case p_periodo
     when 'semana' then (case p_inicio_semana
                           when 'lunes' then date_trunc('week', loc)
@@ -272,11 +330,15 @@ begin
   with pts as (
     select s.id, s.nickname,
            coalesce(case when p_materia is null
-             then (select sum(p.puntos) from public.pruebas p
+             then (select sum(p.puntos + p.bono_racha) from public.pruebas p
                    where p.student_id = s.id and p.finished_at >= desde)
-             else (select count(*) * p_pts_correcta from public.answers a
+                  + coalesce((select sum(a.bono) from public.answers a
                    join public.pruebas p on p.id = a.prueba_id
-                   where a.student_id = s.id and a.correcta and p.finished_at >= desde
+                   where a.student_id = s.id and p.finished_at >= desde), 0)
+             else (select count(*) filter (where a.correcta) * p_pts_correcta + coalesce(sum(a.bono), 0)
+                   from public.answers a
+                   join public.pruebas p on p.id = a.prueba_id
+                   where a.student_id = s.id and p.finished_at >= desde
                      and left(a.question_id, 3) = p_materia) end, 0)::int as total
     from public.students s
     where s.leaderboard and s.nickname is not null),
@@ -285,13 +347,13 @@ begin
            row_number() over (order by total desc, lower(nickname)) as rn,
            nickname, total, id
     from pts where total > 0)
-  select x.r, x.nickname, x.total, x.id = me from ranked x where x.rn <= p_top_n
+  select x.r, x.nickname, x.total, x.id = me from ranked x where x.rn <= topn
   union all
   select y.r, y.nickname, y.total, true from (
     select k.r, k.nickname, k.total, k.rn from ranked k where k.id = me
     union all
     select null, p.nickname, 0, null from pts p where p.id = me and p.total = 0) y
-  where y.rn is null or y.rn > p_top_n
+  where y.rn is null or y.rn > topn
   order by 1 nulls last, 2;
 end $$;
 revoke all on function public.tabla_posiciones(text, text, int, text, text, int) from public, anon;

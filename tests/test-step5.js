@@ -3,7 +3,8 @@
 //    saves nothing and the total returns; a finished Prueba is saved with its answers and codes; the board lists only
 //    students who joined, ties share a rank, the Materia filter works, the switch is saved at once, the own row and
 //    «Mi práctica» match the points chip; no connection: the board shows the message and the switch does not change.
-// B. Every screen at 1180 × 820, 820 × 1180 and 390 × 844: no horizontal scroll, every control has a 56 px touch area,
+// B. Every screen at 1180 × 820, 820 × 1180 and 390 × 844 (17 Nov 2026: also the main page with its personal message and
+//    the Tabla filter panel; the racha and the sticker are swept in test-rachas.js): no horizontal scroll, every control has a 56 px touch area,
 //    every text passes its WCAG contrast limit (4.5:1, or 3:1 for large text), no page errors.
 // Usage: python3 -m http.server 8765 & node tests/test-step5.js [screenshot folder]
 const { chromium } = require('playwright');
@@ -67,14 +68,14 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
   await p.click('#ptsbtn'); await p.waitForTimeout(200);
   let tx = await p.locator('#app').innerText();
   ok('board lists only students who joined; ties share a rank', tx.includes('Leoa') && tx.includes('Cuco') && tx.includes('Tita') && !tx.includes('Paty')
-    && (await p.locator('.brd4 li .rk4').allInnerTexts()).join() === '1,2,2');
+    && (await p.locator('.brd5 li .rk4').allInnerTexts()).join() === '1,2,2');
   ok('switch off: note «Nadie ve tus puntos…», no own row', tx.includes(TX.tablaFueraNota) && !tx.includes('(tú)') && (await p.getAttribute('#swt4', 'aria-checked')) === 'false');
   await p.click('[data-tm="MAT"]'); await p.waitForTimeout(150);
-  ok('Materia filter: board changes (Matemáticas: Cuco, Leoa)', (await p.locator('.brd4 li .nk').allInnerTexts()).join() === 'Cuco,Leoa');
+  ok('Materia filter: board changes (Matemáticas: Cuco, Leoa)', (await p.locator('.brd5 li .nk').allInnerTexts()).join() === 'Cuco,Leoa');
   await p.click('[data-tm="ALL"]'); await p.waitForTimeout(150);
   await p.click('#swt4'); await p.waitForTimeout(200);
   ok('switch on: saved at once', (await mockdb(p)).users.find(u => u.nickname === 'Ana').leaderboard === true && (await p.getAttribute('#swt4', 'aria-checked')) === 'true');
-  ok('joined with 0 points: own row «–» after the others', (await p.locator('.brd4 li.me').innerText()).includes('Ana (tú)') && (await p.locator('.brd4 li.me .rk4').innerText()) === '–');
+  ok('joined with 0 points: own row «–» after the others', (await p.locator('.brd5 li.me').innerText()).includes('Ana (tú)') && (await p.locator('.brd5 li.me .rk4').innerText()) === '–');
 
   // ---------- live points ----------
   await rail(p, 'home'); await p.click('#c-grado'); await p.click('#start'); await p.waitForTimeout(100);
@@ -103,14 +104,14 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
   // ---------- board and «Mi práctica» after playing ----------
   const total = await ptsNum(p);
   await p.click('#ptsbtn'); await p.waitForTimeout(200);
-  ok('board: own row in place with the same points as the chip', (await p.locator('.brd4 li.me').innerText()).includes('Ana (tú)') && (await p.locator('.brd4 li.me .pp').innerText()) === `${total} puntos`);
+  ok('board: own row in place with the same points as the chip', (await p.locator('.brd5 li.me').innerText()).includes('Ana (tú)') && (await p.locator('.brd5 li.me .pp').innerText()) === `${total} puntos`);
   await p.click('[data-tv="prac"]'); await p.waitForTimeout(80);
   ok('Mi práctica: this week = the chip total, «1 prueba»', (await p.locator('.pnum:not(.dim) b').innerText()) === String(total) && (await p.locator('.wk4.cur .wn').innerText()) === '1 prueba');
   await rail(p, 'progreso');
   ok('maps after playing: no points', !/puntos/i.test(await p.locator('#app').innerText()));
   await rail(p, 'tabla'); await p.waitForTimeout(150);
   await p.click('#swt4'); await p.waitForTimeout(200);
-  ok('leave the board: own row gone at once, saved', !(await p.locator('.brd4').innerText()).includes('Ana') && (await mockdb(p)).users.find(u => u.nickname === 'Ana').leaderboard === false);
+  ok('leave the board: own row gone at once, saved', !(await p.locator('.brd5').innerText()).includes('Ana') && (await mockdb(p)).users.find(u => u.nickname === 'Ana').leaderboard === false);
   ok('A: no page errors', p.errs.length === 0); if (p.errs.length) console.log(p.errs);
   await p.context().close();
 
@@ -119,7 +120,7 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
   await signUp(po, 'off@x.com', 'Off');   // joined by default
   await po.evaluate(() => localStorage.setItem('mock.offline', 'true'));
   await rail(po, 'tabla'); await po.waitForTimeout(150);
-  ok('no connection: the board shows «No hay conexión…»', (await po.locator('.pcard4').first().innerText()).includes(TX.errorConexion));
+  ok('no connection: the board shows «No hay conexión…»', (await po.locator('.tlist5').innerText()).includes(TX.errorConexion));
   await po.click('#swt4'); await po.waitForTimeout(150);
   ok('no connection: the board switch stays on, with the message', (await po.getAttribute('#swt4', 'aria-checked')) === 'true' && (await po.locator('#swerr').innerText()) === TX.errorConexion);
   await rail(po, 'config'); await po.click('#swtab'); await po.waitForTimeout(150);
@@ -151,9 +152,11 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
     while (await q.locator('.qo').count()) { await answer(q, true); await q.waitForTimeout(30); await q.click('#next'); await q.waitForTimeout(30); }
     await q.waitForTimeout(400); await visit('11-resultado');
     await q.click('#mis'); await q.locator('.rrow').nth(1).click(); await q.waitForTimeout(60); await visit('12-respuestas');
+    await rail(q, 'home'); await visit('12b-pruebas-mensaje');   // 17 Nov 2026: the personal message under the greeting
     await rail(q, 'progreso'); await visit('13-mapa-todo');
     for (const m of ['CIE', 'LEN', 'MAT', 'SOC']) { await q.click(`[data-mat="${m}"]`); await q.waitForTimeout(60); await visit(`14-mapa-${m}`); }
     await rail(q, 'tabla'); await q.waitForTimeout(150); await visit('15-tabla-posiciones');
+    if (w < 960) { await q.click('#tfbtn'); await q.waitForTimeout(350); await visit('15b-tabla-filtro'); await q.keyboard.press('Escape'); await q.waitForTimeout(60); }   // the filter panel
     await q.click('[data-tv="prac"]'); await q.waitForTimeout(60); await visit('16-tabla-practica');
     await rail(q, 'ayuda'); await visit('17-ayuda');
     await rail(q, 'config'); await visit('18-config');
