@@ -656,6 +656,46 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
 .rpill .ic { width: 22px; height: 22px; stroke: var(--sun); stroke-width: 2; fill: none; flex: none; }
 .hpage .hmsg { font-size: 19px; font-weight: 700; line-height: 1.4; color: #fff; }
 @media (max-width: 599px) { .rpill { font-size: 17px; } .hpage .hmsg { font-size: 17px; } }
+/* Points chip (16 Nov 2026): the scope icon in a white disc, the points, a small faded podium (opens the Tabla) */
+.info .pts { padding: 0 14px 0 9px; }
+.info .pts .sc { width: 26px; height: 26px; border-radius: 999px; background: #fff; display: flex; align-items: center; justify-content: center; flex: none; }
+.info .pts .sc .ic { width: 16px; height: 16px; stroke-width: 2.2; }
+.info .pts .sc .scm { display: flex; color: var(--mt); }
+.info .pts > .ic { width: 16px; height: 16px; opacity: .7; }
+body.s-read .info .pts .sc { background: var(--sft, #F3F5F9); }
+.info .pts.pop.big { transform: scale(1.22); box-shadow: 0 0 0 6px rgba(255,201,60,.45), 0 0 0 12px rgba(255,201,60,.18); }
+@media (prefers-reduced-motion: reduce) { .info .pts.pop.big { transform: none; } }
+/* Tema tiles: the student's points in that Tema, small, top right */
+.ttile { position: relative; }
+.ttile .tpts { position: absolute; top: 14px; right: 14px; background: var(--mt-s, #E3F4FC); color: var(--mt); border-radius: 999px; padding: 4px 10px; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+@media (max-width: 599px) { .ttile .tpts { top: 10px; right: 10px; font-size: 12px; padding: 3px 8px; } }
+/* Intro and result cards: the total of the Prueba's scope */
+.gtot { margin: 2px 0 0; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: var(--ink); }
+.gtot .ic { width: 18px; height: 18px; stroke-width: 2; color: var(--lc); flex: none; }
+/* Result card: shorter band and score, the bonus lines in a light box, the racha sticker over the corner */
+.rpage .gband.sm { height: 96px; } .rpage .gband.sm .ic { width: 52px; height: 52px; }
+.rpage .score3 { margin-top: 4px; } .rpage .score3 .sbig { font-size: 56px; }
+.rlines { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; padding: 10px 14px; border-radius: 14px; background: #F3F6FA; }
+.rline { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: var(--ink); }
+.rline.gtot { margin: 0; }
+.rline .rmk { width: 18px; display: flex; justify-content: center; color: #17783F; flex: none; }
+.rline .rfl { width: 18px; height: 18px; stroke-width: 2.2; color: var(--ink); flex: none; }
+.rpage .smsg { margin-top: 8px; font-size: 17px; line-height: 1.45; }
+.gwrap { position: relative; flex: none; max-width: 100%; }
+.stk { position: absolute; top: -22px; right: -46px; z-index: 3; transform: rotate(9deg); width: 168px; box-sizing: border-box; padding: 12px 14px 14px;
+  border-radius: 22px; background: var(--sun); border: 4px solid var(--bc); box-shadow: 0 6px 0 rgba(10,20,40,.35), 0 14px 24px rgba(10,20,40,.35);
+  display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--ink); text-align: center; animation: stkin .35s .2s ease-out both; }
+.stk-n { display: flex; align-items: center; gap: 4px; font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; }
+.stk-n .ic { width: 26px; height: 26px; stroke-width: 2.4; }
+.stk-t { font-weight: 700; font-size: 14px; line-height: 1.2; }
+@keyframes stkin { from { transform: rotate(9deg) scale(.4); opacity: 0; } to { transform: rotate(9deg); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .stk { animation: none; } }
+@media (max-width: 599px) {
+  .gwrap { width: 100%; }
+  .stk { top: -16px; right: -4px; width: 134px; padding: 9px 11px 11px; border-width: 3px; border-radius: 17px; }
+  .stk-n { font-size: 27px; } .stk-n .ic { width: 20px; height: 20px; } .stk-t { font-size: 12px; }
+  .rpage .score3 .sbig { font-size: 46px; }
+}
 </style>
 </head>
 <body>
@@ -1007,10 +1047,18 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
     const v = state.view;
     if (v === 'materia' && state.materia) return { mid: state.materia };
     if (v === 'intro' && state.pick && state.pick.mid) return { mid: state.pick.mid };
-    if (v === 'pregunta' && state.prueba && state.prueba.mid) return { mid: state.prueba.mid, tid: state.prueba.tid || null };
+    if (v === 'pregunta' && state.prueba && state.prueba.mid) return { mid: state.prueba.mid, tid: state.prueba.tid || null, prueba: true };
     return {};
   }
   const totalPoints = () => { const s = scopeNow(); return puntosDe(s.mid, s.tid) + livePoints(); };
+  // The chip carries the scope icon (grade: the four-colour “+”; Materia: its icon; Tema: its icon) in a white disc
+  const scopeIcon = sc => (!sc.mid ? micon('ALL') : `<span class="scm" style="--mt:var(--${sc.mid.toLowerCase()}-t)">${(sc.tid && temaIcon(sc.mid, sc.tid)) || micon(sc.mid)}</span>`);
+  function chipLabel(sc, p) {
+    if (!sc.mid) return t('textos.verTabla', { p });
+    const m = materia(sc.mid).name;
+    if (sc.prueba) return sc.tid ? t('textos.chipTema', { p }) : t('textos.chipMateria', { p, materia: m });
+    return t('textos.verTablaMateria', { p, materia: m });
+  }
 
   /* ---------- sound effects (decided 28 Oct 2026) ----------
      Three short sounds generated in the browser (no files): correct = "Marimba" (two warm notes, C to G),
@@ -1089,37 +1137,39 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   function renderTop() {
     if (!state.user) { top.innerHTML = ''; top.hidden = true; return; }   // login and nickname: no information area
     const on = soundOn(), lbl = esc(t(on ? 'textos.sonidoSilenciar' : 'textos.sonidoActivar'));
-    const total = totalPoints(), anim = state.ptsAnim; state.ptsAnim = null;
+    const total = totalPoints(), anim = state.ptsAnim, sc = scopeNow(); state.ptsAnim = null;
     const shown = anim ? anim.from : total, h = HEAD || {};
     top.innerHTML = `<div class="ttl">`
       + (h.back ? `<button class="b-back" id="${h.back[0]}"><span class="ar" aria-hidden="true">‹</span>${esc(t(h.back[1]))}</button>` : '')
       + (h.icon || h.title ? `<span class="tt">${h.icon || ''}${h.title ? `<h1>${esc(h.title)}</h1>` : ''}</span>` : '') + (h.pill ? `<span class="gpill">${esc(CFG.grado)}</span>` : '') + (h.extra || '')
       + `</div><div class="tools">`
       + `<button class="snd ${on ? '' : 'off'}" id="snd" aria-pressed="${on}" aria-label="${lbl}" title="${lbl}">${soundIcon(on)}</button>`
-      + `<button class="pts" id="ptsbtn" aria-label="${esc(t('textos.verTabla', { p: total }))}">${micon('TAB')}<span class="n">${esc(t('textos.puntosTotales', { n: shown }))}</span></button></div>`;
+      + `<button class="pts" id="ptsbtn" aria-label="${esc(chipLabel(sc, total))}"><span class="sc">${scopeIcon(sc)}</span><span class="n">${esc(t('textos.puntosTotales', { n: shown }))}</span>${micon('TAB')}</button></div>`;
     document.getElementById('snd').onclick = toggleSound;
-    document.getElementById('ptsbtn').onclick = () => leaveTo('tabla');
+    // On the Materia screen (and its intro) the chip opens the Tabla filtered to that Materia (16 Nov 2026)
+    document.getElementById('ptsbtn').onclick = () => (sc.mid && !sc.prueba ? leaveTo('tabla', { tMat: sc.mid }) : leaveTo('tabla'));
     if (h.back && h.back[2]) document.getElementById(h.back[0]).onclick = h.back[2];   // step 3: the view gives the back action
     top.hidden = false;
-    if (anim) countUp(anim.from, anim.to);
+    if (anim) countUp(anim.from, anim.to, anim.big);
   }
   // The total counts up with a short pop (under half a second, brief yellow highlight) when an answer is correct.
-  function countUp(from, to) {
+  // 16 Nov 2026: a correct answer that also earns the aciertos seguidos bonus gets a bigger pop (no text on the question screen)
+  function countUp(from, to, big) {
     const b = document.getElementById('ptsbtn'), n = b && b.querySelector('.n'); if (!n) return;
     const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const put = v => { n.textContent = t('textos.puntosTotales', { n: v }); };
-    b.classList.add('pop');
-    setTimeout(() => { b.classList.add('fade'); b.classList.remove('pop'); }, 450);
+    b.classList.add('pop'); if (big) b.classList.add('big');
+    setTimeout(() => { b.classList.add('fade'); b.classList.remove('pop', 'big'); }, big ? 650 : 450);
     if (reduce) { put(to); return; }
     const t0 = performance.now(), dur = 400;
     const step = now => { const k = Math.min(1, (now - t0) / dur); put(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)))); if (k < 1 && n.isConnected) requestAnimationFrame(step); };
     requestAnimationFrame(step);
   }
   // From the top bar during a Prueba: the same confirmation as «Salir» first (the answers and points are not saved)
-  function leaveTo(view) {
+  function leaveTo(view, extra) {
     const P = state.prueba;
     if (state.view === 'pregunta' && P) { P.quit = true; P.quitTo = view; render(); return; }
-    go(view);
+    go(view, extra);
   }
 
   /* ---------- views ---------- */
@@ -1349,14 +1399,16 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   // name and the grade pill. The line and the yellow «Todo [Materia]» tile, then 12 white Tema tiles (4 × 3):
   // the Tema icon (or the number in the icon slot until that Materia's icons are drawn), the name, «Tema N».
   // Temas not active yet: a translucent tile with «Tema N» only, not tappable.
+  // 16 Nov 2026: each Tema tile shows the student's points in that Tema, small, in a corner (none at 0)
+  const tpts = (mid, tid) => { const n = puntosDe(mid, tid); return n ? `<span class="tpts">${esc(t('textos.puntosTotales', { n }))}</span>` : ''; };
   function viewMateria() {
     const m = materia(state.materia);
     head({ back: ['back', 'textos.volver', () => go('home')], icon: `<span class="tic2">${micon(m.id)}</span>`, title: m.name, pill: true });
     const tiles = temaSlots(m).map(({ n, tema: x }) => x
-      ? `<button class="ttile" data-t="${x.id}"><span class="tslot">${temaIcon(m.id, x.id) || `<span class="tnum" aria-hidden="true">${n}</span>`}</span><b class="tn">${esc(x.name)}</b><span class="tno">${esc(t('textos.temaN', { n }))}</span></button>`
+      ? `<button class="ttile" data-t="${x.id}">${tpts(m.id, x.id)}<span class="tslot">${temaIcon(m.id, x.id) || `<span class="tnum" aria-hidden="true">${n}</span>`}</span><b class="tn">${esc(x.name)}</b><span class="tno">${esc(t('textos.temaN', { n }))}</span></button>`
       : `<div class="ttile off" aria-disabled="true"><span class="tno">${esc(t('textos.temaN', { n }))}</span></div>`).join('');
     app.innerHTML = `
-      <section class="page mpage" style="--mt:var(--${m.id.toLowerCase()}-t)">
+      <section class="page mpage" style="--mt:var(--${m.id.toLowerCase()}-t);--mt-s:var(--${m.id.toLowerCase()}-s)">
         <div class="mhead3"><p>${esc(t('textos.materiaSub'))}</p>
           <button class="mtodo" id="all">${micon(m.id)}<span>${esc(t('textos.todosLosTemas', { materia: m.name }))}</span></button></div>
         <div class="ttiles">${tiles}</div>
@@ -1383,6 +1435,15 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   // Animations only when the card arrives (not on a re-render or on the way back from «Mis respuestas»)
   let prevView = null;
 
+  // The total of the Prueba's scope on the intro and result cards (16 Nov 2026): one Tema, one Materia or the grade.
+  // The intro hides it at 0 points; the result always has points after a Prueba with a correct answer.
+  function scopeTotal(pick, where) {
+    const n = puntosDe(pick.tipo === 'grado' ? null : pick.mid, pick.tipo === 'tema' ? pick.tid : null);
+    if (!n) return '';
+    const pre = where === 'intro' ? 'textos.introTotal' : 'textos.resultadoTotal';
+    const txt = pick.tipo === 'tema' ? t(pre + 'Tema', { n }) : pick.tipo === 'materia' ? t(pre + 'Materia', { n, materia: materia(pick.mid).name }) : t(pre + 'Grado', { n });
+    return `<p class="gtot">${micon('TAB')}<span>${esc(txt)}</span></p>`;
+  }
   // Prueba intro: a game card (8 Nov 2026). Band with the launching icon; label, title, two chips, the instruction,
   // «¡Empezar!» across the card. «‹ Volver» in the information area. No mascot, no visible timer.
   function viewIntro() {
@@ -1396,6 +1457,7 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
             <p class="glbl">${esc(L.sub)}</p>
             <h2>${esc(L.title)}</h2>
             <div class="gchips"><span class="gchip">${esc(t('textos.introPreguntas', { n: CFG.preguntasPorPrueba }))}</span><span class="gchip y">${esc(t('textos.introPuntos', { p: CFG.puntosPorCorrecta }))}</span></div>
+            ${scopeTotal(p, 'intro')}
             <p class="ginst">${esc(t('textos.introInstruccion'))}</p>
             <span class="grow"></span>
             <button class="b b-pri wide" id="start">${esc(t('textos.empezar'))}</button>
@@ -1460,7 +1522,8 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
       it.chosen = +b.dataset.o; it.checked = true; it.fbNew = true; it.checkedAt = Date.now(); it.answeredAt = new Date().toISOString(); it.ms = Date.now() - P.qStart;
       sfx(it.chosen === q.correct ? 'correcta' : 'incorrecta');
       // 4 Nov 2026: the top bar adds the points at the same moment the option turns green (no extra sound)
-      const after = totalPoints(); if (after !== before) state.ptsAnim = { from: before, to: after };
+      const done = P.items.filter(x => x.checked), bonos = bonosAciertos(done.map(x => x.chosen === Q(x.id).correct));
+      const after = totalPoints(); if (after !== before) state.ptsAnim = { from: before, to: after, big: bonos[bonos.length - 1] > 0 };
       render();
       // Phones and portrait: if the explanation and «Continuar» end below the screen, bring them up (on a tablet in landscape it fits)
       const fb = document.querySelector('.qfoot');
@@ -1523,22 +1586,38 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
     const x = tema(R.materia, R.tema);
     return t('textos.introTemaSub', { materia: m.name, n: temaNum(R.tema) }) + (x ? ' · ' + x.name : '');
   }
+  // 16 Nov 2026: the line «+N por aciertos seguidos» when earned; the racha when this Prueba adds a day (from 2 days);
+  // the Tema total; the racha bonus as a colourful sticker over the card (then the racha line is left out, 17 Nov 2026).
+  function stickerHtml(rc) {
+    const txt = t('textos.stickerRacha', { p: rc.bono, n: rc.dias }), i = txt.indexOf(' ');
+    // the first word large («+50»), the rest small with its last three words kept together («de 5 días»)
+    const rest = esc(txt.slice(i + 1)).replace(/ (\S+) (\S+) (\S+)$/, ' $1&nbsp;$2&nbsp;$3');
+    return `<div class="stk" role="img" aria-label="${esc(txt)}"><span class="stk-n"><svg class="ic" aria-hidden="true"><use href="#i-RACHA"/></svg>${esc(txt.slice(0, i))}</span><span class="stk-t" aria-hidden="true">${rest}</span></div>`;
+  }
   function viewResultado() {
-    const R = state.resultado, n = R.respuestas.length;
+    const R = state.resultado, n = R.respuestas.length, rc = state.racha || { nuevoDia: false, dias: 0, bono: 0 };
+    const aciertos = R.respuestas.reduce((a, r) => a + (r.bono || 0), 0);
+    const lines = (aciertos ? `<p class="rline"><span class="rmk ok" aria-hidden="true">✓</span><span>${esc(t('textos.resultadoAciertos', { p: aciertos }))}</span></p>` : '')
+      + (rc.nuevoDia && rc.dias >= 2 && !rc.bono ? `<p class="rline"><svg class="ic rfl" aria-hidden="true"><use href="#i-RACHA"/></svg><span>${esc(t('textos.resultadoRacha', { n: rc.dias }))}</span></p>` : '')
+      + scopeTotal(pickOf(R), 'resultado').replace('class="gtot"', 'class="rline gtot"');
     head({});
     app.innerHTML = `
       <section class="page rpage"><div class="rwrap">
+        <div class="gwrap">
+        ${rc.bono ? stickerHtml(rc) : ''}
         <div class="gcard${prevView === 'pregunta' ? ' flip' : ''}" style="${cardStyle(pickOf(R))}">
           <div class="gband sm" aria-hidden="true">${launchIcon(pickOf(R))}</div>
           <div class="gbody">
             <p class="glbl">${esc(resultLabel(R))}</p>
             <h2>${esc(t('textos.resultadoTitulo'))}</h2>
-            <div class="score3"><span class="sbig">${esc(t('textos.resultadoCorrectas', { c: R.correctas, n }))}</span><span class="gchip">${esc(t('textos.resultadoPuntos', { p: R.puntos }))}</span></div>
+            <div class="score3"><span class="sbig">${esc(t('textos.resultadoCorrectas', { c: R.correctas, n }))}</span><span class="gchip">${esc(t('textos.resultadoPuntos', { p: R.puntos + aciertos }))}</span></div>
             <p class="ssub">${esc(t('textos.resultadoCorrectasSub'))}</p>
+            ${lines ? `<div class="rlines">${lines}</div>` : ''}
             ${state.mensaje ? `<p class="smsg">${esc(state.mensaje)}</p>` : ''}
             <span class="grow"></span>
             <div class="gacts"><button class="b b-sec" id="mis">${esc(t('textos.misRespuestas'))}</button><button class="b b-pri" id="again">${esc(t('textos.otraPrueba'))}</button></div>
           </div>
+        </div>
         </div>
         <img class="rchivo" src="img/chivo-${state.festejo ? 'festejo' : 'saludo'}.svg" alt="" aria-hidden="true">
       </div></section>`;
