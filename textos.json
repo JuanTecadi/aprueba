@@ -115,6 +115,24 @@
     "ayuda3": "Cada respuesta correcta suma {p} puntos.",
     "ayuda4": "En Progreso ves cuánto dominas cada tema.",
     "ayuda5": "En Tabla puedes compararte con otros, si quieres aparecer.",
+    "rachaDias": "{n} días seguidos",
+    "resultadoRacha": "Racha: {n} días seguidos",
+    "stickerRacha": "+{p} por tu racha de {n} días",
+    "resultadoAciertos": "+{p} por aciertos seguidos",
+    "introTotalTema": "Llevas {n} puntos en este tema",
+    "introTotalMateria": "Llevas {n} puntos en {materia}",
+    "introTotalGrado": "Llevas {n} puntos en {grado}",
+    "resultadoTotalTema": "Ahora llevas {n} puntos en este tema",
+    "resultadoTotalMateria": "Ahora llevas {n} puntos en {materia}",
+    "resultadoTotalGrado": "Ahora llevas {n} puntos en {grado}",
+    "chipTema": "{p} puntos en este tema",
+    "chipMateria": "{p} puntos en {materia}",
+    "verTablaMateria": "{p} puntos en {materia}. Ver la tabla de {materia}",
+    "mapaDe": "Mapa de {materia}",
+    "tablaPeriodo": "Período",
+    "tablaMateria": "Materia",
+    "tablaFiltro": "{periodo} · {materia}",
+    "tablaVerTabla": "Ver tabla",
     "resumen": {
       "feliz": [
         {
@@ -182,6 +200,72 @@
         },
         {
           "texto": "No pasa nada. Lee cada explicación con calma y haz otra prueba."
+        }
+      ]
+    },
+    "mensaje": {
+      "primera": [
+        {
+          "texto": "Ya hiciste tu primera prueba. ¿Vamos por la segunda?"
+        },
+        {
+          "texto": "Primera prueba lista. Elige un tema y haz otra."
+        }
+      ],
+      "pruebas": [
+        {
+          "texto": "Llevas {n} pruebas. Cada una te deja algo nuevo."
+        },
+        {
+          "texto": "Ya van {n} pruebas. ¿Qué tema toca hoy?"
+        },
+        {
+          "texto": "Has hecho {n} pruebas. Elige un tema y suma otra."
+        },
+        {
+          "texto": "{n} pruebas hechas. Una más y sigues sumando."
+        }
+      ],
+      "semana": [
+        {
+          "texto": "Esta semana ya llevas más pruebas que la semana pasada."
+        },
+        {
+          "texto": "Esta semana vas por encima de la semana pasada."
+        },
+        {
+          "texto": "Esta semana: {n} pruebas. La semana pasada: {m}."
+        },
+        {
+          "texto": "Ya pasaste las pruebas de la semana pasada. Sigue así."
+        }
+      ],
+      "regreso": [
+        {
+          "texto": "Qué bueno que volviste. ¿Por cuál tema empiezas?"
+        },
+        {
+          "texto": "De vuelta por aquí. Una prueba corta y retomas el ritmo."
+        },
+        {
+          "texto": "Volviste. Repasar después de unos días ayuda a recordar."
+        },
+        {
+          "texto": "Qué bueno tenerte de vuelta. Empieza por un tema que ya conoces."
+        }
+      ],
+      "avance": [
+        {
+          "texto": "Donde más has avanzado: {materiaAvance}. Donde tienes más por descubrir: {materiaDescubrir}."
+        },
+        {
+          "texto": "En {materiaAvance} es donde más has avanzado. ¿Y si pruebas con {materiaDescubrir}?"
+        },
+        {
+          "texto": "Tu mapa crece más en {materiaAvance}. En {materiaDescubrir} hay mucho por descubrir."
+        },
+        {
+          "texto": "{materiaDescubrir} tiene temas esperando por ti. En {materiaAvance} ya llevas buen camino."
         }
       ]
     }

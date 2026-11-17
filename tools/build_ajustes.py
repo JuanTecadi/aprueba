@@ -86,6 +86,13 @@ def timezone(v):
     return v
 
 
+def topn(v):
+    """Rows on the board: 3 to 50, or «Todos» = everyone who joined (Tabla redesign, decided 12 November 2026)."""
+    if str(v or '').strip().strip('*').strip().lower() == 'todos':
+        return 'todos'
+    return whole(3, 50)(v)
+
+
 GRADES = ('4to', '5to', '6to')   # a logo exists for each (img/aprueba-<grado>.svg)
 
 
@@ -114,12 +121,16 @@ RULES = {
     'grado': grade,
     'enlaceOpinion': link,
     # Leaderboard, Tabla de posiciones (4 November 2026)
-    'tablaTop': whole(3, 50),
+    'tablaTop': topn,
     'progresoSemanas': whole(2, 26),
     'inicioSemana': weekday,
     'zonaHoraria': timezone,
     # Leaderboard default for new accounts (8 November 2026, v0.3)
     'tablaPorDefecto': onoff,
+    # Racha and bonus points (decided 16 November 2026)
+    'bonoRacha': whole(0, 500),
+    'aciertosSeguidosDesde': whole(2, 30),
+    'bonoAciertoSeguido': whole(0, 100),
 }
 
 
@@ -175,6 +186,8 @@ def main(src, questions, out='ajustes.json'):
         errors.append('End message "high" must start above "medium"')
     if found.get('mascotaFelizDesde', 1) < found.get('mensajeAltoDesde', 0):
         errors.append('Mascot celebrates from must not be lower than End message "high"')
+    if found.get('aciertosSeguidosDesde', 0) > found.get('preguntasPorPrueba', 30):
+        errors.append('Correct answers in a row for the bonus must not be higher than Questions per Prueba')
     limits = [found.get(f'nivel{i}Desde') for i in range(1, 6)]
     if None not in limits and any(b <= a for a, b in zip(limits, limits[1:])):
         errors.append('Level limits must go up: level 1 < level 2 < level 3 < level 4 < level 5')

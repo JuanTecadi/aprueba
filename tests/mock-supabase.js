@@ -56,6 +56,7 @@
   // stand-in does not work out weeks); top_n rows, ties share a rank, plus the caller's own row when further down.
   // Extra students for the board can be put in mock.db as users with fixed 'puntos' ({ ALL, CIE, ... }).
   function tabla({ p_periodo, p_materia, p_top_n }) {
+    if (p_top_n === null || p_top_n === undefined) p_top_n = Infinity;   // «Todos»
     const d = db(), uid = me();
     const pts = d.users.filter(u => u.leaderboard && u.nickname).map(u => {
       let total;

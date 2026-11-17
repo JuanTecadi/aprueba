@@ -662,6 +662,7 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   <symbol id="i-PRU" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z"/></symbol>
   <symbol id="i-PRO" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V12M12 20V5M19 20v-9"/></symbol>
   <symbol id="i-TAB" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20v-6h6v6M9 20V9h6v11M15 20v-8h6v8"/></symbol>
+  <symbol id="i-RACHA" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5C12.8 6 18.5 8.2 18.5 14.2a6.5 6.5 0 0 1-13 0c0-3.6 2.1-5.5 3.5-6.6.2 2 1 3.2 2 3.6-.4-3-.0-6 1-8.7z"/></symbol>
   <symbol id="i-AYU" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4M12 17h.01"/></symbol>
   <symbol id="i-CFG" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></symbol>
   <symbol id="i-CIE-T01" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v8a6 6 0 0 0 12 0V3h-4v8a2 2 0 0 1-4 0V3zM6 7h4M14 7h4"/></symbol>
@@ -1551,11 +1552,13 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
      own row in yellow), the switch card at the side. «Mi práctica»: points this week and last week, bars per week. */
   let tablaCache = {};
   const TPER = [['semana', 'textos.tablaSemana'], ['mes', 'textos.tablaMes'], ['siempre', 'textos.tablaSiempre']];
+  /* Rows on the board: tablaTop is a number, or «todos» (everyone who joined). */
+  function topN() { return CFG.tablaTop === 'todos' ? Infinity : CFG.tablaTop; }
   async function loadTabla(key, per, mat) {
     tablaCache[key] = { loading: true };
     try {
       const c = client(); if (!c) throw noNet();
-      const { data, error } = await c.rpc('tabla_posiciones', { p_periodo: per, p_materia: mat, p_top_n: CFG.tablaTop,
+      const { data, error } = await c.rpc('tabla_posiciones', { p_periodo: per, p_materia: mat, p_top_n: CFG.tablaTop === 'todos' ? null : CFG.tablaTop,
         p_inicio_semana: CFG.inicioSemana, p_zona: CFG.zonaHoraria, p_pts_correcta: CFG.puntosPorCorrecta });
       if (error) throw error;
       tablaCache[key] = { rows: data || [] };
@@ -1589,8 +1592,8 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
     else if (T0.error) list = `<p class="error">${esc(t('textos.errorConexion'))}</p>`;
     else {
       const rows = T0.rows;
-      const ranked = rows.filter(r => r.rango !== null && !(r.soy_yo && rows.indexOf(r) >= CFG.tablaTop));
-      const own = rows.filter(r => r.soy_yo && (r.rango === null || rows.indexOf(r) >= CFG.tablaTop));
+      const ranked = rows.filter(r => r.rango !== null && !(r.soy_yo && rows.indexOf(r) >= topN()));
+      const own = rows.filter(r => r.soy_yo && (r.rango === null || rows.indexOf(r) >= topN()));
       const li = r => `<li class="${r.soy_yo ? 'me' : ''}"><span class="rk4${r.rango >= 1 && r.rango <= 3 ? ' md' + r.rango : ''}">${r.rango === null ? '–' : r.rango}</span>`
         + `<span class="nk">${esc(r.soy_yo ? t('textos.tablaTu', { apodo: r.apodo }) : r.apodo)}</span><b class="pp">${esc(t('textos.puntosTotales', { n: r.puntos }))}</b></li>`;
       list = (ranked.length ? '' : `<p class="tnote4">${esc(t('textos.tablaVacia'))}</p>`)

@@ -55,15 +55,31 @@ FIXED = {
     # Ayuda (new in v0.3)
     "ayudaTitulo": [], "ayudaSubtitulo": [], "ayuda1": ["n"], "ayuda2": [], "ayuda3": ["p"],
     "ayuda4": [], "ayuda5": [],
+    # Racha, bonus points and points by scope (decided 16 November 2026, texts approved 17 November 2026)
+    "rachaDias": ["n"], "resultadoRacha": ["n"], "stickerRacha": ["p", "n"], "resultadoAciertos": ["p"],
+    "introTotalTema": ["n"], "introTotalMateria": ["n", "materia"], "introTotalGrado": ["n", "grado"],
+    "resultadoTotalTema": ["n"], "resultadoTotalMateria": ["n", "materia"], "resultadoTotalGrado": ["n", "grado"],
+    "chipTema": ["p"], "chipMateria": ["p", "materia"], "verTablaMateria": ["p", "materia"],
+    "mapaDe": ["materia"],
+    # Tabla redesign (decided 12 November 2026)
+    "tablaPeriodo": [], "tablaMateria": [], "tablaFiltro": ["periodo", "materia"], "tablaVerTabla": [],
 }
-# Rotating groups: allowed moods (None = the app's voice, no mood column) and maximum length.
-# v0.3: only the end-of-Prueba message remains, up to 120 characters.
+# Rotating groups: allowed moods (None = the app's voice, no mood column), maximum length and
+# the placeholders the lines may use. v0.3: the end-of-Prueba message, up to 120 characters, no data.
+# 17 November 2026: the personal messages of the main page (shown when there is no racha), up to 90
+# characters with the longest values filled in (SAMPLE).
 ROTATING = {
-    "resumen.feliz": (None, 120),
-    "resumen.alto": (None, 120),
-    "resumen.medio": (None, 120),
-    "resumen.bajo": (None, 120),
+    "resumen.feliz": (None, 120, []),
+    "resumen.alto": (None, 120, []),
+    "resumen.medio": (None, 120, []),
+    "resumen.bajo": (None, 120, []),
+    "mensaje.primera": (None, 90, []),
+    "mensaje.pruebas": (None, 90, ["n"]),
+    "mensaje.semana": (None, 90, ["n", "m"]),
+    "mensaje.regreso": (None, 90, []),
+    "mensaje.avance": (None, 90, ["materiaAvance", "materiaDescubrir"]),
 }
+SAMPLE = {"n": "999", "m": "999", "materiaAvance": "Matemáticas", "materiaDescubrir": "Matemáticas"}
 MOODS = {"neutral", "reto", "feliz"}
 
 
@@ -114,7 +130,7 @@ def check(fixed, groups, errors):
     for key in fixed:
         if key not in FIXED:
             errors.append(f"Clave desconocida `{key}` (la app no la usa).")
-    for key, (moods, maxlen) in ROTATING.items():
+    for key, (moods, maxlen, allowed) in ROTATING.items():
         lines = groups.get(key)
         if not lines:
             errors.append(f"El grupo `{key}` no tiene ninguna línea.")
@@ -130,10 +146,15 @@ def check(fixed, groups, errors):
                 errors.append(f"{where}: ánimo «{ln['animo']}» no permitido aquí ({', '.join(sorted(moods))}).")
             if not ln["texto"]:
                 errors.append(f"{where}: texto vacío.")
-            if len(ln["texto"]) > maxlen:
-                errors.append(f"{where}: {len(ln['texto'])} caracteres, máximo {maxlen}.")
-            if re.search(r"\{\w+\}", ln["texto"]):
-                errors.append(f"{where}: las líneas que rotan no llevan datos ({{...}}).")
+            used = set(re.findall(r"\{(\w+)\}", ln["texto"]))
+            if used - set(allowed):
+                if allowed:
+                    errors.append(f"{where}: usa {', '.join('{' + b + '}' for b in sorted(used - set(allowed)))}; permitidos: {', '.join('{' + a + '}' for a in allowed)}.")
+                else:
+                    errors.append(f"{where}: las líneas de este grupo no llevan datos ({{...}}).")
+            filled = re.sub(r"\{(\w+)\}", lambda m: SAMPLE.get(m.group(1), m.group(0)), ln["texto"])
+            if len(filled) > maxlen:
+                errors.append(f"{where}: {len(filled)} caracteres, máximo {maxlen}.")
     for key in groups:
         if key not in ROTATING:
             errors.append(f"Grupo desconocido `{key}` (la app no lo usa).")
