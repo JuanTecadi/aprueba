@@ -703,6 +703,79 @@ body.s-read .info .pts .sc { background: var(--sft, #F3F5F9); }
 .mcol[role="button"]:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
 .mcol .mch::before { content: none; }
 @media (prefers-reduced-motion: reduce) { .mcol[role="button"]:active { transform: none; } }
+/* Tabla redesign (decided 12 Nov 2026, mockup option C). The view switch sits in the title row, its left edge in line
+   with the list (wide screens); the filters in a 250 px column (wide) or behind one filter button with a panel. */
+body.v-tabla .info .ttl { position: relative; }
+.tlay5 { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 24px; align-items: stretch; }
+.tside5 { display: flex; flex-direction: column; gap: 8px; min-height: calc(100vh - 140px); }
+.tlbl5 { margin: 8px 0 0 6px; color: #C9D3EE; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.tside5 .tlbl5:first-child { margin-top: 0; }
+.vseg { display: flex; flex-direction: column; gap: 2px; padding: 4px; border-radius: 20px; background: var(--glass); }
+.vseg button { height: 48px; border: 0; border-radius: 16px; background: transparent; color: var(--on-dark); font-weight: 700; font-size: 15px; text-align: left; padding: 0 16px; display: flex; align-items: center; gap: 10px; position: relative; }
+.vseg button::before { content: ""; position: absolute; inset: -4px 0; }
+.vseg button[aria-pressed="true"] { background: #fff; color: var(--ink); }
+.vseg .mdot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.tside5 .grow { flex: 1; }
+.swcard5 { background: var(--glass); border-radius: 20px; padding: 16px; color: #fff; }
+.swcard5 .crow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.swcard5 .crow b { flex: 1; color: #fff; }
+.swcard5 p { margin: 8px 0 0; font-size: 14px; line-height: 1.35; color: #D7DEF2; }
+.swcard5 p.error { color: #FFD1D1; } .swcard5 p.error:empty { display: none; }
+.tlist5 { background: #fff; color: var(--ink); border-radius: 24px; padding: 14px; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.thead5 { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 4px 6px 10px; }
+.thead5 b { font-family: var(--display); font-weight: 800; font-size: 18px; }
+.thead5 span { font-size: 13px; color: var(--muted2); }
+.tscroll5 { overflow-y: auto; max-height: calc(100vh - 200px); min-height: 120px; overscroll-behavior: contain; }
+.brd5 { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.brd5 li { height: 44px; border-radius: 12px; display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 0 16px 0 10px; box-sizing: border-box; background: #F3F5F9; font-size: 16px; flex: none; }
+.brd5 li .rk4 { width: 30px; height: 30px; justify-self: center; }
+.brd5 li.me { background: #FFF3CC; box-shadow: inset 0 0 0 2px var(--sun), 0 -6px 16px rgba(22,33,58,.18); position: sticky; bottom: 0; z-index: 1; }
+.brd5 li.ph { background: #F3F5F9; } .brd5 li.ph .nk { height: 14px; border-radius: 7px; background: #E3E6EE; max-width: 40%; }
+.brd5 .nk { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.brd5 .pp { white-space: nowrap; font-size: 15px; font-variant-numeric: tabular-nums; }
+.tlist5 > .tscroll5 > .tnote4:first-child { margin-top: 4px; }
+.tfbtn5, .tswb5 { display: none; }
+.tfbtn5 { align-items: center; gap: 10px; height: 52px; padding: 0 18px; border-radius: 999px; border: 2px solid rgba(255,255,255,.55); background: transparent; color: #fff; font-weight: 700; font-size: 16px; position: relative; }
+.tfbtn5::before { content: ""; position: absolute; inset: -4px 0; }
+.tfbtn5 span { flex: 1; text-align: left; }
+.tfbtn5 .ic { width: 20px; height: 20px; }
+.tpanel5 { position: fixed; inset: 0; z-index: 50; }
+.tback5 { position: absolute; inset: 0; background: rgba(10,16,36,.55); }
+.tsheet5 { position: absolute; left: 0; right: 0; bottom: 0; max-width: 560px; margin: 0 auto; background: #fff; color: var(--ink); border-radius: 24px 24px 0 0; padding: 10px 18px calc(24px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 14px; box-sizing: border-box; animation: sheetin .22s ease-out; }
+@keyframes sheetin { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .tsheet5 { animation: none; } }
+.grab5 { width: 40px; height: 5px; border-radius: 3px; background: #C9D1DC; align-self: center; }
+.tptl5 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 20px; }
+.seg.lt5 { display: flex; background: #E9EDF4; }
+.seg.lt5 button { flex: 1; justify-content: center; padding: 0 6px; color: var(--ink); }
+.seg.lt5 button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.tmgrid5 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.tmgrid5 button { height: 56px; border-radius: 14px; border: 2px solid #D5DCE6; background: #fff; color: var(--ink); font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; padding: 0 14px; }
+.tmgrid5 button.all { grid-column: 1 / -1; }
+.tmgrid5 button[aria-pressed="true"] { border-color: var(--sun); background: #FFF3C9; }
+.tmgrid5 .mdot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+@media (min-width: 960px) {
+  body.v-tabla .info .tvseg { position: absolute; left: 274px; top: 50%; transform: translateY(-50%); }
+}
+@media (max-width: 959px) {
+  .tlay5 { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .tside5 { display: none; }
+  .tfbtn5, .tswb5 { display: flex; }
+  .tfbtn5 { justify-self: start; min-width: 320px; }
+  .tswb5 .swcard5 { width: 100%; }
+  .tscroll5 { max-height: calc(100vh - 330px); }
+}
+@media (max-width: 599px) {
+  body.v-tabla .info h1, body.v-tabla .info .gpill { display: none; }
+  body.v-tabla .info .tools { order: -1; width: 100%; justify-content: flex-end; }
+  body.v-tabla .info .tvseg { order: 1; margin-right: auto; }
+  .tfbtn5 { justify-self: stretch; min-width: 0; }
+  .tlist5 { padding: 10px; border-radius: 20px; }
+  .thead5 b { display: none; }
+  .thead5 { padding: 2px 6px 8px; }
+  .brd5 li { padding: 0 12px 0 6px; column-gap: 10px; }
+  .tscroll5 { max-height: calc(100vh - 330px); }
+}
 </style>
 </head>
 <body>
@@ -1156,6 +1229,7 @@ body.s-read .info .pts .sc { background: var(--sft, #F3F5F9); }
     // On the Materia screen (and its intro) the chip opens the Tabla filtered to that Materia (16 Nov 2026)
     document.getElementById('ptsbtn').onclick = () => (sc.mid && !sc.prueba ? leaveTo('tabla', { tMat: sc.mid }) : leaveTo('tabla'));
     if (h.back && h.back[2]) document.getElementById(h.back[0]).onclick = h.back[2];   // step 3: the view gives the back action
+    if (h.bind) h.bind(top);   // controls a view puts in the information area (the Tabla's view switch)
     top.hidden = false;
     if (anim) countUp(anim.from, anim.to, anim.big);
   }
@@ -1782,37 +1856,64 @@ body.s-read .info .pts .sc { background: var(--sft, #F3F5F9); }
   const dayMonth = k => { const d = new Date(k + 'T00:00:00Z'), f = o => new Intl.DateTimeFormat('es-VE', { ...o, timeZone: 'UTC' }).format(d).replace('.', '');
     return `<b>${f({ day: 'numeric' })}</b><span>${esc(f({ month: 'short' }))}</span>`; };
 
+  /* «Posiciones» (redesign decided 12 November 2026, mockup option C): every student who joined and has points in the
+     period, rows of 44 px in a list that scrolls, the student's own row fixed at the bottom of the list while it is out
+     of view. Tablet in landscape: «Período» and «Materia» as vertical segmented controls in a 250 px column on the left,
+     the switch card at its foot. Tablet in portrait and phones: one filter button, «Esta semana · Todo 5to ▾», opening a
+     panel from the bottom with «Período», «Materia» (two columns, Todo 5to across) and «Ver tabla»; the switch card under
+     the list. */
+  const perName = per => t((TPER.find(x => x[0] === per) || TPER[0])[1]);
+  const matName = mat => (mat ? materia(mat).name : t('textos.tipoGrado'));
   function tablaPos() {
     const per = state.tPer || 'semana', mat = state.tMat || null, key = per + '|' + (mat || 'ALL');
     const T0 = tablaCache[key];
     if (!T0) loadTabla(key, per, mat);
     let list;
-    if (!T0 || T0.loading) list = `<ol class="brd4" aria-busy="true">${'<li class="ph"><span class="rk4"></span><span class="nk"></span></li>'.repeat(3)}</ol>`;
+    if (!T0 || T0.loading) list = `<ol class="brd5" aria-busy="true">${'<li class="ph"><span class="rk4"></span><span class="nk"></span></li>'.repeat(3)}</ol>`;
     else if (T0.error) list = `<p class="error">${esc(t('textos.errorConexion'))}</p>`;
     else {
-      const rows = T0.rows;
-      const ranked = rows.filter(r => r.rango !== null && !(r.soy_yo && rows.indexOf(r) >= topN()));
-      const own = rows.filter(r => r.soy_yo && (r.rango === null || rows.indexOf(r) >= topN()));
+      const rows = T0.rows, ranked = rows.filter(r => r.rango !== null);
       const li = r => `<li class="${r.soy_yo ? 'me' : ''}"><span class="rk4${r.rango >= 1 && r.rango <= 3 ? ' md' + r.rango : ''}">${r.rango === null ? '–' : r.rango}</span>`
         + `<span class="nk">${esc(r.soy_yo ? t('textos.tablaTu', { apodo: r.apodo }) : r.apodo)}</span><b class="pp">${esc(t('textos.puntosTotales', { n: r.puntos }))}</b></li>`;
       list = (ranked.length ? '' : `<p class="tnote4">${esc(t('textos.tablaVacia'))}</p>`)
-        + (rows.length ? `<ol class="brd4">${ranked.map(li).join('')}${own.length && ranked.length ? '<li class="gap" aria-hidden="true">⋮</li>' : ''}${own.map(li).join('')}</ol>` : '');
+        + (rows.length ? `<ol class="brd5">${rows.map(li).join('')}</ol>` : '');
     }
-    const on = !!state.enTabla;
-    return `
-        <div class="segrow frow4">
-          <div class="seg" role="group" aria-label="${esc(t('textos.tablaPosiciones'))}">${TPER.map(([k, l]) => segBtn('per', k, k === per, t(l))).join('')}</div>
-          <div class="seg" role="group" aria-label="${esc(t('textos.tablaPosiciones'))}">${segBtn('tm', 'ALL', !mat, t('textos.tipoGrado'))}${BANK.materias.map(x => segBtn('tm', x.id, x.id === mat, x.name, x.id)).join('')}</div>
-        </div>
-        <div class="tgrid4">
-          <div class="pcard4">${list}${per === 'semana' ? `<p class="tnote4">${esc(t('textos.tablaReinicio'))}</p>` : ''}</div>
-          <div class="pcard4 swcard">
+    const on = !!state.enTabla, filtro = t('textos.tablaFiltro', { periodo: perName(per), materia: matName(mat) });
+    const vseg = (attr, items) => `<div class="vseg" role="group">${items.join('')}</div>`;
+    const swcard = `<div class="swcard5">
             <div class="crow"><b>${esc(t('textos.tablaSwitch'))}</b>${toggle('swt4', on, t('textos.tablaSwitch'))}</div>
             <p>${esc(t(on ? 'textos.tablaDentroNota' : 'textos.tablaFueraNota'))}</p>
             <p class="error" id="swerr" role="alert"></p>
+          </div>`;
+    const d = state.tDraft || { per, mat };
+    return `
+        <div class="tlay5">
+          <aside class="tside5">
+            <p class="tlbl5" id="lbl-per">${esc(t('textos.tablaPeriodo'))}</p>
+            ${vseg('per', TPER.map(([k, l]) => segBtn('per', k, k === per, t(l))))}
+            <p class="tlbl5" id="lbl-mat">${esc(t('textos.tablaMateria'))}</p>
+            ${vseg('tm', [segBtn('tm', 'ALL', !mat, t('textos.tipoGrado'))].concat(BANK.materias.map(x => segBtn('tm', x.id, x.id === mat, x.name, x.id))))}
+            <span class="grow"></span>
+            ${swcard}
+          </aside>
+          <button class="tfbtn5" id="tfbtn" aria-haspopup="dialog" aria-expanded="${!!state.tPanel}"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span>${esc(filtro)}</span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="tlist5">
+            <div class="thead5"><b>${esc(filtro)}</b>${per === 'semana' ? `<span>${esc(t('textos.tablaReinicio'))}</span>` : ''}</div>
+            <div class="tscroll5">${list}</div>
           </div>
-        </div>`;
+          <div class="tswb5">${swcard.replace(/id="(swt4|swerr)"/g, 'id="$1b"')}</div>
+        </div>
+        ${state.tPanel ? `<div class="tpanel5"><div class="tback5" id="tback"></div>
+          <div class="tsheet5" role="dialog" aria-modal="true" aria-labelledby="tp-per">
+            <span class="grab5" aria-hidden="true"></span>
+            <p class="tptl5" id="tp-per">${esc(t('textos.tablaPeriodo'))}</p>
+            <div class="seg lt5" role="group" aria-labelledby="tp-per">${TPER.map(([k, l]) => segBtn('dper', k, k === d.per, t(l))).join('')}</div>
+            <p class="tptl5" id="tp-mat">${esc(t('textos.tablaMateria'))}</p>
+            <div class="tmgrid5" role="group" aria-labelledby="tp-mat">${[['ALL', t('textos.tipoGrado')]].concat(BANK.materias.map(x => [x.id, x.name])).map(([k, l]) => `<button data-dmat="${k}" aria-pressed="${(k === 'ALL' ? !d.mat : d.mat === k)}"${k === 'ALL' ? ' class="all"' : ''}>${k === 'ALL' ? '' : `<i class="mdot" style="background:var(--${k.toLowerCase()})" aria-hidden="true"></i>`}${esc(l)}</button>`).join('')}</div>
+            <button class="b b-pri wide" id="tver">${esc(t('textos.tablaVerTabla'))}</button>
+          </div></div>` : ''}`;
   }
+
   function tablaPractica() {
     const W = semanas(), maxP = Math.max(1, ...W.map(w => w.p)), last = W[W.length - 1], prev = W[W.length - 2];
     const bars = W.map(w => `<div class="wk4${w.cur ? ' cur' : ''}${w.p ? '' : ' zero'}"><b class="wv">${w.p}</b>`
@@ -1833,24 +1934,38 @@ body.s-read .info .pts .sc { background: var(--sft, #F3F5F9); }
         </div>`;
   }
   function viewTabla() {
-    head({ title: t('textos.tablaTitulo'), pill: true });
     const vw = state.tView || 'pos';
+    const tv = `<div class="seg tvseg" role="group" aria-label="${esc(t('textos.tablaTitulo'))}">${segBtn('tv', 'pos', vw === 'pos', t('textos.tablaPosiciones'))}${segBtn('tv', 'prac', vw === 'prac', t('textos.tablaPractica'))}</div>`;
+    head({ title: t('textos.tablaTitulo'), pill: true, extra: tv,
+      bind: el => el.querySelectorAll('[data-tv]').forEach(b => b.onclick = () => { state.tView = b.dataset.tv; state.tPanel = false; render(); }) });
     app.innerHTML = `
-      <section class="page tpage">
-        <div class="segrow"><div class="seg" role="group" aria-label="${esc(t('textos.tablaTitulo'))}">${segBtn('tv', 'pos', vw === 'pos', t('textos.tablaPosiciones'))}${segBtn('tv', 'prac', vw === 'prac', t('textos.tablaPractica'))}</div></div>
+      <section class="page tpage${vw === 'pos' ? ' tpos5' : ''}">
         ${vw === 'pos' ? tablaPos() : tablaPractica()}
       </section>`;
-    app.querySelectorAll('[data-tv]').forEach(b => b.onclick = () => { state.tView = b.dataset.tv; render(); });
     app.querySelectorAll('[data-per]').forEach(b => b.onclick = () => { state.tPer = b.dataset.per; render(); });
     app.querySelectorAll('[data-tm]').forEach(b => b.onclick = () => { state.tMat = b.dataset.tm === 'ALL' ? null : b.dataset.tm; render(); });
-    const sw = document.getElementById('swt4');
-    if (sw) sw.onclick = async () => {
-      sw.disabled = true;
-      const ok = await setEnTabla(!state.enTabla);
-      if (!ok) { sw.disabled = false; document.getElementById('swerr').textContent = t('textos.errorConexion'); return; }
-      render(); const s2 = document.getElementById('swt4'); if (s2) s2.focus();
-    };
+    // The filter panel (tablet in portrait and phones): choices are drafted, «Ver tabla» applies them
+    const $ = id => document.getElementById(id);
+    const close = () => { state.tPanel = false; state.tDraft = null; render(); const f = $('tfbtn'); if (f) f.focus(); };
+    if ($('tfbtn')) $('tfbtn').onclick = () => { state.tPanel = true; state.tDraft = { per: state.tPer || 'semana', mat: state.tMat || null }; render(); const f = document.querySelector('.tsheet5 [aria-pressed="true"]'); if (f) f.focus(); };
+    if (state.tPanel) {
+      app.querySelectorAll('[data-dper]').forEach(b => b.onclick = () => { state.tDraft.per = b.dataset.dper; render(); const f = document.querySelector(`[data-dper="${b.dataset.dper}"]`); if (f) f.focus(); });
+      app.querySelectorAll('[data-dmat]').forEach(b => b.onclick = () => { state.tDraft.mat = b.dataset.dmat === 'ALL' ? null : b.dataset.dmat; render(); const f = document.querySelector(`[data-dmat="${b.dataset.dmat}"]`); if (f) f.focus(); });
+      $('tver').onclick = () => { state.tPer = state.tDraft.per; state.tMat = state.tDraft.mat; close(); };
+      $('tback').onclick = close;
+      document.querySelector('.tsheet5').onkeydown = e => { if (e.key === 'Escape') close(); };
+    }
+    for (const id of ['swt4', 'swt4b']) {
+      const sw = $(id);
+      if (sw) sw.onclick = async () => {
+        sw.disabled = true;
+        const ok = await setEnTabla(!state.enTabla);
+        if (!ok) { sw.disabled = false; $(id === 'swt4' ? 'swerr' : 'swerrb').textContent = t('textos.errorConexion'); return; }
+        render(); const s2 = $(id); if (s2) s2.focus();
+      };
+    }
   }
+
 
   const VIEWS = { tabla: viewTabla, login: viewLogin, apodo: viewApodo, config: viewConfig, ayuda: viewAyuda, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, respuestas: viewRespuestas, progreso: viewProgreso };
   function render() {
@@ -1871,6 +1986,7 @@ body.s-read .info .pts .sc { background: var(--sft, #F3F5F9); }
     document.body.classList.toggle('s-login', v === 'login');   // full-bleed split screen
     document.body.classList.toggle('s-read', !!read);
     document.body.classList.toggle('v-preg', v === 'pregunta');   // 9 Nov 2026: information area aligned with the question card
+    document.body.classList.toggle('v-tabla', v === 'tabla');     // Tabla redesign: the view switch in the title row
     document.body.classList.toggle('tinted', !!(read || deep));
     const tone = read && read !== 'ALL' ? read : deep;
     document.body.setAttribute('style', (tone ? '--mc:' + MCOLOR[tone] + ';' : '') + (deep ? MDEEP(deep) : ''));

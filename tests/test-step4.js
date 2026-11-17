@@ -15,7 +15,7 @@ const qs = (m, t) => BANK.questions.filter(q => q.materia === m && q.tema === t)
 const temaName = (m, t) => BANK.materias.find(x => x.id === m).temas.find(x => x.id === t).name;
 const DAY = 864e5;
 
-// Ten other students on the board (all ahead of Ana, so her own row comes after the top 8 with «⋮»)
+// Ten other students on the board (all ahead of Ana, so her own row is last)
 const OTHERS = ['Pana_Andrés', 'LunaVerde', 'Tigre21', 'Sofi.R', 'Capi10', 'Mariposa', 'ElRayo', 'Kiki', 'Zeta', 'Nube']
   .map((n, i) => ({ id: 'u-o' + i, email: `o${i}@x.com`, pass: 'x', nickname: n, leaderboard: true, puntos: { ALL: 5000 - i * 100, CIE: i < 3 ? 900 - i * 100 : 0 } }));
 
@@ -131,30 +131,69 @@ const contrast = (p, sel) => p.locator(sel).first().evaluate(e => {
     await p.click('[data-rail="home"]'); await p.click('[data-rail="progreso"]'); await p.waitForTimeout(60);
     ok(`${tag} Progreso opens on Todo 5to again`, (await p.getAttribute('[data-mat="ALL"]', 'aria-pressed')) === 'true');
 
-    // ---------- Tabla: Posiciones ----------
+    // ---------- Tabla: Posiciones (redesign decided 12 Nov 2026, option C; built 17 Nov 2026) ----------
+    const narrow = w < 960, swId = narrow ? '#swt4b' : '#swt4', swCard = narrow ? '.tswb5 .swcard5' : '.tside5 .swcard5';
+    const filtro = (per, mat) => TX.tablaFiltro.replace('{periodo}', per).replace('{materia}', mat);
+    // choose period and Materia: the left column on a tablet in landscape, the filter panel elsewhere
+    const pick = async (per, mat) => {
+      if (!narrow) { await p.click(`[data-per="${per}"]`); await p.waitForTimeout(100); await p.click(`[data-tm="${mat}"]`); await p.waitForTimeout(120); return; }
+      await p.click('#tfbtn'); await p.waitForTimeout(60); await p.click(`[data-dper="${per}"]`); await p.click(`[data-dmat="${mat}"]`); await p.click('#tver'); await p.waitForTimeout(150);
+    };
     await p.click('[data-rail="tabla"]'); await p.waitForTimeout(150);
-    ok(`${tag} Tabla: title, pill, «Posiciones» pressed`, (await p.locator('#top h1').innerText()) === TX.tablaTitulo && (await p.getAttribute('[data-tv="pos"]', 'aria-pressed')) === 'true');
-    ok(`${tag} Tabla: filters, «Esta semana» and «Todo 5to» pressed`, (await p.locator('[data-per]').count()) === 3 && (await p.locator('[data-tm]').count()) === 5
-      && (await p.getAttribute('[data-per="semana"]', 'aria-pressed')) === 'true' && (await p.getAttribute('[data-tm="ALL"]', 'aria-pressed')) === 'true');
-    if (w === 1180) ok(`${tag} Tabla: the two filters sit in one row`, await p.evaluate(() => { const [a, b] = [...document.querySelectorAll('.frow4 .seg')].map(e => e.getBoundingClientRect()); return Math.abs(a.top - b.top) < 1 && b.right <= innerWidth; }));
-    const rows = await p.locator('.brd4 li:not(.gap)').allInnerTexts();
-    ok(`${tag} Tabla: top 8, «⋮», own row «Ana (tú)» below`, rows.length === 9 && (await p.locator('.brd4 li.gap').count()) === 1 && rows[8].includes('Ana (tú)') && (await p.locator('.brd4 li.me').count()) === 1);
+    ok(`${tag} Tabla: «Posiciones | Mi práctica» in the information area, «Posiciones» pressed`, (await p.locator('#top [data-tv]').count()) === 2 && (await p.getAttribute('#top [data-tv="pos"]', 'aria-pressed')) === 'true');
+    ok(`${tag} Tabla: title and pill ${w === 390 ? 'hidden on phones' : 'shown'}`, w === 390
+      ? !(await p.locator('#top h1').isVisible()) && !(await p.locator('#top .gpill').isVisible())
+      : (await p.locator('#top h1').innerText()) === TX.tablaTitulo && (await p.locator('#top .gpill').isVisible()));
+    if (!narrow) {
+      ok(`${tag} Tabla: the view switch lines up with the left edge of the list`, await p.evaluate(() => Math.abs(document.querySelector('.tvseg').getBoundingClientRect().left - document.querySelector('.tlist5').getBoundingClientRect().left) < 2));
+      ok(`${tag} Tabla: left column with «Período» (3) and «Materia» (5), vertical, «Esta semana» and «Todo 5to» pressed`, await p.locator('.tside5').isVisible()
+        && (await p.locator('.tside5 [data-per]').count()) === 3 && (await p.locator('.tside5 [data-tm]').count()) === 5
+        && (await p.getAttribute('[data-per="semana"]', 'aria-pressed')) === 'true' && (await p.getAttribute('[data-tm="ALL"]', 'aria-pressed')) === 'true'
+        && await p.evaluate(() => { const [a, b] = [...document.querySelectorAll('.tside5 [data-per]')].map(e => e.getBoundingClientRect()); return b.top > a.top && Math.abs(a.left - b.left) < 1; })
+        && !(await p.locator('#tfbtn').isVisible()));
+      ok(`${tag} Tabla: the line above the list «Esta semana · Todo 5to»`, (await p.locator('.thead5 b').innerText()) === filtro(TX.tablaSemana, TX.tipoGrado.replace('{grado}', '5to')));
+    } else {
+      ok(`${tag} Tabla: one filter button «Esta semana · Todo 5to», no left column`, (await p.locator('#tfbtn').innerText()).trim() === filtro(TX.tablaSemana, TX.tipoGrado.replace('{grado}', '5to'))
+        && !(await p.locator('.tside5').isVisible()) && (await p.getAttribute('#tfbtn', 'aria-expanded')) === 'false');
+    }
+    const rows = await p.locator('.brd5 li').allInnerTexts();
+    ok(`${tag} Tabla: everyone who joined (11 rows), own row «Ana (tú)» last`, rows.length === 11 && rows[10].includes('Ana (tú)') && (await p.locator('.brd5 li.me').count()) === 1 && (await p.locator('.brd5 li.gap').count()) === 0);
+    ok(`${tag} Tabla: rows of 44 px`, await p.evaluate(() => [...document.querySelectorAll('.brd5 li')].every(li => Math.round(li.getBoundingClientRect().height) === 44)));
+    ok(`${tag} Tabla: at least 10 rows fit in view`, await p.evaluate(() => document.querySelector('.tscroll5').clientHeight >= 10 * 48 - 4));
+    ok(`${tag} Tabla: own row stays at the bottom of the list while out of view`, await p.evaluate(() => {
+      const sc = document.querySelector('.tscroll5'), me = document.querySelector('.brd5 li.me').getBoundingClientRect(), box = sc.getBoundingClientRect();
+      sc.scrollTop = 0; return sc.scrollHeight <= sc.clientHeight + 1 || Math.abs(me.bottom - box.bottom) < 2; }));
     ok(`${tag} Tabla: points as «N puntos»`, rows[0].includes('5000 puntos') && rows[0].includes('Pana_Andrés'));
-    ok(`${tag} Tabla: medal circles for ranks 1 to 3 only`, (await css(p, '.brd4 li:nth-child(1) .rk4', 'backgroundColor')) === 'rgb(255, 201, 60)' && (await p.locator('.rk4.md2').count()) === 1
+    ok(`${tag} Tabla: medal circles for ranks 1 to 3 only`, (await css(p, '.brd5 li:nth-child(1) .rk4', 'backgroundColor')) === 'rgb(255, 201, 60)' && (await p.locator('.rk4.md2').count()) === 1
       && (await p.locator('.rk4.md3').count()) === 1 && (await p.locator('.rk4[class*="md"]').count()) === 3);
-    ok(`${tag} Tabla: own row in yellow`, (await css(p, '.brd4 li.me', 'backgroundColor')) === 'rgb(255, 243, 204)');
-    ok(`${tag} Tabla: «La tabla empieza de cero cada lunes» on Esta semana`, (await p.locator('.pcard4').first().innerText()).includes(TX.tablaReinicio));
-    ok(`${tag} Tabla: switch card on, with its note`, (await p.getAttribute('#swt4', 'aria-checked')) === 'true' && (await p.locator('.swcard').innerText()).includes(TX.tablaDentroNota) && (await p.locator('.swcard').innerText()).includes(TX.tablaSwitch));
+    ok(`${tag} Tabla: own row in yellow`, (await css(p, '.brd5 li.me', 'backgroundColor')) === 'rgb(255, 243, 204)');
+    ok(`${tag} Tabla: «La tabla empieza de cero cada lunes» on Esta semana`, (await p.locator('.thead5').innerText()).includes(TX.tablaReinicio));
+    ok(`${tag} Tabla: switch card on, with its note${narrow ? ', under the list' : ', at the foot of the column'}`, (await p.getAttribute(swId, 'aria-checked')) === 'true' && (await p.locator(swCard).innerText()).includes(TX.tablaDentroNota)
+      && (await p.locator(swCard).innerText()).includes(TX.tablaSwitch) && await p.locator(swCard).isVisible()
+      && (!narrow || await p.evaluate(() => document.querySelector('.tswb5').getBoundingClientRect().top >= document.querySelector('.tlist5').getBoundingClientRect().bottom)));
     ok(`${tag} Tabla: no mascot`, (await p.locator('#app img').count()) === 0);
     await shot('4-tabla-posiciones');
-    await p.click('[data-per="mes"]'); await p.waitForTimeout(120);
-    ok(`${tag} Tabla: «Este mes» hides the Monday line`, (await p.getAttribute('[data-per="mes"]', 'aria-pressed')) === 'true' && !(await p.locator('#app').innerText()).includes(TX.tablaReinicio));
-    await p.click('[data-tm="SOC"]'); await p.waitForTimeout(120);
-    ok(`${tag} Tabla: nobody in Sociales → «Todavía nadie…» and own row with «–»`, (await p.locator('#app').innerText()).includes(TX.tablaVacia) && (await p.locator('.brd4 li.me .rk4').innerText()) === '–');
-    await p.click('[data-tm="ALL"]'); await p.click('#swt4'); await p.waitForTimeout(150);
-    ok(`${tag} Tabla: switch off → note changes, own row leaves the board`, (await p.getAttribute('#swt4', 'aria-checked')) === 'false' && (await p.locator('.swcard').innerText()).includes(TX.tablaFueraNota) && (await p.locator('.brd4 li.me').count()) === 0);
-    await p.click('#swt4'); await p.waitForTimeout(150);
-    ok(`${tag} Tabla: switch on again → own row back`, (await p.locator('.brd4 li.me').count()) === 1);
+    if (narrow) {
+      await p.click('#tfbtn'); await p.waitForTimeout(350);   // the panel slides in (0.22 s)
+      ok(`${tag} Tabla panel: opens from the bottom with «Período», «Materia» (Todo 5to across) and «Ver tabla»`, (await p.locator('.tsheet5[role="dialog"]').count()) === 1
+        && (await p.locator('[data-dper]').count()) === 3 && (await p.locator('[data-dmat]').count()) === 5 && (await p.locator('#tver').innerText()) === TX.tablaVerTabla
+        && await p.evaluate(() => { const a = document.querySelector('[data-dmat="ALL"]').getBoundingClientRect(), b = document.querySelector('[data-dmat="CIE"]').getBoundingClientRect(); return a.width > b.width * 1.8; })
+        && await p.evaluate(() => Math.abs(document.querySelector('.tsheet5').getBoundingClientRect().bottom - innerHeight) < 2)
+        && (await p.getAttribute('#tfbtn', 'aria-expanded')) === 'true');
+      if (OUT) await p.screenshot({ path: `${OUT}/4b-tabla-panel-${w}.png` });
+      await p.click('[data-dper="mes"]'); await p.keyboard.press('Escape'); await p.waitForTimeout(80);
+      ok(`${tag} Tabla panel: Escape closes it without applying`, (await p.locator('.tsheet5').count()) === 0 && (await p.locator('#tfbtn').innerText()).includes(TX.tablaSemana));
+    }
+    await pick('mes', 'ALL');
+    ok(`${tag} Tabla: «Este mes» hides the Monday line`, !(await p.locator('#app').innerText()).includes(TX.tablaReinicio)
+      && (narrow ? (await p.locator('#tfbtn').innerText()).includes(TX.tablaMes) : (await p.getAttribute('[data-per="mes"]', 'aria-pressed')) === 'true'));
+    await pick('mes', 'SOC');
+    ok(`${tag} Tabla: nobody in Sociales → «Todavía nadie…» and own row with «–»`, (await p.locator('#app').innerText()).includes(TX.tablaVacia) && (await p.locator('.brd5 li.me .rk4').innerText()) === '–'
+      && (!narrow || (await p.locator('#tfbtn').innerText()).trim() === filtro(TX.tablaMes, 'Sociales')));
+    await pick('mes', 'ALL'); await p.click(swId); await p.waitForTimeout(150);
+    ok(`${tag} Tabla: switch off → note changes, own row leaves the board`, (await p.getAttribute(swId, 'aria-checked')) === 'false' && (await p.locator(swCard).innerText()).includes(TX.tablaFueraNota) && (await p.locator('.brd5 li.me').count()) === 0);
+    await p.click(swId); await p.waitForTimeout(150);
+    ok(`${tag} Tabla: switch on again → own row back`, (await p.locator('.brd5 li.me').count()) === 1);
 
     // ---------- Tabla: Mi práctica ----------
     await p.click('[data-tv="prac"]'); await p.waitForTimeout(80);
@@ -171,6 +210,12 @@ const contrast = (p, sel) => p.locator(sel).first().evaluate(e => {
     await shot('5-tabla-practica');
     await p.click('[data-rail="home"]'); await p.click('#ptsbtn'); await p.waitForTimeout(120);
     ok(`${tag} Points chip opens the Tabla on «Posiciones»`, (await p.getAttribute('[data-tv="pos"]', 'aria-pressed')) === 'true');
+    // 16 Nov 2026: on the Materia screen the chip carries the Materia and opens the Tabla filtered to it
+    await p.click('[data-rail="home"]'); await p.click('[data-m="CIE"]'); await p.waitForTimeout(60);
+    ok(`${tag} Materia screen: the chip shows the Ciencias points with its icon`, (await p.locator('#ptsbtn .sc use').getAttribute('href')) === '#i-CIE'
+      && (await p.getAttribute('#ptsbtn', 'aria-label')) === TX.verTablaMateria.replace('{p}', String(ciePts + Math.floor(t1 / 2) * 10)).replace(/\{materia\}/g, 'Ciencias'));
+    await p.click('#ptsbtn'); await p.waitForTimeout(150);
+    ok(`${tag} Materia chip opens the Tabla filtered to Ciencias`, narrow ? (await p.locator('#tfbtn').innerText()).includes('Ciencias') : (await p.getAttribute('[data-tm="CIE"]', 'aria-pressed')) === 'true');
     ok(`${tag} no page errors`, p.errs.length === 0);
     if (p.errs.length) console.log(p.errs);
     await p.context().close();
