@@ -52,7 +52,7 @@
   }
 
   // Leaderboard (4 Nov 2026), same rules as public.tabla_posiciones: opted-in students only; whole grade = saved
-  // points of each Prueba, one Materia = correct answers of that Materia x points; 'siempre' ignores dates (the
+  // points of each Prueba plus its bonuses, one Materia = correct answers of that Materia x points; 'siempre' ignores dates (the
   // stand-in does not work out weeks); top_n rows, ties share a rank, plus the caller's own row when further down.
   // Extra students for the board can be put in mock.db as users with fixed 'puntos' ({ ALL, CIE, ... }).
   function tabla({ p_periodo, p_materia, p_top_n }) {
@@ -61,8 +61,10 @@
     const pts = d.users.filter(u => u.leaderboard && u.nickname).map(u => {
       let total;
       if (u.puntos) total = u.puntos[p_materia || 'ALL'] || 0;
-      else if (!p_materia) total = d.pruebas.filter(p => p.student_id === u.id).reduce((a, p) => a + p.puntos, 0);
-      else total = d.answers.filter(a => a.correcta && a.question_id.startsWith(p_materia) && d.pruebas.some(p => p.id === a.prueba_id && p.student_id === u.id)).length * 10;
+      else if (!p_materia) total = d.pruebas.filter(p => p.student_id === u.id).reduce((a, p) => a + p.puntos + (p.bono_racha || 0)
+        + d.answers.filter(x => x.prueba_id === p.id).reduce((b, x) => b + (x.bono || 0), 0), 0);
+      else total = d.answers.filter(a => a.question_id.startsWith(p_materia) && d.pruebas.some(p => p.id === a.prueba_id && p.student_id === u.id))
+        .reduce((b, a) => b + (a.correcta ? 10 : 0) + (a.bono || 0), 0);   // bonuses (17 Nov 2026): aciertos seguidos of that Materia; racha bonus not
       return { id: u.id, apodo: u.nickname, puntos: total };
     });
     const ranked = pts.filter(x => x.puntos > 0).sort((a, b) => b.puntos - a.puntos || a.apodo.localeCompare(b.apodo));
@@ -99,9 +101,28 @@
       if (!d.pruebas.some(x => x.id === p.id)) {
         if (p.answers.length !== p.n_preguntas) return { data: null, error: { message: 'answers do not match n_preguntas' } };
         for (const a of p.answers) if (!['K', 'D1', 'D2', 'D3'].includes(a.opcion) || a.correcta !== (a.opcion === 'K')) return { data: null, error: { message: 'bad answer ' + JSON.stringify(a) } };
-        const { answers, ...row } = p;
-        d.pruebas.push({ ...row, student_id: me() });
-        answers.forEach(a => d.answers.push({ ...a, prueba_id: p.id }));
+        // Bonuses (17 Nov 2026), same rules as public.save_prueba: worked out here from the settings the page sends;
+        // without them (an app before the bonuses) every bonus is 0
+        const { answers, ajustes, ...row } = p, aj = ajustes || {};
+        const bR = Math.min(Math.max(+aj.bonoRacha || 0, 0), 500), desde = Math.min(Math.max(+aj.aciertosSeguidosDesde || 7, 2), 30);
+        const bA = Math.min(Math.max(+aj.bonoAciertoSeguido || 0, 0), 100), zona = aj.zonaHoraria || 'America/Caracas';
+        let run = 0;
+        const withBono = answers.slice().sort((a, b) => a.posicion - b.posicion).map(a => { run = a.correcta ? run + 1 : 0; return { ...a, bono: a.correcta && bA > 0 && run >= desde ? bA : 0 }; });
+        const day = t => new Intl.DateTimeFormat('en-CA', { timeZone: zona, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(t));
+        const mine = d.pruebas.filter(x => x.student_id === me()), dia = day(p.finished_at);
+        let bonoRacha = 0;
+        if (bR > 0 && !mine.some(x => day(x.finished_at) === dia)) {
+          const days = new Set(mine.map(x => day(x.finished_at)).concat([dia]));
+          let k = dia, n = 0;
+          for (let i = 0; i < 3660; i++) {
+            const wd = new Date(k + 'T00:00:00Z').getUTCDay();
+            if (days.has(k)) n++; else if (wd !== 0 && wd !== 6) break;
+            const u = new Date(k + 'T00:00:00Z'); u.setUTCDate(u.getUTCDate() - 1); k = u.toISOString().slice(0, 10);
+          }
+          if (n > 0 && n % 5 === 0) bonoRacha = bR;
+        }
+        d.pruebas.push({ ...row, bono_racha: bonoRacha, student_id: me() });
+        withBono.forEach(a => d.answers.push({ ...a, prueba_id: p.id }));
       }
       put(d); return { data: p.id, error: null };
     }

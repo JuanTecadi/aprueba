@@ -648,6 +648,14 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   .wd { font-size: 12px; }
   .wn { font-size: 10px; white-space: normal; text-align: center; line-height: 1.15; overflow-wrap: anywhere; }
 }
+
+/* ---------- rachas y puntos (17 November 2026) ---------- */
+/* Main page: the racha (flame in a soft yellow pill) or one personal message, under the greeting */
+.hpage .hracha, .hpage .hmsg { margin: 0 0 10px; }
+.rpill { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px 0 10px; border-radius: 999px; background: rgba(255,201,60,.16); color: #fff; font-weight: 700; font-size: 18px; }
+.rpill .ic { width: 22px; height: 22px; stroke: var(--sun); stroke-width: 2; fill: none; flex: none; }
+.hpage .hmsg { font-size: 19px; font-weight: 700; line-height: 1.4; color: #fff; }
+@media (max-width: 599px) { .rpill { font-size: 17px; } .hpage .hmsg { font-size: 17px; } }
 </style>
 </head>
 <body>
@@ -830,14 +838,14 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   async function loadHistory() {
     const c = client();
     const { data, error } = await c.from('pruebas')
-      .select('id,tipo,materia,tema,started_at,finished_at,duracion_seg,n_correctas,puntos,answers(question_id,posicion,opcion,correcta,tiempo_ms)')
+      .select('id,tipo,materia,tema,started_at,finished_at,duracion_seg,n_correctas,puntos,bono_racha,answers(question_id,posicion,opcion,correcta,tiempo_ms,bono)')
       .order('finished_at', { ascending: true });
     if (error) throw error;
     const saved = (data || []).map(x => ({
       id: x.id, tipo: x.tipo, materia: x.materia, tema: x.tema, inicio: x.started_at, fin: x.finished_at,
-      duracionSeg: x.duracion_seg, correctas: x.n_correctas, puntos: x.puntos,
+      duracionSeg: x.duracion_seg, correctas: x.n_correctas, puntos: x.puntos, bonoRacha: x.bono_racha || 0,
       respuestas: (x.answers || []).slice().sort((a, b) => a.posicion - b.posicion)
-        .map(a => ({ id: a.question_id, correcta: a.correcta, opcion: a.opcion, ms: a.tiempo_ms }))
+        .map(a => ({ id: a.question_id, correcta: a.correcta, opcion: a.opcion, ms: a.tiempo_ms, bono: a.bono || 0 }))
     }));
     const ids = new Set(saved.map(x => x.id));
     const waiting = load(keyPend(state.uid), []).filter(w => !ids.has(w.record.id));
@@ -938,13 +946,71 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   }
   // Points reward practice (4 Nov 2026): every correct answer, repeats included. The saved total plus, during a
   // Prueba, the points of the answers given so far; an abandoned Prueba is never saved, so the total returns.
-  const savedPoints = () => userData().pruebas.reduce((a, p) => a + p.puntos, 0);
-  const livePoints = () => {
+  /* ---------- racha, bonuses and points by scope (decided 16 November 2026) ----------
+     Bonuses: from the aciertosSeguidosDesde-th correct answer in a row within a Prueba, each correct answer earns
+     bonoAciertoSeguido (it belongs to that answer's Tema); the first Prueba of a day that brings the racha to a multiple
+     of 5 days earns bonoRacha (grade total and board only). The database works out and stores both when it saves
+     (save_prueba); the app uses the same rule to show them at once. Racha: a day counts with at least one Prueba
+     finished (Venezuela time); a Saturday or Sunday without one never breaks it. */
+  const dayKey = d => new Intl.DateTimeFormat('en-CA', { timeZone: CFG.zonaHoraria, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+  const isWeekend = k => { const w = new Date(k + 'T00:00:00Z').getUTCDay(); return w === 0 || w === 6; };
+  const daysBetween = (a, b) => Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 864e5);
+  const diasConPrueba = list => new Set(list.map(p => dayKey(new Date(p.fin))));
+  // Days counted back from day k: a day with a Prueba counts; a weekend day without one is skipped; a weekday without one stops
+  function rachaDesde(days, k) {
+    let n = 0;
+    for (let i = 0; i < 3660; i++) { if (days.has(k)) n++; else if (!isWeekend(k)) break; k = addDays(k, -1); }
+    return n;
+  }
+  // The racha now: today counts once a Prueba is finished; until then the days before still stand
+  function rachaHoy() {
+    const days = diasConPrueba(userData().pruebas), hoy = dayKey(new Date());
+    return rachaDesde(days, days.has(hoy) ? hoy : addDays(hoy, -1));
+  }
+  // Aciertos seguidos: the bonus of each answer, from a list of right (true) / wrong (false)
+  function bonosAciertos(cors) {
+    let run = 0;
+    return cors.map(c => { run = c ? run + 1 : 0; return c && CFG.bonoAciertoSeguido > 0 && run >= CFG.aciertosSeguidosDesde ? CFG.bonoAciertoSeguido : 0; });
+  }
+  // A Prueba finished at fin, after the Pruebas in before: does it add a day, the racha with it, and the racha bonus
+  function rachaDe(fin, before) {
+    const days = diasConPrueba(before), k = dayKey(new Date(fin));
+    if (days.has(k)) return { nuevoDia: false, dias: 0, bono: 0 };
+    days.add(k);
+    const dias = rachaDesde(days, k);
+    return { nuevoDia: true, dias, bono: CFG.bonoRacha > 0 && dias % 5 === 0 ? CFG.bonoRacha : 0 };
+  }
+  // Points of one answer (its own points plus its aciertos seguidos bonus) and of one saved Prueba (plus the racha bonus)
+  const ptsRespuesta = r => (r.correcta ? CFG.puntosPorCorrecta : CFG.puntosPorIncorrecta) + (r.bono || 0);
+  const ptsPrueba = p => p.puntos + (p.bonoRacha || 0) + p.respuestas.reduce((a, r) => a + (r.bono || 0), 0);
+  // Points by scope: the grade (every point, racha bonuses included), one Materia or one Tema (its answers and their bonuses).
+  // The Materia and Tema come from the question id (CIE5-T01-S01-001), so old answers count even if a question changes.
+  const inScope = (id, mid, tid) => id.slice(0, 3) === mid && (!tid || id.slice(5, 8) === tid);
+  function puntosDe(mid, tid) {
+    let n = 0;
+    for (const p of userData().pruebas) {
+      if (!mid) { n += ptsPrueba(p); continue; }
+      for (const r of p.respuestas) if (inScope(r.id, mid, tid)) n += ptsRespuesta(r);
+    }
+    return n;
+  }
+  // During a Prueba: the points of the answers given so far, with their aciertos seguidos bonus
+  function livePoints() {
     const P = state.prueba; if (state.view !== 'pregunta' || !P) return 0;
-    const done = P.items.filter(x => x.checked), c = done.filter(x => x.chosen === Q(x.id).correct).length;
-    return pts(c, done.length);
-  };
-  const totalPoints = () => savedPoints() + livePoints();
+    const done = P.items.filter(x => x.checked), cors = done.map(x => x.chosen === Q(x.id).correct), b = bonosAciertos(cors);
+    return cors.reduce((a, c, i) => a + (c ? CFG.puntosPorCorrecta : CFG.puntosPorIncorrecta) + b[i], 0);
+  }
+  const savedPoints = () => puntosDe();
+  // The scope of the screen (decided 16 November 2026): the Materia screen shows its Materia; a Prueba and its intro
+  // show the Prueba's scope (Tema, Materia or grade; the intro shows the Materia of the screen it came from); the rest the grade.
+  function scopeNow() {
+    const v = state.view;
+    if (v === 'materia' && state.materia) return { mid: state.materia };
+    if (v === 'intro' && state.pick && state.pick.mid) return { mid: state.pick.mid };
+    if (v === 'pregunta' && state.prueba && state.prueba.mid) return { mid: state.prueba.mid, tid: state.prueba.tid || null };
+    return {};
+  }
+  const totalPoints = () => { const s = scopeNow(); return puntosDe(s.mid, s.tid) + livePoints(); };
 
   /* ---------- sound effects (decided 28 Oct 2026) ----------
      Three short sounds generated in the browser (no files): correct = "Marimba" (two warm notes, C to G),
@@ -1057,7 +1123,7 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   }
 
   /* ---------- views ---------- */
-  function go(view, extra = {}) { if (view !== state.view) state.introLine = null; if (view === 'tabla' && state.view !== 'tabla') { tablaCache = {}; state.tView = 'pos'; }   /* fresh board, «Posiciones» first */ if (view === 'progreso' && state.view !== 'progreso') state.mapMateria = 'ALL';   /* the map opens on Todo 5to */ Object.assign(state, { view }, extra); render(); window.scrollTo(0, 0); }
+  function go(view, extra = {}) { if (view !== state.view) { state.introLine = null; if (view !== 'home') state.homeLine = null; } if (view === 'tabla' && state.view !== 'tabla') { tablaCache = {}; state.tView = 'pos'; }   /* fresh board, «Posiciones» first */ if (view === 'progreso' && state.view !== 'progreso') state.mapMateria = 'ALL';   /* the map opens on Todo 5to */ Object.assign(state, { view }, extra); render(); window.scrollTo(0, 0); }
 
   // Shared piece (30 Oct 2026): Profe Ariel large with the bubble above; v0.3: returns nothing
   const bigCoach = () => '';   // v0.3: see coach()
@@ -1205,10 +1271,48 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   // Main page «Pruebas» (v0.3, 8 Nov 2026): practice only. The greeting in the information area, the invitation,
   // the four Materias as solid tiles, «Todo 5to» across the full width in yellow, «Danos tu opinión» under the tiles,
   // and the chivo «Saludo» as decoration at the bottom right.
+  /* The line under the greeting (decided 16 November 2026, texts approved 17 November 2026): from 2 days the racha
+     («N días seguidos» with the flame); otherwise one personal message from the kinds that apply, never the line shown
+     just before (kept on this device). Only the student's own data, compared only with their own past, never negative.
+     Chosen once per visit to the page (state.homeLine is cleared when the student goes elsewhere). */
+  const keyMsg = uid => 'aprueba.v03.mensaje.' + uid;
+  function mensajeHome() {
+    const ps = userData().pruebas, n = ps.length;
+    if (!n) return null;                                       // no Pruebas yet: the invitation is enough
+    const kinds = [n === 1 ? ['mensaje.primera', {}] : ['mensaje.pruebas', { n }]];
+    const cur = weekKey(new Date()), prev = addDays(cur, -7);
+    const esta = ps.filter(p => weekKey(new Date(p.fin)) === cur).length, pasada = ps.filter(p => weekKey(new Date(p.fin)) === prev).length;
+    if (pasada >= 1 && esta > pasada) kinds.push(['mensaje.semana', { n: esta, m: pasada }]);
+    const ultima = ps.reduce((a, p) => (p.fin > a ? p.fin : a), '');
+    if (daysBetween(dayKey(new Date(ultima)), dayKey(new Date())) >= 3) kinds.push(['mensaje.regreso', {}]);
+    // Progress by Materia: from the map percentages, once every Materia has at least 10 answers
+    const answers = {}; for (const p of ps) for (const r of p.respuestas) answers[r.id.slice(0, 3)] = (answers[r.id.slice(0, 3)] || 0) + 1;
+    if (BANK.materias.every(m => (answers[m.id] || 0) >= 10)) {
+      const S = perf(), pct = m => (S[m.id] && S[m.id].n ? S[m.id].c / S[m.id].n : 0);
+      const sorted = BANK.materias.slice().sort((a, b) => pct(b) - pct(a));
+      const hi = sorted[0], lo = sorted[sorted.length - 1];
+      if (pct(hi) > pct(lo)) kinds.push(['mensaje.avance', { materiaAvance: hi.name, materiaDescubrir: lo.name }]);
+    }
+    const options = [];
+    for (const [g, vars] of kinds) (('textos.' + g).split('.').reduce((o, k) => o && o[k], T) || []).forEach((l, i) => options.push({ id: g + '#' + i, texto: l.texto, vars }));
+    if (!options.length) return null;
+    const last = load(keyMsg(state.uid), null), pool = options.length > 1 ? options.filter(o => o.id !== last) : options;
+    const o = pool[Math.floor(Math.random() * pool.length)];
+    save(keyMsg(state.uid), o.id);
+    return o.texto.replace(/\{(\w+)\}/g, (_, k) => o.vars[k] ?? '');
+  }
+  function lineaHome() {
+    const dias = rachaHoy();
+    if (dias >= 2) return `<p class="hracha"><span class="rpill"><svg class="ic" aria-hidden="true"><use href="#i-RACHA"/></svg>${esc(t('textos.rachaDias', { n: dias }))}</span></p>`;
+    if (state.homeLine === undefined || state.homeLine === null) state.homeLine = mensajeHome() || '';
+    return state.homeLine ? `<p class="hmsg">${esc(state.homeLine)}</p>` : '';
+  }
+
   function viewHome() {
     head({ title: t('textos.hola', { nombre: state.user }) });
     app.innerHTML = `
       <section class="page hpage">
+        ${lineaHome()}
         <p class="lead">${esc(t('textos.invitacion', { n: CFG.preguntasPorPrueba }))}</p>
         <div class="hgrid">
           <div class="htiles">
@@ -1376,11 +1480,13 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
     const P = state.prueba;
     // The option chosen is saved as its code from the master workbook (K = correct, D1-D3), not its position or text
     const respuestas = P.items.map(x => { const q = Q(x.id); return { id: x.id, correcta: x.chosen === q.correct, opcion: q.codes[x.chosen], ms: x.ms, at: x.answeredAt }; });
-    const correctas = respuestas.filter(r => r.correcta).length;
+    bonosAciertos(respuestas.map(r => r.correcta)).forEach((b, k) => { respuestas[k].bono = b; });
+    const correctas = respuestas.filter(r => r.correcta).length, fin = new Date().toISOString();
+    const racha = rachaDe(fin, userData().pruebas);   // before this Prueba is added
     const record = {
       id: newId(), tipo: P.tipo, materia: P.mid || null, tema: P.tid || null,
-      inicio: P.inicio, fin: new Date().toISOString(), duracionSeg: Math.round((Date.now() - P.t0) / 1000),
-      correctas, puntos: pts(correctas, respuestas.length), respuestas
+      inicio: P.inicio, fin, duracionSeg: Math.round((Date.now() - P.t0) / 1000),
+      correctas, puntos: pts(correctas, respuestas.length), bonoRacha: racha.bono, respuestas
     };
     // Temas that reach the top level for the first time with this Prueba (with "Mejor", a level never goes down)
     const top5 = CFG.niveles.length, before = perf();
@@ -1388,6 +1494,7 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
     const payload = { id: record.id, tipo: record.tipo, materia: record.materia, tema: record.tema,
       started_at: record.inicio, finished_at: record.fin, duracion_seg: record.duracionSeg,
       n_preguntas: respuestas.length, n_correctas: correctas, puntos: record.puntos,
+      ajustes: { bonoRacha: CFG.bonoRacha, aciertosSeguidosDesde: CFG.aciertosSeguidosDesde, bonoAciertoSeguido: CFG.bonoAciertoSeguido, zonaHoraria: CFG.zonaHoraria },
       answers: respuestas.map((r, k) => ({ question_id: r.id, posicion: k + 1, opcion: r.opcion, correcta: r.correcta, tiempo_ms: r.ms, answered_at: r.at })) };
     save(keyPend(state.uid), load(keyPend(state.uid), []).concat([{ record, payload }]));
     sendPending();
@@ -1402,7 +1509,7 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
     const band = share >= CFG.mascotaFelizDesde ? 'feliz' : share >= CFG.mensajeAltoDesde ? 'alto' : share >= CFG.mensajeMedioDesde ? 'medio' : 'bajo';
     const mensaje = nuevoNivel5.length ? t('textos.nivel5', { tema: nuevoNivel5[0] }) : say('textos.resumen.' + band).texto;
     const festejo = band === 'feliz' || nuevoNivel5.length > 0;
-    go('resultado', { resultado: record, nuevoNivel5, mensaje, festejo, prueba: null });
+    go('resultado', { resultado: record, racha, nuevoNivel5, mensaje, festejo, prueba: null });
   }
 
   // End of Prueba (8 Nov 2026): the back of the card. Band with the launching icon; label, «¡Terminaste la prueba!»,
@@ -1576,7 +1683,7 @@ body.v-preg .info { width: 780px; max-width: 100%; margin-left: auto; margin-rig
   // «Mi práctica»: the student's own points and Pruebas per week, from the Pruebas already loaded after login
   function semanas() {
     const cur = weekKey(new Date()), by = {};
-    for (const p of userData().pruebas) { const k = weekKey(new Date(p.fin)); (by[k] = by[k] || { p: 0, n: 0 }); by[k].p += p.puntos; by[k].n++; }
+    for (const p of userData().pruebas) { const k = weekKey(new Date(p.fin)); (by[k] = by[k] || { p: 0, n: 0 }); by[k].p += ptsPrueba(p); by[k].n++; }
     return Array.from({ length: CFG.progresoSemanas }, (_, i) => { const k = addDays(cur, -7 * (CFG.progresoSemanas - 1 - i)); return { k, cur: k === cur, ...(by[k] || { p: 0, n: 0 }) }; });
   }
   // Week label: the date the week starts, day above month (fits eight bars on a phone)
