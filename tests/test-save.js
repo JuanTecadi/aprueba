@@ -36,6 +36,7 @@ async function playPrueba(p, opts = {}) {
   const p = await newPage(b);
   await p.click('#swap'); await p.fill('#email', 'mama@x.com'); await p.fill('#pass', 'clave123'); await p.check('#adulto'); await p.click('#go');
   await p.waitForTimeout(150); await p.fill('#nick', 'Ana'); await p.click('#go'); await p.waitForTimeout(150);
+  await p.click('[data-g="5to"]'); await p.click('#go'); await p.waitForTimeout(150);   // the grade step (4to and 6to, 18 Nov 2026)
   let firstQ;
   const n1 = await playPrueba(p, { thumbs: async () => {
     firstQ = await p.evaluate(() => document.querySelector('.qcard3') && document.querySelector('.qcard3').innerText);

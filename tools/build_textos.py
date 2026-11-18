@@ -25,6 +25,8 @@ FIXED = {
     # Nickname (first login)
     "apodoTitulo": [], "apodoEtiqueta": [], "apodoAyuda": [], "apodoTablaNota": [], "apodoBoton": [],
     "apodoOcupado": [],
+    # Grade step at sign-up and the grade cards from Configuración (4to and 6to, decided 18 November 2026)
+    "gradoTitulo": [], "gradoAyuda": [], "gradoCambioNota": [], "gradoOpcion": ["grado"], "gradoBoton": [],
     # Main page «Pruebas» and Materia screen
     "hola": ["nombre"], "invitacion": ["n"], "tipoGrado": ["grado"], "opinion": [],
     "materiaSub": [], "todosLosTemas": ["materia"], "temaN": ["n"],
@@ -51,10 +53,10 @@ FIXED = {
     "progresoSemanaActual": [], "progresoPruebas": ["n"], "progresoPrueba": ["n"], "progresoNota": [],
     # Configuración
     "configuracion": [], "guardar": [], "guardado": [], "sonido": [], "tablaConfig": [], "grado": [],
-    "cuenta": [], "cerrarSesion": [],
+    "gradoCambiar": [], "cuenta": [], "cerrarSesion": [],
     # Ayuda (new in v0.3)
     "ayudaTitulo": [], "ayudaSubtitulo": [], "ayuda1": ["n"], "ayuda2": [], "ayuda3": ["p"],
-    "ayuda4": [], "ayuda5": [],
+    "ayuda4": [], "ayuda5": [], "ayuda6": [],
     # Racha, bonus points and points by scope (decided 16 November 2026, texts approved 17 November 2026)
     "rachaDias": ["n"], "resultadoRacha": ["n"], "stickerRacha": ["p", "n"], "resultadoAciertos": ["p"],
     "introTotalTema": ["n"], "introTotalMateria": ["n", "materia"], "introTotalGrado": ["n", "grado"],

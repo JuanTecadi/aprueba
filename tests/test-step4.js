@@ -43,6 +43,7 @@ async function open(b, w, h) {
   await p.goto(URL, { waitUntil: 'networkidle' });
   await p.click('#swap'); await p.fill('#email', 'a@x.com'); await p.fill('#pass', 'clave123'); await p.check('#adulto'); await p.click('#go');
   await p.waitForTimeout(150); await p.fill('#nick', 'Ana'); await p.click('#go'); await p.waitForTimeout(150);
+  await p.click('[data-g="5to"]'); await p.click('#go'); await p.waitForTimeout(150);   // the grade step (4to and 6to, 18 Nov 2026)
   await p.evaluate(({ others, seed }) => {
     const d = JSON.parse(localStorage.getItem('mock.db')), uid = JSON.parse(localStorage.getItem('mock.session'));
     seed.pr.forEach(x => { x.student_id = uid; });

@@ -28,6 +28,7 @@ const res = []; const ok = (n, c) => res.push([c ? 'PASS' : 'FAIL', n]);
     await p.fill('#nick', 'JuanCreador'); await p.click('#swt');
     ok(`${w} switch off keeps the typed nickname`, (await p.getAttribute('#swt', 'aria-checked')) === 'false' && (await p.inputValue('#nick')) === 'JuanCreador');
     await p.click('#swt'); await p.click('#go'); await p.waitForTimeout(200);
+    await p.click('[data-g="5to"]'); await p.click('#go'); await p.waitForTimeout(150);   // the grade step (4to and 6to, 18 Nov 2026)
     const u = await p.evaluate(() => JSON.parse(localStorage.getItem('mock.db')).users.find(x => x.nickname === 'JuanCreador'));
     ok(`${w} nickname and leaderboard saved together`, u.nickname === 'JuanCreador' && u.leaderboard === true);
     ok(`${w} main page: greeting in the information area`, (await p.locator('#top').innerText()).includes('¡Hola, JuanCreador!'));
@@ -38,7 +39,7 @@ const res = []; const ok = (n, c) => res.push([c ? 'PASS' : 'FAIL', n]);
     let clash = false; for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) { const [a, c] = [boxes[i], boxes[j]]; if (a[0] < c[2] - 1 && c[0] < a[2] - 1 && a[1] < c[3] - 1 && c[1] < a[3] - 1) clash = true; }
     ok(`${w} main page: tiles do not overlap`, !clash);
     await p.click('[data-rail="ayuda"]'); await p.waitForTimeout(80);
-    ok(`${w} Ayuda: five lines, numbers from the settings`, (await p.locator('.alist li').count()) === 5 && (await p.locator('.alist').innerText()).includes('responde 10 preguntas') && (await p.locator('.alist').innerText()).includes('suma 10 puntos'));
+    ok(`${w} Ayuda: six lines (the grade line since 18 Nov 2026), numbers from the settings`, (await p.locator('.alist li').count()) === 6 && (await p.locator('.alist').innerText()).includes('responde 10 preguntas') && (await p.locator('.alist').innerText()).includes('suma 10 puntos'));
     ok(`${w} Ayuda: rail item selected`, (await p.getAttribute('[data-rail="ayuda"]', 'aria-current')) === 'page');
     await shot('5-ayuda');
     await p.click('[data-rail="config"]'); await p.waitForTimeout(80);

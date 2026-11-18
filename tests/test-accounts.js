@@ -48,6 +48,10 @@ const shot = async (p, name) => { if (SHOTS) await p.screenshot({ path: path.joi
     await p.fill('#nick', 'sofia'); await p.click('#go'); await p.waitForTimeout(100);
     ok(`${tag} taken nickname refused (Sofía = sofia)`, (await err(p)) === TX.apodoOcupado);
     await p.fill('#nick', `Luis${w}`); await p.click('#go'); await p.waitForTimeout(200);
+    // The grade step (4to and 6to, 18 Nov 2026): no rail and no information area; «Continuar» waits for a card
+    ok(`${tag} grade step after the nickname, no rail, no information area`, (await p.locator('.grdcard h1').innerText()) === TX.gradoTitulo && await p.locator('#top').isHidden() && await p.locator('#rail').isHidden());
+    ok(`${tag} grade step: no card chosen, Continuar disabled`, (await p.locator('[aria-pressed="true"]').count()) === 0 && await p.locator('#go').isDisabled());
+    await p.click('[data-g="5to"]'); await p.click('#go'); await p.waitForTimeout(200);
     ok(`${tag} main page after the nickname`, (await greeting(p)) === `¡Hola, Luis${w}!` && (await p.getAttribute('[data-rail="home"]', 'aria-current')) === 'page');
     // Session remembered
     await p.reload({ waitUntil: 'networkidle' }); await p.waitForTimeout(150);

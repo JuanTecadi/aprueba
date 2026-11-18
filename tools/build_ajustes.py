@@ -1,7 +1,7 @@
 """Convert the settings document (Aprueba – Ajustes, the source of truth) into ajustes.json, checking every value.
 An Excel copy (.xlsx with the same columns) is also accepted.
 
-Usage: python3 build_ajustes.py <Aprueba – Ajustes.md> <questions-5to.json (or another grade's file)> [ajustes.json]
+Usage: python3 build_ajustes.py <Aprueba – Ajustes.md> <questions-4to.json,questions-5to.json,questions-6to.json> [ajustes.json]
 Stops with a clear message if any value is not allowed; nothing is written in that case.
 """
 import json, re, sys
@@ -93,14 +93,17 @@ def topn(v):
     return whole(3, 50)(v)
 
 
-GRADES = ('4to', '5to', '6to')   # a logo exists for each (img/aprueba-<grado>.svg)
+GRADES = ('4to', '5to', '6to')   # a logo, a chivo and a question file exist for each
 
 
-def grade(v):
-    v = str(v or '').strip()
-    if v not in GRADES:
-        raise ValueError('must be one of ' + ', '.join(GRADES) + ' (a logo exists for each)')
-    return v
+def grades(v):
+    """The grades offered at sign-up and in Configuración (gradosDisponibles, 4to and 6to, decided 18 November 2026):
+    a list such as «4to, 5to, 6to»; at least one; returned in grade order."""
+    parts = [x.strip() for x in str(v or '').replace(' y ', ',').split(',') if x.strip()]
+    bad = [x for x in parts if x not in GRADES]
+    if bad or not parts:
+        raise ValueError('must be a list of ' + ', '.join(GRADES) + ', at least one')
+    return [g for g in GRADES if g in parts]
 
 
 RULES = {
@@ -118,7 +121,7 @@ RULES = {
     **{f'nivel{i}Color': colour for i in (1, 2, 3, 4, 5)},
     'temasIncluidos': text(200),
     'temasPorMateria': whole(1, 20),
-    'grado': grade,
+    'gradosDisponibles': grades,
     'enlaceOpinion': link,
     # Leaderboard, Tabla de posiciones (4 November 2026)
     'tablaTop': topn,
@@ -173,7 +176,9 @@ def main(src, questions, out='ajustes.json'):
                 errors.append(f'{name}: {e} (found: {value!r})')
     errors += [f'Missing row for key {k}' for k in RULES if k not in seen]
     if 'temasIncluidos' in found:
-        known = {q['tema'] for q in json.load(open(questions, encoding='utf-8'))['questions']}
+        # one question file per grade (18 November 2026): several files separated by commas; a Tema must exist in each
+        files = [f.strip() for f in questions.split(',') if f.strip()]
+        known = set.intersection(*({q['tema'] for q in json.load(open(f, encoding='utf-8'))['questions']} for f in files))
         try:
             found['temasIncluidos'] = temas(found['temasIncluidos'], known)
         except ValueError as e:

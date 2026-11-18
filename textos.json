@@ -40,6 +40,11 @@
     "apodoTablaNota": "Los demás verán tu apodo y tus puntos. Puedes salir cuando quieras.",
     "apodoBoton": "Listo",
     "apodoOcupado": "Ese apodo ya lo tiene otra persona. Prueba con otro.",
+    "gradoTitulo": "¿En qué grado estás?",
+    "gradoAyuda": "Así te mostramos las preguntas de tu grado.",
+    "gradoCambioNota": "Puedes cambiar cuando quieras. Tu avance de cada grado queda guardado.",
+    "gradoOpcion": "{grado} grado",
+    "gradoBoton": "Continuar",
     "hola": "¡Hola, {nombre}!",
     "rachaDias": "{n} días seguidos",
     "invitacion": "Elige qué practicar. Son {n} preguntas y aprendes con cada respuesta.",
@@ -124,6 +129,7 @@
     "sonido": "Sonido",
     "tablaConfig": "Aparecer en la tabla de posiciones",
     "grado": "Grado",
+    "gradoCambiar": "Cambiar",
     "cuenta": "Cuenta",
     "cerrarSesion": "Cerrar sesión",
     "ayudaTitulo": "Ayuda",
@@ -133,6 +139,7 @@
     "ayuda3": "Cada respuesta correcta suma {p} puntos.",
     "ayuda4": "En Progreso ves cuánto dominas cada tema.",
     "ayuda5": "En Tabla puedes compararte con otros, si quieres aparecer.",
+    "ayuda6": "En Configuración puedes cambiar de grado cuando quieras.",
     "resumen": {
       "feliz": [
         {

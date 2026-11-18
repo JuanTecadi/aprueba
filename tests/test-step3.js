@@ -21,6 +21,7 @@ async function open(b, w, h, bank) {
   await p.goto(URL, { waitUntil: 'networkidle' });
   await p.click('#swap'); await p.fill('#email', 'a@x.com'); await p.fill('#pass', 'clave123'); await p.check('#adulto'); await p.click('#go');
   await p.waitForTimeout(150); await p.fill('#nick', 'Ana'); await p.click('#go'); await p.waitForTimeout(150);
+  await p.click('[data-g="5to"]'); await p.click('#go'); await p.waitForTimeout(150);   // the grade step (4to and 6to, 18 Nov 2026)
   return p;
 }
 const noScrollX = p => p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1);

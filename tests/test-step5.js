@@ -44,6 +44,7 @@ async function signUp(p, email, nick, board = true) {
   await p.waitForTimeout(150); await p.fill('#nick', nick);
   if (!board) await p.click('#swt');
   await p.click('#go'); await p.waitForTimeout(150);
+  await p.click('[data-g="5to"]'); await p.click('#go'); await p.waitForTimeout(150);   // the grade step (4to and 6to, 18 Nov 2026)
 }
 async function answer(p, right) {
   const q = byStem[(await p.locator('.qstem').innerText()).replace(/\s+/g, ' ').trim()];
@@ -140,6 +141,7 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
     await visit('01-login'); await q.click('#swap'); await visit('02-crear');
     await q.fill('#email', `s${w}@x.com`); await q.fill('#pass', 'clave123'); await q.check('#adulto'); await q.click('#go'); await q.waitForTimeout(150);
     await visit('03-apodo'); await q.fill('#nick', 'Ana' + w); await q.click('#go'); await q.waitForTimeout(150);
+    await visit('03b-grado'); await q.click('[data-g="5to"]'); await visit('03c-grado-elegido'); await q.click('#go'); await q.waitForTimeout(150);   // the grade step (18 Nov 2026)
     await visit('04-pruebas');
     for (const m of ['CIE', 'LEN', 'MAT', 'SOC']) { await rail(q, 'home'); await q.click(`[data-m="${m}"]`); await visit(`05-materia-${m}`); }
     await q.click('#all'); await visit('06-intro-todo-SOC');
@@ -160,6 +162,13 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
     await q.click('[data-tv="prac"]'); await q.waitForTimeout(60); await visit('16-tabla-practica');
     await rail(q, 'ayuda'); await visit('17-ayuda');
     await rail(q, 'config'); await visit('18-config');
+    await q.click('#cgrado'); await q.waitForTimeout(80); await visit('19-config-grado');   // the grade cards from Configuración (18 Nov 2026)
+    for (const g of ['4to', '6to']) {   // every navigation screen in the 4to and 6to look
+      await rail(q, 'config'); await q.click('#cgrado'); await q.click(`[data-g="${g}"]`); await q.click('#go'); await q.waitForTimeout(250);
+      await rail(q, 'home'); await visit(`20-${g}-pruebas`); await q.click('[data-m="CIE"]'); await visit(`20-${g}-materia`);
+      await rail(q, 'progreso'); await visit(`20-${g}-mapa`); await rail(q, 'tabla'); await q.waitForTimeout(150); await visit(`20-${g}-tabla`);
+      await rail(q, 'ayuda'); await visit(`20-${g}-ayuda`); await rail(q, 'config'); await visit(`20-${g}-config`);
+    }
     ok(`${w}x${h} every screen: no horizontal scroll`, wide.length === 0, wide);
     ok(`${w}x${h} every screen: touch areas ≥ 56 px`, small.length === 0, small);
     ok(`${w}x${h} every screen: text contrast passes WCAG`, low.length === 0, low);

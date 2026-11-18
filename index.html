@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>/* Base styles carried over from the v0.1 page host */:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
-<title>aPrueba 5to</title>
+<title>aPrueba</title>
 <!-- App icon and install (10 Nov 2026): home screen on iPad/iPhone and Android, install on Windows/Mac; files from tools/make_appicons.py -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="img/aprueba-icon.svg">
@@ -108,8 +108,8 @@ body.tinted { background-color: var(--sft); }
    «Colour outside, calm inside»: navigation screens on the deep grade colour (inside a Materia, the deep Materia tone),
    reading screens on the soft Materia tint. No notebook grid, no watermark, no dark mode. */
 :root {
-  /* Grade identity: 5to = Médanos de Coro (dunes). Only 5to is built; 4to and 6to pills are in logo v2. */
-  --g-bg: #1B2A55; --g-rail: #121D3D; --g-land1: #22336A; --g-land2: #2A3D78; --g-pill: #2E4A9A;
+  /* Grade identity: 5to = Médanos de Coro (dunes) here; 4to (Los Andes) and 6to (tepuyes) in body.g-4to / body.g-6to (18 Nov 2026, option B) */
+  --g-bg: #1B2A55; --g-rail: #121D3D; --g-bar: #121D3D; --g-land1: #233772; --g-land2: #294289; --g-land3: #294289; --g-pill: #2E4A9A;
   /* Deep Materia tones for Materia screens (Ciencias from the mockup; the other three with the same darkening and contrast checks) */
   --cie-d: #0A4E70; --cie-r: #083B55; --cie-l1: #0C5A80; --cie-l2: #106690;
   --len-d: #811B4E; --len-r: #61153B; --len-l1: #931F5A; --len-l2: #A62365;
@@ -125,7 +125,7 @@ body { background: var(--bg); padding: 0; }
 body.tinted { background: var(--bg); }   /* replaces the v0.2 tinted page */
 body.s-read, body.tinted.s-read { background: var(--sft, #F3F5F9); }
 .land { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
-.land .l1 { fill: var(--l1); } .land .l2 { fill: var(--l2); }
+.land .l1 { fill: var(--l1); } .land .l2 { fill: var(--l2); } .land .l3 { fill: var(--l3, var(--l2)); }
 body.s-read .land { display: none; }
 .wmp { display: none !important; }   /* no watermark (8 Nov 2026) */
 
@@ -188,7 +188,7 @@ body.s-read .seg { background: rgba(22,33,58,.07); } body.s-read .seg button { c
 
 /* Phones: the rail becomes a bottom bar (hidden during a Prueba, like the rail) */
 @media (max-width: 599px) {
-  .rail { top: auto; right: 0; width: auto; height: calc(64px + env(safe-area-inset-bottom, 0px)); flex-direction: row; justify-content: space-around;
+  .rail { top: auto; right: 0; width: auto; height: calc(64px + env(safe-area-inset-bottom, 0px)); flex-direction: row; justify-content: space-around; background: var(--bar-bg, var(--rail-bg));
     padding: 0 4px env(safe-area-inset-bottom, 0px); gap: 0; }
   .rail .badge { display: none; }
   .rail .ri { width: auto; flex: 1; height: 56px; margin: 4px 2px; }
@@ -776,6 +776,54 @@ body.v-tabla .info .ttl { position: relative; }
   .brd5 li { padding: 0 12px 0 6px; column-gap: 10px; }
   .tscroll5 { max-height: calc(100vh - 330px); }
 }
+
+/* ---------- 4to and 6to (decided 18 November 2026, built on the branch grados) ----------
+   One app for every grade: body.g-4to / body.g-6to set the grade identity (option B of the backgrounds review);
+   5to stays in :root. The surface in use is re-declared here, because :root resolves var() once. */
+body { --bg: var(--g-bg); --rail-bg: var(--g-rail); --bar-bg: var(--g-bar); --l1: var(--g-land1); --l2: var(--g-land2); --l3: var(--g-land3); }
+body.g-4to { --g-bg: #063F36; --g-rail: #042A24; --g-bar: #042F28; --g-land1: #105A5C; --g-land2: #186F7A; --g-land3: #4C8385; --g-pill: #1E7F91;
+  --on-dark-2: #E4F0F2; --rail-ink: #B7D6DC; }
+body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4B2E7C; --g-land2: #543C95; --g-land3: #78629D; --g-pill: #5B47A8;
+  --on-dark-2: #EBE9F5; --rail-ink: #CBC4E3; }
+/* The grade step (sign-up, after the nickname) and the grade cards opened from Configuración */
+.grd { min-height: calc(100vh - 58px); display: flex; align-items: center; justify-content: center; }
+.grd.cambio { min-height: 0; margin-top: 8px; }
+.grdcard { width: 900px; max-width: 100%; background: #fff; border-radius: 24px; padding: 36px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; color: var(--ink); }
+.grdcard .lchip { align-self: flex-start; background: #1B2A55; border-radius: 12px; padding: 8px 12px; line-height: 0; }
+.grdcard .lchip .logo { height: 40px; }
+.grdcard h1, .grdcard h2 { margin: 10px 0 0; font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1.15; }
+.grdcard .gsub { margin: 0 0 10px; font-size: 17px; line-height: 1.45; color: var(--muted2); }
+.gopts { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 20px; padding: 8px; }
+.gopt { position: relative; overflow: hidden; height: 330px; border: 0; border-radius: 22px; padding: 18px; background: var(--gb);
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; font: inherit; color: #fff; cursor: pointer; text-align: left; }
+.gopt[aria-pressed="true"] { box-shadow: 0 0 0 4px #fff, 0 0 0 8px var(--sun); }
+.gopt:focus-visible { outline: 3px solid var(--sun); outline-offset: 6px; }
+.gopt .gland { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 60%; }
+.gopt .glogo { position: relative; height: 30px; }
+.gopt .gchivo { position: relative; height: 190px; align-self: center; }
+.gopt .gname { position: relative; font-family: var(--display); font-weight: 800; font-size: 24px; }
+.gopt .gok { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 999px; background: var(--sun); color: var(--ink);
+  display: flex; align-items: center; justify-content: center; z-index: 2; font-weight: 800; font-size: 20px; }
+.grdcard .actions { margin-top: 10px; }
+.crow .gctl { display: flex; align-items: center; gap: 12px; }
+@media (min-width: 600px) and (max-width: 959px) {
+  .grdcard { padding: 28px; } .gopts { gap: 14px; padding: 6px; } .gopt { height: 280px; padding: 14px; } .gopt .gchivo { height: 150px; } .gopt .gname { font-size: 21px; }
+}
+@media (max-width: 599px) {
+  body.v-grado-alta { background: #fff; } body.v-grado-alta .land { display: none; }
+  .grd { min-height: 0; display: block; }
+  .grdcard { padding: 20px 4px 8px; border-radius: 0; background: transparent; }
+  body.v-grado-cambio .grdcard { padding: 20px; border-radius: 20px; background: #fff; }
+  .grdcard h1, .grdcard h2 { font-size: 26px; margin-top: 8px; }
+  .grdcard .gsub { font-size: 16px; margin-bottom: 6px; }
+  .gopts { grid-template-columns: 1fr; gap: 14px; }
+  .gopt { height: 150px; padding: 0 14px 0 0; border-radius: 18px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 4px; }
+  .gopt .gchivo { height: 136px; align-self: flex-end; margin-bottom: 4px; }
+  .gopt .gtxt { display: flex; flex-direction: column; gap: 10px; }
+  .gopt .glogo { height: 28px; } .gopt .gname { font-size: 22px; }
+  .crow .gctl .b { width: auto; min-width: 0; padding: 0 22px; }
+}
+@media (min-width: 600px) { .gopt .gtxt { display: contents; } }
 </style>
 </head>
 <body>
@@ -843,7 +891,7 @@ body.v-tabla .info .ttl { position: relative; }
   <symbol id="i-SOC-T11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s-7 8-7 12a7 7 0 0 0 14 0c0-4-7-12-7-12z"/><path d="M9 17c0-3 2-5 6-5 0 3.5-2 5-6 5zM9 17l3-2.5"/></symbol>
   <symbol id="i-ALL" viewBox="0 0 56 56"><rect x="21.5" y="1.9" width="13.1" height="20.5" rx="5.6" fill="#0A6E9C"/><rect x="33.6" y="21.5" width="20.5" height="13.1" rx="5.6" fill="#B3266D"/><rect x="21.5" y="33.6" width="13.1" height="20.5" rx="5.6" fill="#A64B00"/><rect x="1.9" y="21.5" width="20.5" height="13.1" rx="5.6" fill="#3236B0"/></symbol>
 </defs></svg>
-<svg class="land" aria-hidden="true" viewBox="0 0 1180 820" preserveAspectRatio="none"><path class="l1" d="M500 820 C640 690 780 690 900 740 C990 660 1090 650 1180 690 L1180 820 Z"/><path class="l2" d="M700 820 C840 760 960 765 1180 785 L1180 820 Z"/></svg>
+<svg class="land" id="land" aria-hidden="true" viewBox="0 0 1180 820" preserveAspectRatio="none"></svg>
 <div class="shell">
   <nav class="rail" id="rail" hidden></nav>
   <div class="stage">
@@ -861,12 +909,13 @@ body.v-tabla .info .ttl { position: relative; }
   // fill colour --mc, text colour --mt, soft tint --sft (used inside style="--mc:...")
   const MCOLOR = { CIE: 'var(--cie);--mt:var(--cie-t);--sft:var(--cie-s)', LEN: 'var(--len);--mt:var(--len-t);--sft:var(--len-s)', MAT: 'var(--mat);--mt:var(--mat-t);--sft:var(--mat-s)', SOC: 'var(--soc);--mt:var(--soc-t);--sft:var(--soc-s)' };
   // v0.3: deep Materia tone (background of Materia screens), its rail and the two landscape shades
-  const MDEEP = id => { const k = id.toLowerCase(); return `--bg:var(--${k}-d);--rail-bg:var(--${k}-r);--l1:var(--${k}-l1);--l2:var(--${k}-l2)`; };
+  const MDEEP = id => { const k = id.toLowerCase(); return `--bg:var(--${k}-d);--rail-bg:var(--${k}-r);--bar-bg:var(--${k}-r);--l1:var(--${k}-l1);--l2:var(--${k}-l2);--l3:var(--${k}-l2)`; };
   const LETTERS = ['A', 'B', 'C', 'D'];
   // Materia icon (always shown next to the Materia name) and icon on a coloured badge
   const micon = id => `<svg class="ic${id === 'ALL' ? ' todo' : ''}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
   // Tema icon (v0.3): every active Tema of the four Materias has one since 8 Nov 2026; null for a Tema without a drawn icon (the screen then shows the number)
-  const temaIcon = (mid, tid) => document.getElementById(`i-${mid}-${tid}`) ? micon(`${mid}-${tid}`) : null;
+  // The Tema icons are drawn for 5to only (4to and 6to show the Tema number until their icons are approved, 18 Nov 2026)
+  const temaIcon = (mid, tid) => G() === '5to' && document.getElementById(`i-${mid}-${tid}`) ? micon(`${mid}-${tid}`) : null;
   // Watermark tile: the Materia icon twice, offset like bricks, used as a CSS mask
   const pattern = id => {
     const g = document.getElementById('i-' + id).innerHTML.replace(/currentColor/g, '#000');
@@ -875,8 +924,22 @@ body.v-tabla .info .ttl { position: relative; }
   };
   const mbadge = (id, b) => `<span class="mbadge" ${b ? `style="--b:${b}px"` : ''}>${micon(id)}</span>`;
   // Logo for the grade in the settings: navy version on light backgrounds, white version in dark mode (files in img/)
-  const logo = (dark = true) => { const g = encodeURIComponent(CFG.grado), alt = esc(t('textos.marca') + ' ' + CFG.grado);
-    return `<img class="logo" src="img/aprueba-${g}${dark ? '-on-dark' : ''}.svg" alt="${alt}">`; };
+  const logo = (dark = true, g = G()) => { const alt = esc(t('textos.marca') + ' ' + g);
+    return `<img class="logo" src="img/aprueba-${encodeURIComponent(g)}${dark ? '-on-dark' : ''}.svg" alt="${alt}">`; };
+  // 4to and 6to (18 Nov 2026): the logo without a grade (login, grade step) and each grade's chivo (the 5to files keep their names)
+  const logoSin = (dark = true) => `<img class="logo" src="img/aprueba${dark ? '-on-dark' : ''}.svg" alt="${esc(t('textos.marca'))}">`;
+  const chivo = (pose, g = G()) => `img/chivo-${g === '5to' ? '' : g + '-'}${pose}.svg`;
+  // The grade landscapes, in the 1180 × 820 frame of the screen: l1 the back layer, l3 the snow or the waterfall, l2 the front
+  const LAND = {
+    '5to': [['l1', 'M500 820 C640 690 780 690 900 740 C990 660 1090 650 1180 690 L1180 820 Z'], ['l2', 'M700 820 C840 760 960 765 1180 785 L1180 820 Z']],
+    '4to': [['l1', 'M470 820 L540 765 L590 780 L640 690 L690 730 L760 625 L840 705 L900 680 L960 720 L1010 680 L1080 720 L1130 700 L1180 712 L1180 820 Z'],
+            ['l3', 'M622 712 L640 690 L659 714 L649 711 L640 720 L631 710 Z M738 652 L760 625 L784 655 L771 651 L761 662 L750 650 Z M995 697 L1010 680 L1026 698 L1017 696 L1010 703 L1003 695 Z'],
+            ['l2', 'M700 820 C840 762 960 768 1180 786 L1180 820 Z']],
+    '6to': [['l1', 'M480 820 L560 768 L572 650 C573 642 578 640 586 640 L640 638 L656 634 L760 637 C767 637 770 641 771 648 L780 740 L810 770 L900 772 L912 748 L920 700 C921 694 925 692 931 692 L1060 690 L1075 686 L1120 688 C1126 688 1129 692 1130 698 L1136 748 L1160 768 L1180 770 L1180 820 Z'],
+            ['l3', 'M748 640 C746 665 750 690 747 712 C745 728 748 742 745 770 L757 770 C755 742 758 728 756 712 C754 690 758 665 755 640 Z'],
+            ['l2', 'M700 820 C840 762 960 768 1180 786 L1180 820 Z']]
+  };
+  const landPaths = (g, fills) => (LAND[g] || LAND['5to']).map(([c, d]) => `<path class="${c}" d="${d}"${fills ? ` fill="${fills[c]}"` : ''}/>`).join('');
   // Profe Ariel with a one-line speech bubble. Moods: neutral (default), reto, feliz (rare). sm = round avatar
   const coach = () => '';   // v0.3: the mascot no longer speaks (kept until steps 2 to 4 rebuild the screens that call it)
   // Rotating lines (Aprueba – Textos): one line at random from a group, never the same as the last one shown.
@@ -894,10 +957,12 @@ body.v-tabla .info .ttl { position: relative; }
   const top = document.getElementById('top');
 
   // user = the nickname shown on screen; uid and email come from the account (v0.2)
-  let state = { view: 'login', user: null, uid: null, email: null, materia: null, prueba: null, loginTab: 'entrar' };
+  let state = { view: 'login', user: null, uid: null, email: null, materia: null, prueba: null, loginTab: 'entrar', grado: null };
+  // The student's current grade (4to and 6to, 18 Nov 2026): from the account; 5to until it is known
+  const G = () => state.grado || '5to';
 
   /* ---------- helpers ---------- */
-  const t = (key, vars = {}) => { vars = { grado: CFG ? CFG.grado : '', ...vars };
+  const t = (key, vars = {}) => { vars = { grado: G(), ...vars };
     return String(key.split('.').reduce((o, k) => o && o[k], T) ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? ''); };
   // points from settings: correct and wrong answers (Aprueba_Ajustes.xlsx)
   const pts = (c, r) => c * CFG.puntosPorCorrecta + (r - c) * CFG.puntosPorIncorrecta;
@@ -919,6 +984,22 @@ body.v-tabla .info .ttl { position: relative; }
   const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable: keep going */ } };
   let memoryData = {};
   const userData = () => memoryData[state.uid] || (memoryData[state.uid] = { pruebas: [] });
+  // Pruebas of the current grade (progress, maps, points, «Progress by Materia»); the racha and the other personal
+  // messages count every grade. A record without a grade (saved before 4to and 6to) is 5to.
+  const gradoDe = p => p.grado || '5to';
+  const misPruebas = () => userData().pruebas.filter(p => gradoDe(p) === G());
+  // One question file per grade, loaded when the grade is first needed and kept for the visit
+  const BANKS = {};
+  async function loadBank(g) {
+    if (!BANKS[g]) {
+      const r = await fetch(`questions-${g}.json`); if (!r.ok) throw new Error('questions-' + g);
+      const b = await r.json(), inc = new Set(CFG.temasIncluidos);   // Temas included (settings): only those Temas and their questions
+      b.materias.forEach(m => { m.temas = m.temas.filter(x => inc.has(x.id)); });
+      b.questions = b.questions.filter(q => inc.has(q.tema));
+      BANKS[g] = b;
+    }
+    BANK = BANKS[g];
+  }
 
   /* ---------- accounts (v0.2, decided 30 Oct 2026) ----------
      Email and password with Supabase. The parent signs up (required tick box, stored as adult_confirmed);
@@ -933,9 +1014,9 @@ body.v-tabla .info .ttl { position: relative; }
   const isOffline = e => !e || e.offline || e.name === 'AuthRetryableFetchError' || e.status === 0 || /fetch|network|load failed/i.test(e.message || '');
   async function loadProfile(user) {
     const c = client(); if (!c) throw noNet();
-    const { data, error } = await c.from('students').select('nickname,leaderboard').eq('id', user.id).maybeSingle();
+    const { data, error } = await c.from('students').select('nickname,leaderboard,grado').eq('id', user.id).maybeSingle();
     if (error) throw error;
-    Object.assign(state, { uid: user.id, email: user.email, user: (data && data.nickname) || null, enTabla: !!(data && data.leaderboard) });
+    Object.assign(state, { uid: user.id, email: user.email, user: (data && data.nickname) || null, enTabla: !!(data && data.leaderboard), grado: (data && data.grado) || '5to' });
   }
   // Leaderboard switch (4 Nov 2026): the same switch on the Tabla de posiciones page and in Configuración.
   // New accounts start out of the board; joining or leaving takes effect at once. Returns true when saved.
@@ -947,8 +1028,22 @@ body.v-tabla .info .ttl { position: relative; }
       state.enTabla = on; tablaCache = {}; return true;
     } catch (e) { return false; }
   }
+  // The grade switch (decided 18 Nov 2026): a free switch, no confirmation; each grade keeps its own progress and Tabla
+  async function setGrado(g) {
+    try {
+      const c = client(); if (!c || !state.uid) return false;
+      if (g !== state.grado) {
+        const { error } = await c.from('students').update({ grado: g }).eq('id', state.uid).select('grado').single();
+        if (error) return false;
+      }
+      await loadBank(g);
+      Object.assign(state, { grado: g, resultado: null, pick: null, materia: null, homeLine: null, mapMateria: 'ALL' });
+      tablaCache = {}; return true;
+    } catch (e) { return false; }
+  }
   async function enterAs(user) {   // after login, sign-up or a session saved on this device
     await loadProfile(user);
+    if (state.user) await loadBank(G());   // a new account loads its questions at the grade step, after choosing
     memoryData = {};
     await loadHistory();
     go(state.user ? 'home' : 'apodo');
@@ -958,11 +1053,11 @@ body.v-tabla .info .ttl { position: relative; }
   async function loadHistory() {
     const c = client();
     const { data, error } = await c.from('pruebas')
-      .select('id,tipo,materia,tema,started_at,finished_at,duracion_seg,n_correctas,puntos,bono_racha,answers(question_id,posicion,opcion,correcta,tiempo_ms,bono)')
+      .select('id,grado,tipo,materia,tema,started_at,finished_at,duracion_seg,n_correctas,puntos,bono_racha,answers(question_id,posicion,opcion,correcta,tiempo_ms,bono)')
       .order('finished_at', { ascending: true });
     if (error) throw error;
     const saved = (data || []).map(x => ({
-      id: x.id, tipo: x.tipo, materia: x.materia, tema: x.tema, inicio: x.started_at, fin: x.finished_at,
+      id: x.id, grado: x.grado || '5to', tipo: x.tipo, materia: x.materia, tema: x.tema, inicio: x.started_at, fin: x.finished_at,
       duracionSeg: x.duracion_seg, correctas: x.n_correctas, puntos: x.puntos, bonoRacha: x.bono_racha || 0,
       respuestas: (x.answers || []).slice().sort((a, b) => a.posicion - b.posicion)
         .map(a => ({ id: a.question_id, correcta: a.correcta, opcion: a.opcion, ms: a.tiempo_ms, bono: a.bono || 0 }))
@@ -1006,7 +1101,7 @@ body.v-tabla .info .ttl { position: relative; }
   async function signOut() {
     try { const c = client(); if (c) await c.auth.signOut(); } catch (e) { /* signed out on this device anyway */ }
     memoryData = {}; tablaCache = {};
-    go('login', { user: null, uid: null, email: null, prueba: null, loginTab: 'entrar' });
+    go('login', { user: null, uid: null, email: null, prueba: null, loginTab: 'entrar', grado: null, resultado: null, pick: null });
   }
 
   /* ---------- draw a prueba (TST-01 to TST-05) ---------- */
@@ -1034,7 +1129,7 @@ body.v-tabla .info .ttl { position: relative; }
      The map shows no points (4 Nov 2026). */
   function perf() {
     const ok = {};   // question id -> counts as correct (true/false)
-    for (const p of userData().pruebas) for (const r of p.respuestas) {   // pruebas are stored in time order
+    for (const p of misPruebas()) for (const r of p.respuestas) {   // pruebas are stored in time order; the current grade only
       if (!Q(r.id)) continue;
       ok[r.id] = CFG.respuestaQueCuenta === 'mejor' ? (ok[r.id] || r.correcta) : r.correcta;
     }
@@ -1106,9 +1201,9 @@ body.v-tabla .info .ttl { position: relative; }
   // Points by scope: the grade (every point, racha bonuses included), one Materia or one Tema (its answers and their bonuses).
   // The Materia and Tema come from the question id (CIE5-T01-S01-001), so old answers count even if a question changes.
   const inScope = (id, mid, tid) => id.slice(0, 3) === mid && (!tid || id.slice(5, 8) === tid);
-  function puntosDe(mid, tid) {
+  function puntosDe(mid, tid) {   // the current grade only (each grade has its own total, 18 Nov 2026)
     let n = 0;
-    for (const p of userData().pruebas) {
+    for (const p of misPruebas()) {
       if (!mid) { n += ptsPrueba(p); continue; }
       for (const r of p.respuestas) if (inScope(r.id, mid, tid)) n += ptsRespuesta(r);
     }
@@ -1198,10 +1293,10 @@ body.v-tabla .info .ttl { position: relative; }
      Information area: the screen's back link, title and context on the left (set by each view with head()),
      the sound button and the points chip (opens the Tabla) on the right. */
   const RAIL = [['home', 'railPruebas', 'PRU'], ['progreso', 'railProgreso', 'PRO'], ['tabla', 'railTabla', 'TAB'], ['ayuda', 'railAyuda', 'AYU']];
-  const railOf = v => ({ materia: 'home', intro: 'home', resultado: 'home', respuestas: 'home' })[v] || v;
+  const railOf = v => ({ materia: 'home', intro: 'home', resultado: 'home', respuestas: 'home', grado: 'config' })[v] || v;
   const rail = document.getElementById('rail');
   function renderRail() {
-    const show = !!state.user && !['login', 'apodo', 'pregunta'].includes(state.view);
+    const show = !!state.user && !['login', 'apodo', 'pregunta'].includes(state.view) && !(state.view === 'grado' && state.gradoModo !== 'cambio');
     document.body.classList.toggle('has-rail', show);
     if (!show) { rail.hidden = true; rail.innerHTML = ''; return; }
     const sel = railOf(state.view);
@@ -1215,13 +1310,13 @@ body.v-tabla .info .ttl { position: relative; }
   let HEAD = null;
   const head = h => { HEAD = h; };
   function renderTop() {
-    if (!state.user) { top.innerHTML = ''; top.hidden = true; return; }   // login and nickname: no information area
+    if (!state.user || (state.view === 'grado' && state.gradoModo !== 'cambio')) { top.innerHTML = ''; top.hidden = true; return; }   // login, nickname and the grade step at sign-up: no information area
     const on = soundOn(), lbl = esc(t(on ? 'textos.sonidoSilenciar' : 'textos.sonidoActivar'));
     const total = totalPoints(), anim = state.ptsAnim, sc = scopeNow(); state.ptsAnim = null;
     const shown = anim ? anim.from : total, h = HEAD || {};
     top.innerHTML = `<div class="ttl">`
       + (h.back ? `<button class="b-back" id="${h.back[0]}"><span class="ar" aria-hidden="true">‹</span>${esc(t(h.back[1]))}</button>` : '')
-      + (h.icon || h.title ? `<span class="tt">${h.icon || ''}${h.title ? `<h1>${esc(h.title)}</h1>` : ''}</span>` : '') + (h.pill ? `<span class="gpill">${esc(CFG.grado)}</span>` : '') + (h.extra || '')
+      + (h.icon || h.title ? `<span class="tt">${h.icon || ''}${h.title ? `<h1>${esc(h.title)}</h1>` : ''}</span>` : '') + (h.pill ? `<span class="gpill">${esc(G())}</span>` : '') + (h.extra || '')
       + `</div><div class="tools">`
       + `<button class="snd ${on ? '' : 'off'}" id="snd" aria-pressed="${on}" aria-label="${lbl}" title="${lbl}">${soundIcon(on)}</button>`
       + `<button class="pts" id="ptsbtn" aria-label="${esc(chipLabel(sc, total))}"><span class="sc">${scopeIcon(sc)}</span><span class="n">${esc(t('textos.puntosTotales', { n: shown }))}</span>${micon('TAB')}</button></div>`;
@@ -1271,7 +1366,7 @@ body.v-tabla .info .ttl { position: relative; }
       <section class="lgn">
         <div class="lbrand">
           <svg class="bland" aria-hidden="true" viewBox="0 0 660 820" preserveAspectRatio="none"><path class="l1" d="M0 820 C120 690 260 670 380 720 C470 650 580 640 660 670 L660 820 Z"/><path class="l2" d="M0 820 C180 760 360 760 660 780 L660 820 Z"/></svg>
-          ${logo()}
+          ${logoSin()}
           <p class="lema">${esc(t('textos.loginLema'))}</p>
           <p class="apoyo">${esc(t('textos.loginApoyo', { n: CFG.preguntasPorPrueba }))}</p>
           <img class="chivo" src="img/chivo-saludo.svg" alt="" aria-hidden="true">
@@ -1333,7 +1428,7 @@ body.v-tabla .info .ttl { position: relative; }
     app.innerHTML = `
       <section class="apodo">
         <form id="f" class="ncard" novalidate>
-          <span class="lchip">${logo()}</span>
+          <span class="lchip">${logoSin()}</span>
           <h1>${esc(t('textos.apodoTitulo'))}</h1>
           <label class="flabel" for="nick">${esc(t('textos.apodoEtiqueta'))}</label>
           <input class="field" id="nick" maxlength="20" autocomplete="nickname" spellcheck="false" value="${esc(state.apodoDraft || '')}">
@@ -1351,7 +1446,43 @@ body.v-tabla .info .ttl { position: relative; }
       const key = await saveNickname($('nick').value, { leaderboard: state.apodoTabla });
       if (key) { $('err').textContent = t(key); $('go').disabled = false; return; }
       state.apodoTabla = null; state.apodoDraft = null;
-      go('home');
+      go('grado', { gradoModo: 'alta', gradoSel: null });
+    });
+  }
+
+  /* The grade (4to and 6to, decided 18 Nov 2026; mockup «aPrueba – 4to y 6to (maqueta)»): one card per grade offered,
+     on its grade background with its landscape, chivo «Saludo» and logo. At sign-up (gradoModo 'alta', after the
+     nickname) none is selected and «Continuar» waits for a tap; from Configuración ('cambio') the current grade is
+     marked, «‹ Volver» leaves without changing, and «Continuar» switches at once with no confirmation. */
+  const GBG = { '4to': ['#063F36', { l1: '#105A5C', l2: '#186F7A', l3: '#4C8385' }], '5to': ['#1B2A55', { l1: '#233772', l2: '#294289' }],
+    '6to': ['#401C5C', { l1: '#4B2E7C', l2: '#543C95', l3: '#78629D' }] };
+  function viewGrado() {
+    const alta = state.gradoModo !== 'cambio', sel = state.gradoSel, grades = CFG.gradosDisponibles;
+    if (!alta) head({ back: ['back', 'textos.volver', () => go('config')], title: t('textos.configuracion') });
+    const card = g => `<button type="button" class="gopt" data-g="${g}" aria-pressed="${sel === g}" style="--gb:${GBG[g][0]}">
+        <svg class="gland" viewBox="470 600 710 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${landPaths(g, GBG[g][1])}</svg>
+        <img class="gchivo" src="${chivo('saludo', g)}" alt="" aria-hidden="true">
+        <span class="gtxt"><img class="glogo" src="img/aprueba-${g}-on-dark.svg" alt=""><span class="gname">${esc(t('textos.gradoOpcion', { grado: g }))}</span></span>
+        ${sel === g ? '<span class="gok" aria-hidden="true">✓</span>' : ''}</button>`;
+    app.innerHTML = `
+      <section class="grd${alta ? '' : ' cambio'}">
+        <form id="f" class="grdcard" novalidate>
+          ${alta ? `<span class="lchip">${logoSin()}</span>` : ''}
+          <${alta ? 'h1' : 'h2'}>${esc(t('textos.gradoTitulo'))}</${alta ? 'h1' : 'h2'}>
+          <p class="gsub">${esc(t(alta ? 'textos.gradoAyuda' : 'textos.gradoCambioNota'))}</p>
+          <div class="gopts" role="group" style="--n:${grades.length}">${grades.map(card).join('')}</div>
+          <p class="error" id="err" role="alert"></p>
+          <div class="actions"><button class="b b-pri" type="submit" id="go"${sel ? '' : ' disabled'}>${esc(t('textos.gradoBoton'))}</button></div>
+        </form>
+      </section>`;
+    const $ = id => document.getElementById(id);
+    app.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { state.gradoSel = b.dataset.g; render(); const x = app.querySelector(`[data-g="${b.dataset.g}"]`); if (x) x.focus(); });
+    $('f').addEventListener('submit', async e => {
+      e.preventDefault(); if (!state.gradoSel) return;
+      $('go').disabled = true; $('err').textContent = '';
+      const ok = await setGrado(state.gradoSel);
+      if (!ok) { $('go').disabled = false; $('err').textContent = t('textos.errorConexion'); return; }
+      if (alta) go('home', { gradoSel: null }); else go('config', { gradoSel: null, gradoOk: true });
     });
   }
 
@@ -1375,7 +1506,8 @@ body.v-tabla .info .ttl { position: relative; }
           <div class="crow"><div class="txt"><b>${esc(t('textos.tablaConfig'))}</b><small>${esc(t(tab ? 'textos.tablaDentroNota' : 'textos.tablaFueraNota'))}</small></div>${toggle('swtab', tab, t('textos.tablaConfig'))}</div>
           <p class="error" id="swerr" role="alert"></p>
           <div class="line"></div>
-          <div class="crow"><b>${esc(t('textos.grado'))}</b><span class="gpill">${esc(CFG.grado)}</span></div>
+          <div class="crow"><b>${esc(t('textos.grado'))}</b><span class="gctl"><span class="gpill">${esc(G())}</span>${CFG.gradosDisponibles.length > 1 ? `<button class="b b-sec" id="cgrado">${esc(t('textos.gradoCambiar'))}</button>` : ''}</span></div>
+          <p class="okmsg" id="gok" role="status">${state.gradoOk ? esc(t('textos.guardado')) : ''}</p>
           <div class="line"></div>
           <p class="sec">${esc(t('textos.cuenta'))}</p>
           <div class="crow"><span class="email">${esc(state.email)}</span><button class="b b-sec" id="salir">${esc(t('textos.cerrarSesion'))}</button></div>
@@ -1390,6 +1522,8 @@ body.v-tabla .info .ttl { position: relative; }
       viewConfig(); $('swtab').focus();
     };
     $('salir').onclick = signOut;
+    state.gradoOk = false;
+    if ($('cgrado')) $('cgrado').onclick = () => go('grado', { gradoModo: 'cambio', gradoSel: G() });
     $('f').addEventListener('submit', async e => {
       e.preventDefault(); $('go').disabled = true; $('err').textContent = ''; $('ok').textContent = '';
       const key = await saveNickname($('nick').value);
@@ -1417,7 +1551,7 @@ body.v-tabla .info .ttl { position: relative; }
     const ultima = ps.reduce((a, p) => (p.fin > a ? p.fin : a), '');
     if (daysBetween(dayKey(new Date(ultima)), dayKey(new Date())) >= 3) kinds.push(['mensaje.regreso', {}]);
     // Progress by Materia: from the map percentages, once every Materia has at least 10 answers
-    const answers = {}; for (const p of ps) for (const r of p.respuestas) answers[r.id.slice(0, 3)] = (answers[r.id.slice(0, 3)] || 0) + 1;
+    const answers = {}; for (const p of misPruebas()) for (const r of p.respuestas) answers[r.id.slice(0, 3)] = (answers[r.id.slice(0, 3)] || 0) + 1;
     if (BANK.materias.every(m => (answers[m.id] || 0) >= 10)) {
       const S = perf(), pct = m => (S[m.id] && S[m.id].n ? S[m.id].c / S[m.id].n : 0);
       const sorted = BANK.materias.slice().sort((a, b) => pct(b) - pct(a));
@@ -1452,7 +1586,7 @@ body.v-tabla .info .ttl { position: relative; }
           </div>
           ${CFG.enlaceOpinion ? `<a class="b b-sec on-dark" href="${esc(CFG.enlaceOpinion)}" target="_blank" rel="noopener">${esc(t('textos.opinion'))}</a>` : ''}
         </div>
-        <img class="deco" src="img/chivo-saludo.svg" alt="" aria-hidden="true">
+        <img class="deco" src="${chivo('saludo')}" alt="" aria-hidden="true">
       </section>`;
     document.getElementById('c-grado').onclick = () => go('intro', { pick: { tipo: 'grado' } });
     app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => go('materia', { materia: b.dataset.m }));
@@ -1462,14 +1596,15 @@ body.v-tabla .info .ttl { position: relative; }
   function viewAyuda() {
     head({ title: t('textos.ayudaTitulo'), pill: true });
     const vars = { n: CFG.preguntasPorPrueba, p: CFG.puntosPorCorrecta };
-    const lines = [['ayuda1', 'CIE'], ['ayuda2', 'AYU'], ['ayuda3', 'TAB'], ['ayuda4', 'PRO'], ['ayuda5', 'TAB']];
+    const lines = [['ayuda1', 'CIE'], ['ayuda2', 'AYU'], ['ayuda3', 'TAB'], ['ayuda4', 'PRO'], ['ayuda5', 'TAB']]
+      .concat(CFG.gradosDisponibles.length > 1 ? [['ayuda6', 'CFG']] : []);
     app.innerHTML = `
       <section class="page ayuda">
         <div class="pcard2">
           <h2>${esc(t('textos.ayudaSubtitulo'))}</h2>
           <ul class="alist">${lines.map(([k, ic]) => `<li><span class="aic">${micon(ic)}</span><span>${esc(t('textos.' + k, vars))}</span></li>`).join('')}</ul>
         </div>
-        <img class="chivo" src="img/chivo-pensando.svg" alt="" aria-hidden="true">
+        <img class="chivo" src="${chivo('pensando')}" alt="" aria-hidden="true">
       </section>`;
   }
 
@@ -1628,14 +1763,14 @@ body.v-tabla .info .ttl { position: relative; }
     const correctas = respuestas.filter(r => r.correcta).length, fin = new Date().toISOString();
     const racha = rachaDe(fin, userData().pruebas);   // before this Prueba is added
     const record = {
-      id: newId(), tipo: P.tipo, materia: P.mid || null, tema: P.tid || null,
+      id: newId(), grado: G(), tipo: P.tipo, materia: P.mid || null, tema: P.tid || null,
       inicio: P.inicio, fin, duracionSeg: Math.round((Date.now() - P.t0) / 1000),
       correctas, puntos: pts(correctas, respuestas.length), bonoRacha: racha.bono, respuestas
     };
     // Temas that reach the top level for the first time with this Prueba (with "Mejor", a level never goes down)
     const top5 = CFG.niveles.length, before = perf();
     userData().pruebas.push(record);
-    const payload = { id: record.id, tipo: record.tipo, materia: record.materia, tema: record.tema,
+    const payload = { id: record.id, grado: record.grado, tipo: record.tipo, materia: record.materia, tema: record.tema,
       started_at: record.inicio, finished_at: record.fin, duracion_seg: record.duracionSeg,
       n_preguntas: respuestas.length, n_correctas: correctas, puntos: record.puntos,
       ajustes: { bonoRacha: CFG.bonoRacha, aciertosSeguidosDesde: CFG.aciertosSeguidosDesde, bonoAciertoSeguido: CFG.bonoAciertoSeguido, zonaHoraria: CFG.zonaHoraria },
@@ -1700,7 +1835,7 @@ body.v-tabla .info .ttl { position: relative; }
           </div>
         </div>
         </div>
-        <img class="rchivo" src="img/chivo-${state.festejo ? 'festejo' : 'saludo'}.svg" alt="" aria-hidden="true">
+        <img class="rchivo" src="${chivo(state.festejo ? 'festejo' : 'saludo')}" alt="" aria-hidden="true">
       </div></section>`;
     document.getElementById('again').onclick = () => go('intro', { pick: pickOf(R) });
     document.getElementById('mis').onclick = () => go('respuestas');
@@ -1832,7 +1967,7 @@ body.v-tabla .info .ttl { position: relative; }
     try {
       const c = client(); if (!c) throw noNet();
       const { data, error } = await c.rpc('tabla_posiciones', { p_periodo: per, p_materia: mat, p_top_n: CFG.tablaTop === 'todos' ? null : CFG.tablaTop,
-        p_inicio_semana: CFG.inicioSemana, p_zona: CFG.zonaHoraria, p_pts_correcta: CFG.puntosPorCorrecta });
+        p_inicio_semana: CFG.inicioSemana, p_zona: CFG.zonaHoraria, p_pts_correcta: CFG.puntosPorCorrecta, p_grado: G() });
       if (error) throw error;
       tablaCache[key] = { rows: data || [] };
     } catch (e) { tablaCache[key] = { error: true }; }
@@ -1967,7 +2102,7 @@ body.v-tabla .info .ttl { position: relative; }
   }
 
 
-  const VIEWS = { tabla: viewTabla, login: viewLogin, apodo: viewApodo, config: viewConfig, ayuda: viewAyuda, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, respuestas: viewRespuestas, progreso: viewProgreso };
+  const VIEWS = { grado: viewGrado, tabla: viewTabla, login: viewLogin, apodo: viewApodo, config: viewConfig, ayuda: viewAyuda, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, respuestas: viewRespuestas, progreso: viewProgreso };
   function render() {
     if (!state.uid) state.view = 'login';                                  // not signed in
     else if (!state.user && state.view !== 'login') state.view = 'apodo';  // signed in, no nickname yet
@@ -1984,6 +2119,13 @@ body.v-tabla .info .ttl { position: relative; }
       : v === 'resultado' && state.resultado ? state.resultado.materia || null
       : v === 'progreso' && state.mapMateria && state.mapMateria !== 'ALL' ? state.mapMateria : null;
     document.body.classList.toggle('s-login', v === 'login');   // full-bleed split screen
+    // The grade identity (18 Nov 2026): the current grade's colours and landscape; the login stays on the 5to navy
+    const g = v === 'login' ? '5to' : G();
+    ['4to', '6to'].forEach(x => document.body.classList.toggle('g-' + x, g === x));
+    document.body.classList.toggle('v-grado-alta', v === 'grado' && state.gradoModo !== 'cambio');
+    document.body.classList.toggle('v-grado-cambio', v === 'grado' && state.gradoModo === 'cambio');
+    const land = document.getElementById('land'); if (land && land.dataset.grado !== g) { land.innerHTML = landPaths(g); land.dataset.grado = g; }
+    document.title = state.uid && v !== 'login' ? `${t('textos.marca')} ${g}` : t('textos.marca');
     document.body.classList.toggle('s-read', !!read);
     document.body.classList.toggle('v-preg', v === 'pregunta');   // 9 Nov 2026: information area aligned with the question card
     document.body.classList.toggle('v-tabla', v === 'tabla');     // Tabla redesign: the view switch in the title row
@@ -2025,13 +2167,8 @@ body.v-tabla .info .ttl { position: relative; }
   async function start(saved) {
     try {
       const get = f => fetch(f).then(r => { if (!r.ok) throw new Error(f); return r.json(); });
-      const [b, tx, aj] = await Promise.all([get('questions-5to.json'), get('textos.json'), get('ajustes.json')]);
-      CFG = aj; T = tx;
-      // Temas included (settings): keep only those Temas and their questions
-      const inc = new Set(aj.temasIncluidos);
-      b.materias.forEach(m => { m.temas = m.temas.filter(x => inc.has(x.id)); });
-      b.questions = b.questions.filter(q => inc.has(q.tema));
-      BANK = b;
+      const [tx, aj] = await Promise.all([get('textos.json'), get('ajustes.json')]);
+      CFG = aj; T = tx;   // the questions: one file per grade, loaded after sign-in for the student's grade (loadBank)
     } catch (e) {
       document.getElementById('loading').textContent = 'No se pudieron cargar las preguntas. Revisa tu conexión y vuelve a abrir la página.';
       return;
