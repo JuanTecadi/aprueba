@@ -31,7 +31,11 @@
           u.nickname = q.val.nickname.trim(); put(d);
         }
         if (q.op === 'update' && 'leaderboard' in q.val) { u.leaderboard = !!q.val.leaderboard; put(d); }   // 4 Nov 2026
-        return { data: u ? [{ nickname: u.nickname, leaderboard: !!u.leaderboard }] : [], error: null };
+        if (q.op === 'update' && 'grado' in q.val) {   // grados_4to_6to (18 Nov 2026): the student's current grade
+          if (!['4to', '5to', '6to'].includes(q.val.grado)) return { data: null, error: { code: '23514', message: 'check constraint' } };
+          u.grado = q.val.grado; put(d);
+        }
+        return { data: u ? [{ nickname: u.nickname, leaderboard: !!u.leaderboard, grado: u.grado || '5to' }] : [], error: null };
       }
       if (table === 'pruebas') {
         let rows = d.pruebas.filter(p => p.student_id === uid);
@@ -54,16 +58,19 @@
   // Leaderboard (4 Nov 2026), same rules as public.tabla_posiciones: opted-in students only; whole grade = saved
   // points of each Prueba plus its bonuses, one Materia = correct answers of that Materia x points; 'siempre' ignores dates (the
   // stand-in does not work out weeks); top_n rows, ties share a rank, plus the caller's own row when further down.
-  // Extra students for the board can be put in mock.db as users with fixed 'puntos' ({ ALL, CIE, ... }).
-  function tabla({ p_periodo, p_materia, p_top_n }) {
+  // Extra students for the board can be put in mock.db as users with fixed 'puntos' ({ ALL, CIE, ... }), which count on the
+  // board of 'puntosGrado' (5to when missing).
+  // grados_4to_6to (18 Nov 2026): one board per grade (p_grado, 5to by default); every sum counts that grade's Pruebas.
+  function tabla({ p_periodo, p_materia, p_top_n, p_grado }) {
     if (p_top_n === null || p_top_n === undefined) p_top_n = Infinity;   // «Todos»
-    const d = db(), uid = me();
+    const g = p_grado || '5to', d = db(), uid = me();
+    const ofG = p => (p.grado || '5to') === g;
     const pts = d.users.filter(u => u.leaderboard && u.nickname).map(u => {
       let total;
-      if (u.puntos) total = u.puntos[p_materia || 'ALL'] || 0;
-      else if (!p_materia) total = d.pruebas.filter(p => p.student_id === u.id).reduce((a, p) => a + p.puntos + (p.bono_racha || 0)
+      if (u.puntos) total = (u.puntosGrado || '5to') === g ? u.puntos[p_materia || 'ALL'] || 0 : 0;
+      else if (!p_materia) total = d.pruebas.filter(p => p.student_id === u.id && ofG(p)).reduce((a, p) => a + p.puntos + (p.bono_racha || 0)
         + d.answers.filter(x => x.prueba_id === p.id).reduce((b, x) => b + (x.bono || 0), 0), 0);
-      else total = d.answers.filter(a => a.question_id.startsWith(p_materia) && d.pruebas.some(p => p.id === a.prueba_id && p.student_id === u.id))
+      else total = d.answers.filter(a => a.question_id.startsWith(p_materia) && d.pruebas.some(p => p.id === a.prueba_id && p.student_id === u.id && ofG(p)))
         .reduce((b, a) => b + (a.correcta ? 10 : 0) + (a.bono || 0), 0);   // bonuses (17 Nov 2026): aciertos seguidos of that Materia; racha bonus not
       return { id: u.id, apodo: u.nickname, puntos: total };
     });
@@ -101,6 +108,9 @@
       if (!d.pruebas.some(x => x.id === p.id)) {
         if (p.answers.length !== p.n_preguntas) return { data: null, error: { message: 'answers do not match n_preguntas' } };
         for (const a of p.answers) if (!['K', 'D1', 'D2', 'D3'].includes(a.opcion) || a.correcta !== (a.opcion === 'K')) return { data: null, error: { message: 'bad answer ' + JSON.stringify(a) } };
+        // grados_4to_6to (18 Nov 2026): the Prueba's grade (5to when missing); answers of another grade are refused
+        const grado = p.grado || '5to';
+        if (p.answers.some(a => a.question_id[3] !== grado[0])) return { data: null, error: { message: 'answers of another grade' } };
         // Bonuses (17 Nov 2026), same rules as public.save_prueba: worked out here from the settings the page sends;
         // without them (an app before the bonuses) every bonus is 0
         const { answers, ajustes, ...row } = p, aj = ajustes || {};
@@ -121,7 +131,7 @@
           }
           if (n > 0 && n % 5 === 0) bonoRacha = bR;
         }
-        d.pruebas.push({ ...row, bono_racha: bonoRacha, student_id: me() });
+        d.pruebas.push({ ...row, grado, bono_racha: bonoRacha, student_id: me() });
         withBono.forEach(a => d.answers.push({ ...a, prueba_id: p.id }));
       }
       put(d); return { data: p.id, error: null };

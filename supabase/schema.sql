@@ -14,6 +14,7 @@ create table if not exists public.students (
   nickname_key     text,              -- lower case, no accents: used for uniqueness
   leaderboard      boolean not null default false,   -- opted in to the leaderboard
   adult_confirmed  boolean not null default false,   -- the adult ticked the box on sign-up
+  grado            text not null default '5to' check (grado in ('4to', '5to', '6to')),   -- current grade, the student switches it freely (grados_4to_6to, 18 Nov 2026)
   created_at       timestamptz not null default now()
 );
 create unique index if not exists students_nickname_key on public.students (nickname_key);
@@ -60,9 +61,10 @@ create table if not exists public.pruebas (
   n_correctas   smallint not null check (n_correctas between 0 and n_preguntas),
   puntos        integer not null check (puntos >= 0),                  -- as awarded at the time (correct answers × points)
   bono_racha    integer not null default 0 check (bono_racha >= 0),    -- racha bonus earned by this Prueba (bonos_racha_aciertos, 17 Nov 2026)
+  grado         text not null default '5to' check (grado in ('4to', '5to', '6to')),   -- grade of the Prueba (grados_4to_6to, 18 Nov 2026)
   created_at    timestamptz not null default now()
 );
-create index if not exists pruebas_student on public.pruebas (student_id, finished_at);
+create index if not exists pruebas_student on public.pruebas (student_id, grado, finished_at);
 
 -- ---------- answers: one row per question answered ----------
 create table if not exists public.answers (
@@ -92,7 +94,7 @@ create table if not exists public.ratings (
 );
 
 -- ---------- Saving a Prueba: the Prueba and its answers in one step (all or nothing) ----------
--- p = {id, tipo, materia, tema, started_at, finished_at, duracion_seg, n_preguntas, n_correctas, puntos,
+-- p = {id, grado (4to, 5to or 6to; 5to when missing; 18 Nov 2026), tipo, materia, tema, started_at, finished_at, duracion_seg, n_preguntas, n_correctas, puntos,
 --      ajustes: {bonoRacha, aciertosSeguidosDesde, bonoAciertoSeguido, zonaHoraria},   (17 Nov 2026; optional)
 --      answers: [{question_id, posicion, opcion, correcta, tiempo_ms, answered_at}, ...]}
 -- Bonuses (migration bonos_racha_aciertos, 17 Nov 2026) are worked out here and saved as awarded: from the
@@ -101,12 +103,15 @@ create table if not exists public.ratings (
 -- Racha: a day with a Prueba counts; a Saturday or Sunday without one is skipped; a weekday without one stops it.
 -- Without ajustes (an app before the bonuses) every bonus is 0.
 -- The app gives each Prueba its id, so a retry after a dropped connection is ignored (no duplicates).
+-- grados_4to_6to (18 Nov 2026): the Prueba's grade is saved; answers of another grade are refused; the racha counts
+-- Pruebas of every grade, and a racha bonus belongs to the grade of the Prueba that earned it.
 create or replace function public.save_prueba(p jsonb)
 returns uuid
 language plpgsql security invoker set search_path = '' as $$
 declare
   pid uuid;
   wanted uuid := coalesce((p ->> 'id')::uuid, gen_random_uuid());
+  g text := coalesce(p ->> 'grado', '5to');
   aj jsonb := coalesce(p -> 'ajustes', '{}'::jsonb);
   b_racha int := least(greatest(coalesce((aj ->> 'bonoRacha')::int, 0), 0), 500);
   desde int := least(greatest(coalesce((aj ->> 'aciertosSeguidosDesde')::int, 7), 2), 30);
@@ -121,9 +126,13 @@ begin
   if jsonb_array_length(p -> 'answers') <> (p ->> 'n_preguntas')::int then
     raise exception 'answers do not match n_preguntas';
   end if;
-  insert into public.pruebas (id, student_id, tipo, materia, tema, started_at, finished_at,
+  if exists (select 1 from jsonb_array_elements(p -> 'answers') a
+             where substr(a ->> 'question_id', 4, 1) <> left(g, 1)) then
+    raise exception 'answers of another grade';
+  end if;
+  insert into public.pruebas (id, student_id, grado, tipo, materia, tema, started_at, finished_at,
                               duracion_seg, n_preguntas, n_correctas, puntos)
-  values (wanted, auth.uid(), p ->> 'tipo', p ->> 'materia', p ->> 'tema',
+  values (wanted, auth.uid(), g, p ->> 'tipo', p ->> 'materia', p ->> 'tema',
           (p ->> 'started_at')::timestamptz, (p ->> 'finished_at')::timestamptz,
           (p ->> 'duracion_seg')::int, (p ->> 'n_preguntas')::int,
           (p ->> 'n_correctas')::int, (p ->> 'puntos')::int)
@@ -145,7 +154,7 @@ begin
     from jsonb_array_elements(p -> 'answers') a
   ) x;
 
-  -- Racha: only the first Prueba of a day (Venezuela time) can earn it.
+  -- Racha (Pruebas of every grade): only the first Prueba of a day (Venezuela time) can earn it.
   if b_racha > 0 then
     dia := ((p ->> 'finished_at')::timestamptz at time zone zona)::date;
     if not exists (select 1 from public.pruebas q
@@ -186,7 +195,7 @@ create policy "own row: update" on public.students for update to authenticated
   using (id = (select auth.uid())) with check (id = (select auth.uid()));
 -- adult_confirmed is set only at sign-up; the app cannot change it.
 revoke update on public.students from anon, authenticated;
-grant update (nickname, leaderboard) on public.students to authenticated;
+grant update (nickname, leaderboard, grado) on public.students to authenticated;
 
 drop policy if exists "own pruebas: read" on public.pruebas;
 drop policy if exists "own pruebas: add"  on public.pruebas;
@@ -302,9 +311,11 @@ order by votos_abajo desc, votos_arriba desc, question_id;
 -- 17 Nov 2026 (bonos_racha_aciertos): top_n null = everyone (tablaTop «Todos», the Tabla redesign); the score adds the
 -- bonuses: whole grade = Prueba points + racha bonuses + aciertos seguidos bonuses; one Materia = its correct answers ×
 -- points + its aciertos seguidos bonuses (the racha bonus belongs to the grade only).
+-- 18 Nov 2026 (grados_4to_6to): one board per grade, p_grado (last; 5to by default); every sum counts that grade's Pruebas.
 create or replace function public.tabla_posiciones(p_periodo text, p_materia text default null::text,
   p_top_n integer default 8, p_inicio_semana text default 'lunes'::text,
-  p_zona text default 'America/Caracas'::text, p_pts_correcta integer default 10)
+  p_zona text default 'America/Caracas'::text, p_pts_correcta integer default 10,
+  p_grado text default '5to'::text)
 returns table(rango integer, apodo text, puntos integer, soy_yo boolean)
 language plpgsql stable security definer set search_path = '' as $$
 declare
@@ -317,6 +328,7 @@ begin
   if p_periodo not in ('semana', 'mes', 'siempre') then raise exception 'periodo must be semana, mes or siempre'; end if;
   if p_materia is not null and p_materia not in ('CIE', 'LEN', 'MAT', 'SOC') then raise exception 'unknown materia'; end if;
   if p_inicio_semana not in ('lunes', 'domingo') then raise exception 'inicio_semana must be lunes or domingo'; end if;
+  if p_grado not in ('4to', '5to', '6to') then raise exception 'grado must be 4to, 5to or 6to'; end if;
   topn := case when p_top_n is null then 2147483647 else least(greatest(p_top_n, 1), 50) end;
   p_pts_correcta := least(greatest(coalesce(p_pts_correcta, 10), 0), 100);
   loc := now() at time zone p_zona;
@@ -331,14 +343,14 @@ begin
     select s.id, s.nickname,
            coalesce(case when p_materia is null
              then (select sum(p.puntos + p.bono_racha) from public.pruebas p
-                   where p.student_id = s.id and p.finished_at >= desde)
+                   where p.student_id = s.id and p.grado = p_grado and p.finished_at >= desde)
                   + coalesce((select sum(a.bono) from public.answers a
                    join public.pruebas p on p.id = a.prueba_id
-                   where a.student_id = s.id and p.finished_at >= desde), 0)
+                   where a.student_id = s.id and p.grado = p_grado and p.finished_at >= desde), 0)
              else (select count(*) filter (where a.correcta) * p_pts_correcta + coalesce(sum(a.bono), 0)
                    from public.answers a
                    join public.pruebas p on p.id = a.prueba_id
-                   where a.student_id = s.id and p.finished_at >= desde
+                   where a.student_id = s.id and p.grado = p_grado and p.finished_at >= desde
                      and left(a.question_id, 3) = p_materia) end, 0)::int as total
     from public.students s
     where s.leaderboard and s.nickname is not null),
@@ -356,5 +368,5 @@ begin
   where y.rn is null or y.rn > topn
   order by 1 nulls last, 2;
 end $$;
-revoke all on function public.tabla_posiciones(text, text, int, text, text, int) from public, anon;
-grant execute on function public.tabla_posiciones(text, text, int, text, text, int) to authenticated;
+revoke all on function public.tabla_posiciones(text, text, int, text, text, int, text) from public, anon;
+grant execute on function public.tabla_posiciones(text, text, int, text, text, int, text) to authenticated;
