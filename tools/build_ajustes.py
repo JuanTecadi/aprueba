@@ -1,7 +1,7 @@
 """Convert the settings document (Aprueba – Ajustes, the source of truth) into ajustes.json, checking every value.
 An Excel copy (.xlsx with the same columns) is also accepted.
 
-Usage: python3 build_ajustes.py <Aprueba – Ajustes.md> <questions.json> [ajustes.json]
+Usage: python3 build_ajustes.py <Aprueba – Ajustes.md> <questions-5to.json (or another grade's file)> [ajustes.json]
 Stops with a clear message if any value is not allowed; nothing is written in that case.
 """
 import json, re, sys

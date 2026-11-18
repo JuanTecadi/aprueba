@@ -13,7 +13,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
 const MOCK = fs.readFileSync(path.join(__dirname, 'mock-supabase.js'), 'utf8');
-const BANK = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'questions.json'), 'utf8'));
+const BANK = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'questions-5to.json'), 'utf8'));
 const TX = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'textos.json'), 'utf8')).textos;
 const AJ = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ajustes.json'), 'utf8'));
 const { smallTargets, lowContrast } = require('./sweep.js');

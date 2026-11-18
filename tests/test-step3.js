@@ -5,7 +5,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
 const MOCK = fs.readFileSync(path.join(__dirname, 'mock-supabase.js'), 'utf8');
-const BANK = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'questions.json'), 'utf8'));
+const BANK = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'questions-5to.json'), 'utf8'));
 const TEXTOS = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'textos.json'), 'utf8')).textos;
 const OUT = process.argv[2] || null;
 const URL = 'http://localhost:8765/';
@@ -17,7 +17,7 @@ async function open(b, w, h, bank) {
   const p = await ctx.newPage(); p.errs = []; p.on('pageerror', e => p.errs.push(e.message));
   await p.route('**/cdn.jsdelivr.net/**', r => r.fulfill({ contentType: 'application/javascript', body: MOCK }));
   await p.route('**/fonts.googleapis.com/**', r => r.abort()); await p.route('**/fonts.gstatic.com/**', r => r.abort());
-  if (bank) await p.route('**/questions.json', r => r.fulfill({ contentType: 'application/json', body: JSON.stringify(bank) }));
+  if (bank) await p.route('**/questions-5to.json', r => r.fulfill({ contentType: 'application/json', body: JSON.stringify(bank) }));
   await p.goto(URL, { waitUntil: 'networkidle' });
   await p.click('#swap'); await p.fill('#email', 'a@x.com'); await p.fill('#pass', 'clave123'); await p.check('#adulto'); await p.click('#go');
   await p.waitForTimeout(150); await p.fill('#nick', 'Ana'); await p.click('#go'); await p.waitForTimeout(150);

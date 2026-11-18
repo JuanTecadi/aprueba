@@ -3,7 +3,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
 const MOCK = fs.readFileSync(path.join(__dirname, 'mock-supabase.js'), 'utf8');
-const BANK = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'questions.json'), 'utf8'));
+const BANK = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'questions-5to.json'), 'utf8'));
 const URL = 'http://localhost:8765/';
 const results = []; const ok = (name, cond) => results.push([cond ? 'PASS' : 'FAIL', name]);
 

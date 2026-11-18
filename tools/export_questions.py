@@ -1,6 +1,6 @@
-"""Export approved questions from the master workbook to questions.json for the aPrueba prototype.
+"""Export approved questions from one grade's master workbook to its question file (questions-4to.json, questions-5to.json, questions-6to.json) for the aPrueba prototype.
 
-Usage: python3 export_questions.py <master.xlsx> [output.json]
+Usage: python3 export_questions.py <master.xlsx> <questions-<grade>.json>
 Exports questions with Status approved or reviewed. A Materia lists only the Temas it has questions for.
 For Option order = Fixed, options are stored already sorted by value (TST-03, MET-08).
 Each option carries its code from the master workbook (v0.2, 30 Oct 2026): K = Correct answer,
@@ -17,30 +17,57 @@ MULT = {'mil': 1e3, 'millones': 1e6, 'millón': 1e6, 'millardos': 1e9, 'millardo
         'billones': 1e12, 'billón': 1e12}
 
 
+WORDS.update({'quince': 15, 'veinte': 20, 'cien': 100, 'miles': 1000})
+MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto',
+          'septiembre', 'octubre', 'noviembre', 'diciembre']
+ORDINALS = {'primero': 1, 'segundo': 2, 'tercero': 3, 'cuarto': 4, 'quinto': 5, 'sexto': 6}
+ROMAN = {'i': 1, 'v': 5, 'x': 10, 'l': 50, 'c': 100}
+DAYS = {'día': 1, 'días': 1, 'mes': 30, 'meses': 30, 'año': 365, 'años': 365}
+LEADS = ('hace unos ', 'hace ', 'a unos ', 'unos ', 'en el ', 'siglo ')
+
+
+def roman(s):
+    n = [ROMAN[c] for c in s]
+    return sum(-a if a < b else a for a, b in zip(n, n[1:] + [0]))
+
+
 def value(text):
-    """Numeric value of an option written in Venezuelan notation (7.503,6071; 50 billones; 7:12; 25/9)."""
-    t = text.strip().lower()
+    """Numeric value of an option written in Venezuelan notation (7.503,6071; 50 billones; 7:12; 25/9),
+    also months, ordinals, centuries in Roman numerals, «Unos …», «Hace unos …» and the minus sign −."""
+    t = text.strip().lower().replace('−', '-')
+    if t in MONTHS:
+        return MONTHS.index(t) + 1
+    for lead in LEADS:
+        if t.startswith(lead):
+            t = t[len(lead):]
+    if t in ORDINALS:
+        return ORDINALS[t]
+    if re.fullmatch(r'[ivxlc]+', t):
+        return roman(t)
+    neg = t.startswith('-')
+    t = t.lstrip('-').strip()
     m = re.fullmatch(r'(\d+):(\d{2})', t)
     if m:
         return int(m[1]) * 60 + int(m[2])
     m = re.fullmatch(r'(\d+)/(\d+)', t)
     if m:
         return int(m[1]) / int(m[2])
-    first = t.split()[0]
-    if first in WORDS:
-        return WORDS[first]
+    words = t.split()
+    unit = DAYS.get(words[-1], 1)
+    if words[0] in WORDS:
+        return WORDS[words[0]] * unit
     m = re.match(r'([\d.]+(?:,\d+)?)\s*(\S+)?', t)
     if not m:
         raise ValueError(text)
     n = float(m[1].replace('.', '').replace(',', '.'))
-    return n * MULT.get(m[2] or '', 1)
+    return (-1 if neg else 1) * n * MULT.get(m[2] or '', 1) * unit
 
 
 def clean(v):
     return None if pd.isna(v) else str(v).strip()
 
 
-def main(src, out='questions.json'):
+def main(src, out):
     q = pd.read_excel(src, 'Questions')
     t = pd.read_excel(src, 'Taxonomy')
     # approved, and reviewed (Accuracy check = Verify): the author chose on 2 Nov 2026 to include the Verify questions and let reviewers catch problems

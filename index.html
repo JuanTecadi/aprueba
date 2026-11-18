@@ -2025,7 +2025,7 @@ body.v-tabla .info .ttl { position: relative; }
   async function start(saved) {
     try {
       const get = f => fetch(f).then(r => { if (!r.ok) throw new Error(f); return r.json(); });
-      const [b, tx, aj] = await Promise.all([get('questions.json'), get('textos.json'), get('ajustes.json')]);
+      const [b, tx, aj] = await Promise.all([get('questions-5to.json'), get('textos.json'), get('ajustes.json')]);
       CFG = aj; T = tx;
       // Temas included (settings): keep only those Temas and their questions
       const inc = new Set(aj.temasIncluidos);
