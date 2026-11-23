@@ -12,6 +12,7 @@ Tablet-first practice game for 5to grado students in Venezuela. This repository 
 | `questions-4to.json`, `questions-5to.json`, `questions-6to.json` | Approved questions, Temas and Subtemas, one file per grade | Master workbooks `Aprueba_4to_T01-T12.xlsx`, `Aprueba_5to_Phase1_T01-T12.xlsx`, `Aprueba_6to_T01-T12.xlsx` |
 | `img/` | Logo version 2 (badge monogram; grade logos on light and dark, app icon) and the mascot version 3, the chivo in a vinotinto shirt (three poses; since 11 November 2026) | Project folders `claude/images/logo/v2/` and `claude/images/mascot/v3/` |
 | `img/app/`, `manifest.webmanifest` | App icon for the home screen (iPad/iPhone, Android) and install on Windows/Mac (10 November 2026): PNG icons built from `img/aprueba-icon.svg` by `tools/make_appicons.py`; opens full screen | This repository |
+| `videos/` | The four videos of *Ayuda* (23 November 2026): `ayuda.mp4` (the help video, also on the login), `estudiantes.mp4`, `familias.mp4`, `docentes.mp4`, each with its still image `.jpg`; downloaded only when tapped | Built in the project, `claude/promo/` |
 | `supabase/schema.sql` | Database: tables, access rules, save function (with the bonuses), leaderboard function `tabla_posiciones`, backstage views | This repository (matches the live Supabase database) |
 | `tools/build_textos.py` | *Aprueba – Textos* → `textos.json`, with checks | This repository |
 | `tools/build_ajustes.py` | *Aprueba – Ajustes* → `ajustes.json`, with checks (moved here 4 November 2026) | This repository |

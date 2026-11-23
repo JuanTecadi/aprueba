@@ -19,6 +19,7 @@
     "volver": "Volver",
     "loginLema": "Practica y aprende.",
     "loginApoyo": "Pruebas cortas de {n} preguntas, con la explicación de cada respuesta.",
+    "loginVideo": "¿Cómo funciona? Ver video",
     "loginTitulo": "¡Qué bueno verte!",
     "correo": "Correo electrónico",
     "contrasena": "Contraseña",
@@ -140,6 +141,20 @@
     "ayuda4": "En Progreso ves cuánto dominas cada tema.",
     "ayuda5": "En Tabla puedes compararte con otros, si quieres aparecer.",
     "ayuda6": "En Configuración puedes cambiar de grado cuando quieras.",
+    "ayudaVideos": "Videos",
+    "videoVer": "Ver video: {titulo}",
+    "videoOtros": "Otros videos",
+    "videoDatos": "{duracion} · {mb} MB",
+    "videoCerrar": "Cerrar",
+    "videoError": "No se pudo cargar el video. Revisa tu conexión e inténtalo de nuevo.",
+    "videoAyudaTitulo": "Cómo funciona aPrueba",
+    "videoAyudaTexto": "Un recorrido de un minuto por la app.",
+    "videoEstudiantesTitulo": "Para estudiantes",
+    "videoEstudiantesTexto": "Lo que puedes hacer en aPrueba.",
+    "videoFamiliasTitulo": "Para familias y docentes",
+    "videoFamiliasTexto": "Qué es aPrueba y cómo ayudarnos a probarla.",
+    "videoDocentesTitulo": "Para docentes que revisan",
+    "videoDocentesTexto": "Cómo revisar aPrueba y dejarnos tus comentarios.",
     "resumen": {
       "feliz": [
         {

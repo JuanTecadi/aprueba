@@ -3,7 +3,8 @@
 //    saves nothing and the total returns; a finished Prueba is saved with its answers and codes; the board lists only
 //    students who joined, ties share a rank, the Materia filter works, the switch is saved at once, the own row and
 //    «Mi práctica» match the points chip; no connection: the board shows the message and the switch does not change.
-// B. Every screen at 1180 × 820, 820 × 1180 and 390 × 844 (17 Nov 2026: also the main page with its personal message and
+// B. Every screen at 1180 × 820, 820 × 1180 and 390 × 844 (23 Nov 2026: also the help video over the login and the two
+// video views of Ayuda; 17 Nov 2026: also the main page with its personal message and
 //    the Tabla filter panel; the racha and the sticker are swept in test-rachas.js): no horizontal scroll, every control has a 56 px touch area,
 //    every text passes its WCAG contrast limit (4.5:1, or 3:1 for large text), no page errors.
 // Usage: python3 -m http.server 8765 & node tests/test-step5.js [screenshot folder]
@@ -138,7 +139,9 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
       (await lowContrast(q)).forEach(x => low.push(`${name}: ${x}`));
       if (await overflow(q)) wide.push(name);
     };
-    await visit('01-login'); await q.click('#swap'); await visit('02-crear');
+    await visit('01-login');
+    await q.click('#lvideo'); await q.waitForTimeout(150); await visit('01b-login-video'); await q.keyboard.press('Escape'); await q.waitForTimeout(60);   // the help video over the login (23 Nov 2026)
+    await q.click('#swap'); await visit('02-crear');
     await q.fill('#email', `s${w}@x.com`); await q.fill('#pass', 'clave123'); await q.check('#adulto'); await q.click('#go'); await q.waitForTimeout(150);
     await visit('03-apodo'); await q.fill('#nick', 'Ana' + w); await q.click('#go'); await q.waitForTimeout(150);
     await visit('03b-grado'); await q.click('[data-g="5to"]'); await visit('03c-grado-elegido'); await q.click('#go'); await q.waitForTimeout(150);   // the grade step (18 Nov 2026)
@@ -161,6 +164,8 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
     if (w < 960) { await q.click('#tfbtn'); await q.waitForTimeout(350); await visit('15b-tabla-filtro'); await q.keyboard.press('Escape'); await q.waitForTimeout(60); }   // the filter panel
     await q.click('[data-tv="prac"]'); await q.waitForTimeout(60); await visit('16-tabla-practica');
     await rail(q, 'ayuda'); await visit('17-ayuda');
+    await q.click('[data-video="estudiantes"]'); await q.waitForTimeout(150); await visit('17b-ayuda-video-vertical');   // Ayuda with videos (23 Nov 2026)
+    await q.click('[data-video="ayuda"]'); await q.waitForTimeout(150); await visit('17c-ayuda-video'); await q.click('#back'); await q.waitForTimeout(60);
     await rail(q, 'config'); await visit('18-config');
     await q.click('#cgrado'); await q.waitForTimeout(80); await visit('19-config-grado');   // the grade cards from Configuración (18 Nov 2026)
     for (const g of ['4to', '6to']) {   // every navigation screen in the 4to and 6to look

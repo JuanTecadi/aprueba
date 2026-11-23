@@ -824,6 +824,61 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
   .crow .gctl .b { width: auto; min-width: 0; padding: 0 22px; }
 }
 @media (min-width: 600px) { .gopt .gtxt { display: contents; } }
+
+/* Ayuda with videos and the help video on the login (decided 23 Nov 2026; mockup «aPrueba – Ayuda con videos (maqueta)») */
+.ayuda.ayuda2 { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 20px; align-items: end; max-width: 1000px; margin-top: 14px; }
+.ayuda2 .pcard2 { width: auto; padding: 20px 28px 8px; }
+.ayuda2 .pcard2 h2 { font-size: 23px; margin-bottom: 4px; }
+.ayuda2 .alist li { padding: 8px 0; font-size: 16.5px; gap: 14px; }
+.ayuda2 .alist .aic { width: 36px; height: 36px; border-radius: 10px; }
+.ayuda2 .alist .aic .ic { width: 20px; height: 20px; }
+.ayuda2 .chivo { height: 300px; margin-right: 6px; }
+.vcard { grid-column: 1 / -1; background: #fff; color: var(--ink); border-radius: 22px; padding: 18px 24px 20px; }
+.vcard h2 { margin: 0 0 12px; font-family: var(--display); font-weight: 800; font-size: 23px; }
+.vgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.vgrid.v2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.vtile { appearance: none; border: 0; background: none; padding: 0; margin: 0; font: inherit; color: var(--ink); text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 8px; border-radius: 14px; }
+.vtile:focus-visible { outline: 3px solid var(--g-pill); outline-offset: 4px; }
+.vposter { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #1B2A55; display: block; }
+.vposter img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vplay { position: absolute; left: 8px; bottom: 8px; width: 40px; height: 40px; border-radius: 50%; background: var(--sun); color: var(--ink); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
+.vplay svg { width: 20px; height: 20px; margin-left: 2px; }
+.vdur { position: absolute; right: 8px; bottom: 8px; background: #0F1A33; color: #fff; font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.vtit { font-weight: 700; font-size: 16px; line-height: 1.3; }
+.vwatch { margin-top: 14px; background: #fff; color: var(--ink); border-radius: 22px; padding: 20px; max-width: 1000px; display: flex; gap: 26px; }
+.vwatch.h { flex-direction: column; gap: 14px; }
+.vplayer { position: relative; background: #0C1226; border-radius: 14px; overflow: hidden; flex: none; }
+.vwatch.h .vplayer { width: 100%; aspect-ratio: 16 / 9; }
+.vwatch.v .vplayer { height: min(590px, calc(100vh - 170px)); aspect-ratio: 9 / 16; }
+.vvid { width: 100%; height: 100%; display: block; background: #0C1226; object-fit: contain; }
+.verror { margin: 8px 0 0; color: #B42318; font-weight: 700; }
+.vinfo h2 { margin: 0 0 6px; font-family: var(--display); font-weight: 800; font-size: 26px; }
+.vinfo p { margin: 0 0 6px; font-size: 18px; line-height: 1.45; }
+.vinfo small { color: #4A5570; font-size: 15px; }
+.vwatch.v .vinfo { padding-top: 6px; flex: 1; min-width: 0; }
+.votros { margin: 34px 0 12px; font-family: var(--display); font-weight: 800; font-size: 20px; }
+.lbrand .vbtn { position: relative; align-self: flex-start; gap: 10px; margin-top: 6px; }
+.lbrand .vbtn svg { width: 18px; height: 18px; flex: none; }
+.vover { position: fixed; inset: 0; background: rgba(8,13,30,.78); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 24px; }
+.vover .box { background: #fff; border-radius: 22px; padding: 16px 16px 18px; width: min(920px, 100%); position: relative; }
+.vover .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 2px 4px 12px 8px; color: var(--ink); }
+.vover .bar b { font-family: var(--display); font-size: 22px; font-weight: 800; }
+.vover .vx { position: relative; appearance: none; background: #fff; font: inherit; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--ink); height: 44px; padding: 0 14px; border-radius: 12px; border: 1.5px solid var(--sec-line); cursor: pointer; flex: none; }
+.vover .vx::before { content: ""; position: absolute; inset: -6px; }   /* 56 px touch area, same look */
+.vover .vx svg { width: 18px; height: 18px; }
+.vover .vplayer { width: 100%; aspect-ratio: 16 / 9; }
+@media (min-width: 600px) and (max-width: 959px) { .ayuda2 .chivo { height: 240px; } .vgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 599px) {
+  .ayuda.ayuda2 { grid-template-columns: minmax(0, 1fr); margin-top: 8px; }
+  .ayuda2 .pcard2 { padding: 16px 18px 4px; }
+  .vcard { padding: 16px 16px 18px; }
+  .vgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; }
+  .vtit { font-size: 15px; }
+  .vwatch { padding: 12px; margin-top: 8px; } .vwatch.v { flex-direction: column; gap: 12px; }
+  .vwatch.v .vplayer { height: auto; width: 100%; }
+  .vinfo h2 { font-size: 22px; } .vinfo p { font-size: 16px; }
+  .vover { padding: 12px; } .vover .bar b { font-size: 18px; }
+}
 </style>
 </head>
 <body>
@@ -1349,7 +1404,7 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
   }
 
   /* ---------- views ---------- */
-  function go(view, extra = {}) { if (view !== state.view) { state.introLine = null; if (view !== 'home') state.homeLine = null; } if (view === 'tabla' && state.view !== 'tabla') { tablaCache = {}; state.tView = 'pos'; }   /* fresh board, «Posiciones» first */ if (view === 'progreso' && state.view !== 'progreso') state.mapMateria = 'ALL';   /* the map opens on Todo 5to */ Object.assign(state, { view }, extra); render(); window.scrollTo(0, 0); }
+  function go(view, extra = {}) { if (view !== state.view) { state.introLine = null; if (view !== 'home') state.homeLine = null; } if (view === 'tabla' && state.view !== 'tabla') { tablaCache = {}; state.tView = 'pos'; }   /* fresh board, «Posiciones» first */ if (view === 'progreso' && state.view !== 'progreso') state.mapMateria = 'ALL';   /* the map opens on Todo 5to */ if (view === 'ayuda' && !('video' in extra)) state.video = null;   /* Ayuda opens on the list (23 Nov 2026) */ Object.assign(state, { view }, extra); render(); window.scrollTo(0, 0); }
 
   // Shared piece (30 Oct 2026): Profe Ariel large with the bubble above; v0.3: returns nothing
   const bigCoach = () => '';   // v0.3: see coach()
@@ -1369,6 +1424,7 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
           ${logoSin()}
           <p class="lema">${esc(t('textos.loginLema'))}</p>
           <p class="apoyo">${esc(t('textos.loginApoyo', { n: CFG.preguntasPorPrueba }))}</p>
+          <button class="b b-sec on-dark vbtn" type="button" id="lvideo">${PLAY}${esc(t('textos.loginVideo'))}</button>
           <img class="chivo" src="img/chivo-saludo.svg" alt="" aria-hidden="true">
         </div>
         <div class="lside">
@@ -1390,6 +1446,7 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
     const $ = id => document.getElementById(id);
     // Switching between the two forms keeps the email already typed
     $('swap').onclick = () => go('login', { loginTab: crear ? 'entrar' : 'crear', loginEmail: $('email').value });
+    $('lvideo').onclick = () => openVideoOver(VIDEOS[0], $('lvideo'));
     const fail = key => { $('err').textContent = t(key, { n: MIN_PASS }); $('go').disabled = false; };
     $('f').addEventListener('submit', async e => {
       e.preventDefault();
@@ -1592,20 +1649,58 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
     app.querySelectorAll('[data-m]').forEach(b => b.onclick = () => go('materia', { materia: b.dataset.m }));
   }
 
-  // Ayuda (new, 8 Nov 2026): one card «Cómo funciona aPrueba», five short lines with an icon each; the chivo «Pensando».
+  // Videos (decided 23 Nov 2026): the help video (landscape) and three vertical ones, in videos/<k>.mp4 with a still
+  // image videos/<k>.jpg. A video is downloaded only when tapped (preload none; src only in the open view or player).
+  // t = text key prefix (…Titulo, …Texto), o = h|v, s = seconds, mb = size shown (MB, decimal comma; test-videos.js checks
+  // it against the file), y = still image crop on the tiles (%).
+  const VIDEOS = [
+    { k: 'ayuda', t: 'videoAyuda', o: 'h', s: 60, mb: '4,0', y: 50 },
+    { k: 'estudiantes', t: 'videoEstudiantes', o: 'v', s: 40, mb: '2,3', y: 16 },
+    { k: 'familias', t: 'videoFamilias', o: 'v', s: 37, mb: '2,1', y: 43 },
+    { k: 'docentes', t: 'videoDocentes', o: 'v', s: 46, mb: '3,0', y: 47 }
+  ];
+  const PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>';
+  const durOf = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const vTitle = v => t('textos.' + v.t + 'Titulo');
+  const vTile = v => `<button class="vtile" data-video="${v.k}" aria-label="${esc(t('textos.videoVer', { titulo: vTitle(v) }))}"><span class="vposter"><img src="videos/${v.k}.jpg" alt="" style="object-position: 50% ${v.y}%"><span class="vplay">${PLAY}</span><span class="vdur">${durOf(v.s)}</span></span><span class="vtit">${esc(vTitle(v))}</span></button>`;
+  const vPlayer = v => `<div class="vplayer"><video class="vvid" controls playsinline preload="none" poster="videos/${v.k}.jpg" src="videos/${v.k}.mp4"></video></div><p class="verror" role="alert" hidden>${esc(t('textos.videoError'))}</p>`;
+  function playIn(root) {   // start the video just opened (called from the tap, so the browser allows it); show the error line if it fails
+    const vid = root.querySelector('video'), er = root.querySelector('.verror'); if (!vid) return;
+    vid.onerror = () => { if (er) er.hidden = false; };
+    const pr = vid.play(); if (pr && pr.catch) pr.catch(() => {});
+  }
+  function stopVideos() {   // before every redraw and when the player closes: stop playing and stop downloading
+    document.querySelectorAll('video').forEach(v => { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) { /* keep going */ } });
+  }
+
+  // Ayuda (new, 8 Nov 2026): one card «Cómo funciona aPrueba», short lines with an icon each; the chivo «Pensando».
+  // 23 Nov 2026: a «Videos» card under it; a video opens large on the same page (state.video) with «‹ Volver».
   function viewAyuda() {
+    const open = VIDEOS.find(v => v.k === state.video);
+    if (open) {
+      head({ back: ['back', 'textos.volver', () => go('ayuda', { video: null })], title: t('textos.ayudaTitulo'), pill: true });
+      app.innerHTML = `
+      <section class="page"><div class="vwatch ${open.o}">${vPlayer(open)}
+        <div class="vinfo"><h2>${esc(vTitle(open))}</h2><p>${esc(t('textos.' + open.t + 'Texto'))}</p><small>${esc(t('textos.videoDatos', { duracion: durOf(open.s), mb: open.mb }))}</small>
+          ${open.o === 'v' ? `<h3 class="votros">${esc(t('textos.videoOtros'))}</h3><div class="vgrid v2">${VIDEOS.filter(v => v !== open).map(vTile).join('')}</div>` : ''}</div>
+      </div></section>`;
+      app.querySelectorAll('[data-video]').forEach(b => b.onclick = () => { go('ayuda', { video: b.dataset.video }); playIn(app); });
+      return;
+    }
     head({ title: t('textos.ayudaTitulo'), pill: true });
     const vars = { n: CFG.preguntasPorPrueba, p: CFG.puntosPorCorrecta };
     const lines = [['ayuda1', 'CIE'], ['ayuda2', 'AYU'], ['ayuda3', 'TAB'], ['ayuda4', 'PRO'], ['ayuda5', 'TAB']]
       .concat(CFG.gradosDisponibles.length > 1 ? [['ayuda6', 'CFG']] : []);
     app.innerHTML = `
-      <section class="page ayuda">
+      <section class="page ayuda ayuda2">
         <div class="pcard2">
           <h2>${esc(t('textos.ayudaSubtitulo'))}</h2>
           <ul class="alist">${lines.map(([k, ic]) => `<li><span class="aic">${micon(ic)}</span><span>${esc(t('textos.' + k, vars))}</span></li>`).join('')}</ul>
         </div>
         <img class="chivo" src="${chivo('pensando')}" alt="" aria-hidden="true">
+        <section class="vcard"><h2>${esc(t('textos.ayudaVideos'))}</h2><div class="vgrid">${VIDEOS.map(vTile).join('')}</div></section>
       </section>`;
+    app.querySelectorAll('[data-video]').forEach(b => b.onclick = () => { go('ayuda', { video: b.dataset.video }); playIn(app); });
   }
 
   // Tema slots 1..temasPorMateria: the included Temas are active, the others show as "Tema N" (not active yet)
@@ -2102,8 +2197,26 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
   }
 
 
+  // The help video over the login screen (23 Nov 2026): the only player over a screen (Ayuda is not reachable before sign-in).
+  // «Cerrar», Escape or a tap outside closes it and gives the focus back to the button.
+  function openVideoOver(v, from) {
+    closeVideoOver();
+    const d = document.createElement('div'); d.className = 'vover'; d.id = 'vover';
+    d.innerHTML = `<div class="box" role="dialog" aria-modal="true" aria-labelledby="vover-t"><div class="bar"><b id="vover-t">${esc(vTitle(v))}</b>
+      <button class="vx" type="button" id="vclose"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>${esc(t('textos.videoCerrar'))}</button></div>${vPlayer(v)}</div>`;
+    document.body.appendChild(d);
+    const close = () => { closeVideoOver(); if (from && from.isConnected) from.focus(); };
+    d.querySelector('#vclose').onclick = close;
+    d.onclick = e => { if (e.target === d) close(); };
+    d.onkeydown = e => { if (e.key === 'Escape') close(); };
+    d.querySelector('#vclose').focus();
+    playIn(d);
+  }
+  function closeVideoOver() { const d = document.getElementById('vover'); if (d) { d.querySelectorAll('video').forEach(x => { try { x.pause(); x.removeAttribute('src'); x.load(); } catch (e) { /* keep going */ } }); d.remove(); } }
+
   const VIEWS = { grado: viewGrado, tabla: viewTabla, login: viewLogin, apodo: viewApodo, config: viewConfig, ayuda: viewAyuda, home: viewHome, materia: viewMateria, intro: viewIntro, pregunta: viewPregunta, resultado: viewResultado, respuestas: viewRespuestas, progreso: viewProgreso };
   function render() {
+    stopVideos(); closeVideoOver();   // 23 Nov 2026: a redraw never leaves a video playing or downloading
     if (!state.uid) state.view = 'login';                                  // not signed in
     else if (!state.user && state.view !== 'login') state.view = 'apodo';  // signed in, no nickname yet
     if (!VIEWS[state.view]) state.view = 'home';

@@ -65,6 +65,11 @@ FIXED = {
     "mapaDe": ["materia"],
     # Tabla redesign (decided 12 November 2026)
     "tablaPeriodo": [], "tablaMateria": [], "tablaFiltro": ["periodo", "materia"], "tablaVerTabla": [],
+    # Ayuda with videos and the help video on the login (decided 23 November 2026)
+    "loginVideo": [], "ayudaVideos": [], "videoVer": ["titulo"], "videoOtros": [], "videoDatos": ["duracion", "mb"],
+    "videoCerrar": [], "videoError": [], "videoAyudaTitulo": [], "videoAyudaTexto": [],
+    "videoEstudiantesTitulo": [], "videoEstudiantesTexto": [], "videoFamiliasTitulo": [], "videoFamiliasTexto": [],
+    "videoDocentesTitulo": [], "videoDocentesTexto": [],
 }
 # Rotating groups: allowed moods (None = the app's voice, no mood column), maximum length and
 # the placeholders the lines may use. v0.3: the end-of-Prueba message, up to 120 characters, no data.
