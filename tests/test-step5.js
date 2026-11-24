@@ -13,7 +13,7 @@ const fs = require('fs'), path = require('path');
 const MOCK = fs.readFileSync(path.join(__dirname, 'mock-supabase.js'), 'utf8');
 const BANK = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'questions-5to.json'), 'utf8'));
 const TX = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'textos.json'), 'utf8')).textos;
-const { smallTargets, lowContrast } = require('./sweep.js');
+const { smallTargets, lowContrast, pilotMark } = require('./sweep.js');
 const URL = 'http://localhost:8765/';
 const OUT = process.argv[2] || null;
 const res = []; const ok = (n, c, detail) => { res.push([c ? 'PASS' : 'FAIL', n]); if (!c && detail && detail.length) console.log('   ' + n + ':\n     ' + detail.join('\n     ')); };
@@ -132,12 +132,13 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
   // ==================== B. every screen at three widths ====================
   for (const [w, h] of [[1180, 820], [820, 1180], [390, 844]]) {
     const q = await newPage(b, { w, h });
-    const small = [], low = [], wide = [];
+    const small = [], low = [], wide = [], pil = [];
     const visit = async name => {
       if (OUT) await q.screenshot({ path: path.join(OUT, `${name}-${w}.png`), fullPage: w === 390 });
       (await smallTargets(q)).forEach(x => small.push(`${name}: ${x}`));
       (await lowContrast(q)).forEach(x => low.push(`${name}: ${x}`));
       if (await overflow(q)) wide.push(name);
+      (await pilotMark(q)).forEach(x => pil.push(`${name}: ${x}`));   // «Versión piloto» (24 Nov 2026)
     };
     await visit('01-login');
     await q.click('#lvideo'); await q.waitForTimeout(150); await visit('01b-login-video'); await q.keyboard.press('Escape'); await q.waitForTimeout(60);   // the help video over the login (23 Nov 2026)
@@ -177,6 +178,7 @@ async function playAll(p, pattern) {   // pattern(i) = answer correctly?
     ok(`${w}x${h} every screen: no horizontal scroll`, wide.length === 0, wide);
     ok(`${w}x${h} every screen: touch areas ≥ 56 px`, small.length === 0, small);
     ok(`${w}x${h} every screen: text contrast passes WCAG`, low.length === 0, low);
+    ok(`${w}x${h} every screen: «Versión piloto» sticker on the login, watermark elsewhere behind no text`, pil.length === 0, pil);
     ok(`${w}x${h} no page errors`, q.errs.length === 0, q.errs);
     await q.context().close();
   }

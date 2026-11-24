@@ -65,4 +65,40 @@ async function lowContrast(p) {
   });
 }
 
-module.exports = { smallTargets, lowContrast };
+
+// «Versión piloto» (24 Nov 2026): on the login the sticker shows on the card and the watermark is hidden; on every other
+// screen the watermark shows, hidden from screen readers, takes no taps and sits behind no text (measured with the
+// page at the top). Returns the problems found.
+async function pilotMark(p) {
+  return p.evaluate(() => {
+    const out = [], wm = document.getElementById('wmpil');
+    if (!wm) return ['no #wmpil'];
+    const login = document.body.classList.contains('s-login');
+    if (login) {
+      const st = document.querySelector('.lcard .pilstk');
+      if (!st || !st.getBoundingClientRect().width) out.push('login: no sticker');
+      if (!wm.hidden) out.push('login: watermark shown');
+      return out;
+    }
+    const r = wm.getBoundingClientRect();
+    if (wm.hidden || !r.width) return ['watermark not shown'];
+    if (wm.getAttribute('aria-hidden') !== 'true') out.push('watermark not aria-hidden');
+    if (getComputedStyle(wm).pointerEvents !== 'none') out.push('watermark takes taps');
+    const walker = document.createTreeWalker(document.querySelector('.shell'), NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      const e = n.parentElement; if (!e || !n.textContent.trim()) continue;
+      if (e.closest('[hidden], [aria-hidden="true"], script, style, .sr')) continue;
+      let hid = false;   // text on an opaque card hides the mark: only text it would show through counts
+      for (let a = e; a && !a.classList.contains('shell'); a = a.parentElement) { const m = (getComputedStyle(a).backgroundColor.match(/[\d.]+/g) || []).map(Number); if (m.length >= 3 && (m.length < 4 || m[3] >= 0.95)) { hid = true; break; } }
+      if (hid) continue;
+      const rg = document.createRange(); rg.selectNodeContents(n);
+      for (const b of rg.getClientRects()) {
+        if (!b.width || !b.height) continue;
+        if (b.right > r.left && b.left < r.right && b.bottom > r.top && b.top < r.bottom) { out.push(`behind «${n.textContent.trim().slice(0, 24)}»`); break; }
+      }
+    }
+    return out;
+  });
+}
+
+module.exports = { smallTargets, lowContrast, pilotMark };

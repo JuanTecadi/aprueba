@@ -879,6 +879,27 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
   .vinfo h2 { font-size: 22px; } .vinfo p { font-size: 16px; }
   .vover { padding: 12px; } .vover .bar b { font-size: 18px; }
 }
+/* «Versión piloto» (24 Nov 2026, style A approved): a sticker on the corner of the login card; on every other screen
+   a faint outline of it behind the content (z-index 0, between the landscape and the shell), never over a text */
+.lcard { position: relative; }
+.pilstk { position: absolute; top: -24px; right: -26px; z-index: 2; margin: 0; transform: rotate(8deg); background: var(--sun); color: var(--ink);
+  border: 4px solid #1B2A55; border-radius: 18px; padding: 9px 16px 10px; text-align: center; line-height: 1; pointer-events: none;
+  box-shadow: 0 5px 0 rgba(10,20,40,.35), 0 12px 22px rgba(10,20,40,.3); }
+.pilstk small, .wmpil small { display: block; font-size: 14px; font-weight: 700; letter-spacing: .02em; }
+.pilstk b, .wmpil b { display: block; font-family: var(--display); font-weight: 800; font-size: 27px; }
+.wmpil { position: fixed; z-index: 0; left: 24px; bottom: 26px; transform: rotate(-8deg); border: 3px solid currentColor; border-radius: 16px;
+  padding: 7px 14px 8px; text-align: center; line-height: 1; color: rgba(255,255,255,.22); pointer-events: none; user-select: none; }
+.wmpil[hidden] { display: none; }
+.wmpil small { font-size: 12px; } .wmpil b { font-size: 21px; }
+body.has-rail .wmpil { left: 124px; }
+body.s-read .wmpil { color: rgba(22,33,58,.17); }
+@media (min-width: 960px) { body.v-tabla .wmpil { left: auto; right: 32px; bottom: 12px; } }   /* the Tabla's left column runs to the bottom, under a translucent card */
+@media (max-width: 959px) { .pilstk { right: 6px; } }
+@media (max-width: 599px) {
+  .pilstk { top: -18px; right: 6px; padding: 7px 12px 8px; border-width: 3px; } .pilstk b { font-size: 21px; } .pilstk small { font-size: 12px; }
+  .wmpil, body.has-rail .wmpil { left: 14px; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); padding: 5px 10px 6px; border-width: 2px; }
+  .wmpil b { font-size: 15px; } .wmpil small { font-size: 10px; }
+}
 </style>
 </head>
 <body>
@@ -947,6 +968,7 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
   <symbol id="i-ALL" viewBox="0 0 56 56"><rect x="21.5" y="1.9" width="13.1" height="20.5" rx="5.6" fill="#0A6E9C"/><rect x="33.6" y="21.5" width="20.5" height="13.1" rx="5.6" fill="#B3266D"/><rect x="21.5" y="33.6" width="13.1" height="20.5" rx="5.6" fill="#A64B00"/><rect x="1.9" y="21.5" width="20.5" height="13.1" rx="5.6" fill="#3236B0"/></symbol>
 </defs></svg>
 <svg class="land" id="land" aria-hidden="true" viewBox="0 0 1180 820" preserveAspectRatio="none"></svg>
+<div class="wmpil" id="wmpil" aria-hidden="true" hidden></div>
 <div class="shell">
   <nav class="rail" id="rail" hidden></nav>
   <div class="stage">
@@ -1415,6 +1437,8 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
   // Phones: the brand panel becomes a header strip with the logo and the tagline.
   const field = (id, key, type, auto, val = '') => `<label class="flabel" for="${id}">${esc(t(key))}</label><input class="field" id="${id}" type="${type}" autocomplete="${auto}" autocapitalize="none" spellcheck="false" value="${esc(val)}">`;
   const tablaDefault = () => CFG.tablaPorDefecto === 'activado';
+  // «Versión piloto» (24 Nov 2026): the sticker on the login card; the same words, faint, as a watermark on every other screen
+  const piloto = () => `<small>${esc(t('textos.pilotoLinea1'))}</small><b>${esc(t('textos.pilotoLinea2'))}</b>`;
   function viewLogin() {
     const crear = state.loginTab === 'crear';
     app.innerHTML = `
@@ -1429,6 +1453,7 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
         </div>
         <div class="lside">
           <form id="f" class="lcard" novalidate>
+            <p class="pilstk">${piloto()}</p>
             <h1>${esc(t(crear ? 'textos.crearTitulo' : 'textos.loginTitulo'))}</h1>
             ${crear ? `<p class="note">${esc(t('textos.crearNota'))}</p>` : ''}
             ${field('email', 'textos.correo', 'email', 'email', state.loginEmail || '')}
@@ -2240,6 +2265,8 @@ body.g-6to { --g-bg: #401C5C; --g-rail: #2B133E; --g-bar: #301545; --g-land1: #4
     const land = document.getElementById('land'); if (land && land.dataset.grado !== g) { land.innerHTML = landPaths(g); land.dataset.grado = g; }
     document.title = state.uid && v !== 'login' ? `${t('textos.marca')} ${g}` : t('textos.marca');
     document.body.classList.toggle('s-read', !!read);
+    const wm = document.getElementById('wmpil');   // 24 Nov 2026: the «Versión piloto» watermark
+    if (wm) { if (!wm.innerHTML) wm.innerHTML = piloto(); wm.hidden = v === 'login'; }
     document.body.classList.toggle('v-preg', v === 'pregunta');   // 9 Nov 2026: information area aligned with the question card
     document.body.classList.toggle('v-tabla', v === 'tabla');     // Tabla redesign: the view switch in the title row
     document.body.classList.toggle('tinted', !!(read || deep));

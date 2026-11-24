@@ -70,6 +70,8 @@ FIXED = {
     "videoCerrar": [], "videoError": [], "videoAyudaTitulo": [], "videoAyudaTexto": [],
     "videoEstudiantesTitulo": [], "videoEstudiantesTexto": [], "videoFamiliasTitulo": [], "videoFamiliasTexto": [],
     "videoDocentesTitulo": [], "videoDocentesTexto": [],
+    # «Versión piloto» mark (decided 24 November 2026): the sticker on the login card and the watermark
+    "pilotoLinea1": [], "pilotoLinea2": [],
 }
 # Rotating groups: allowed moods (None = the app's voice, no mood column), maximum length and
 # the placeholders the lines may use. v0.3: the end-of-Prueba message, up to 120 characters, no data.
